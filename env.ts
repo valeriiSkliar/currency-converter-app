@@ -18,6 +18,8 @@ const envSchema = z.object({
 
   // only available for app.config.ts usage
   APP_BUILD_ONLY_VAR: z.string().optional(),
+  EXPO_ACCOUNT_OWNER: z.string().optional(),
+  EAS_PROJECT_ID: z.string().optional(),
 });
 
 // Config records per environment
@@ -61,6 +63,8 @@ const _env: z.infer<typeof envSchema> = {
   EXPO_PUBLIC_VAR_NUMBER: Number(process.env.EXPO_PUBLIC_VAR_NUMBER ?? 0),
   EXPO_PUBLIC_VAR_BOOL: process.env.EXPO_PUBLIC_VAR_BOOL === "true",
   APP_BUILD_ONLY_VAR: process.env.APP_BUILD_ONLY_VAR,
+  EXPO_ACCOUNT_OWNER: process.env.EXPO_ACCOUNT_OWNER,
+  EAS_PROJECT_ID: process.env.EAS_PROJECT_ID,
 };
 
 function getValidatedEnv(env: z.infer<typeof envSchema>) {

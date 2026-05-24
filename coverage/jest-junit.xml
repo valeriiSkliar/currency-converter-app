@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuites name="jest tests" tests="4" failures="0" errors="0" time="1.053">
-  <testsuite name="src/__tests__/env.test.ts" errors="0" failures="0" skipped="0" timestamp="2026-05-24T15:54:07" time="0.766" tests="4">
-    <testcase classname="env" name="exposes EXPO_PUBLIC_API_URL" time="0.118">
+<testsuites name="jest tests" tests="4" failures="0" errors="0" time="1.071">
+  <testsuite name="src/__tests__/env.test.ts" errors="0" failures="0" skipped="0" timestamp="2026-05-24T16:47:04" time="0.907" tests="4">
+    <testcase classname="env" name="exposes EXPO_PUBLIC_API_URL" time="0.496">
     </testcase>
-    <testcase classname="env" name="exposes EXPO_PUBLIC_APP_SERVICE_KEY" time="0.02">
+    <testcase classname="env" name="exposes EXPO_PUBLIC_APP_SERVICE_KEY" time="0.022">
     </testcase>
-    <testcase classname="env" name="has CurrencyConverter as app name" time="0.022">
+    <testcase classname="env" name="has CurrencyConverter as app name" time="0.017">
     </testcase>
-    <testcase classname="env" name="has cimmetria bundle IDs" time="0.037">
+    <testcase classname="env" name="has cimmetria bundle IDs" time="0.021">
     </testcase>
   </testsuite>
 </testsuites>
