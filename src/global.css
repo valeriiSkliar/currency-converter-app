@@ -101,6 +101,24 @@
 
   --color-destructive: #ef4444;
   --color-destructive-foreground: #ffffff;
+
+  /* Design B Currency Converter colors */
+  --color-bg: #F4F2EC;
+  --color-surface: #FFFFFF;
+  --color-surface-2: #F7F6F2;
+  --color-ink: #0E0E10;
+  --color-ink-2: #2A2A2D;
+  --color-ink-mute: #6B7077;
+  --color-ink-soft: #9CA0A8;
+  --color-line: rgba(14,14,16,0.07);
+  --color-line-strong: rgba(14,14,16,0.13);
+  --color-accent: #FFD200;
+  --color-accent-ink: #0E0E10;
+  --color-blue: #0057B7;
+  --color-green: #00C566;
+  --color-red: #FF3B30;
+  --color-chip: #F1EFE8;
+  --color-chip-ink: #0E0E10;
 }
 
 /* Dark mode colors */
@@ -117,6 +135,24 @@
 
     --color-border: #404040;
     --color-input: #404040;
+
+    /* Design B Currency Converter dark colors */
+    --color-bg: #0A0A0C;
+    --color-surface: #131316;
+    --color-surface-2: #1B1B1F;
+    --color-ink: #FAFAFA;
+    --color-ink-2: #E5E5E7;
+    --color-ink-mute: #9CA0A8;
+    --color-ink-soft: #6B7077;
+    --color-line: rgba(255,255,255,0.07);
+    --color-line-strong: rgba(255,255,255,0.14);
+    --color-accent: #FFD200;
+    --color-accent-ink: #0E0E10;
+    --color-blue: #5C9CFF;
+    --color-green: #2EDB7E;
+    --color-red: #FF6259;
+    --color-chip: #1F1F23;
+    --color-chip-ink: #FAFAFA;
   }
 }
 

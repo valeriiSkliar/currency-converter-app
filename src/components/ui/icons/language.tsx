@@ -4,7 +4,7 @@ import Svg, { G, Path, Text, TSpan } from "react-native-svg";
 
 export function Language({ ...props }: SvgProps) {
   return (
-    <Svg width={100} height={71} {...props}>
+    <Svg width={100} height={71} viewBox="0 0 100 71" {...props}>
       <G fill="none" fillRule="evenodd">
         <Path
           d="M55.684 0H3.319A3.319 3.319 0 0 0 0 3.324V39.4a3.319 3.319 0 0 0 3.32 3.324h10.207V57l14.048-14.276h28.109A3.32 3.32 0 0 0 59 39.4V3.324A3.32 3.32 0 0 0 55.684 0"
@@ -19,7 +19,7 @@ export function Language({ ...props }: SvgProps) {
           fill="#192332"
         />
         <Text
-        // fontFamily="HelveticaNeueLTArabic-Bold, Helvetica Neue LT Arabic"
+          // fontFamily="HelveticaNeueLTArabic-Bold, Helvetica Neue LT Arabic"
           fontSize={30}
           fontWeight="bold"
           fill="#FFF"

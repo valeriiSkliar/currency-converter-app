@@ -113,3 +113,10 @@ pnpm build:production:ios       # EAS production build
 ### 6. Localization
 - **No Hardcoded Strings**: Use the `i18next` framework immediately. Define all text keys inside JSON translation catalogs (`src/translations/`).
 
+### 7. Code Style & Quality Compliance
+- **Mandatory Quality Checks**: Run `pnpm run check-all` (which executes ESLint check, TypeScript validation, translation key matching, and Jest tests) before committing any changes.
+- **Strict Function Length Limit**: The ESLint rule `max-lines-per-function` enforces a maximum of **110 lines** per function/component. Decompose complex screen components into small, modular sub-sections within the same file or a dedicated components folder.
+- **TypeScript Import Rules**: Import named components in alphabetical order. Double-quotes must be used for string literals.
+- **Ignore Generated Code**: Never manually edit auto-generated typing files (such as `uniwind-types.d.ts`). Add them to the ignores array in `eslint.config.mjs` if they violate linter rules.
+- **React Performance & Lists**: Always use unique, stable identifiers (e.g. `item.id`, `item.name`) as `key` props when mapping arrays in React. Never use array index (`idx`) as keys.
+- **Autofix Utilities**: Proactively execute `pnpm run lint --fix` to resolve standard spacing, indentation, quote usage, and import sorting issues.
