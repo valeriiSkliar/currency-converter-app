@@ -68,3 +68,48 @@ pnpm build:production:ios       # EAS production build
 - ✅ **DO** use EAS Build for production: `pnpm build:production:ios`
 - ✅ **DO** prefix env vars with `EXPO_PUBLIC_*` for app access
 - ❌ **DO NOT** modify `android/` or `ios/` directly (use Expo config plugins)
+
+## Component Architecture & State Management Guidelines
+
+### 1. Component Responsibility Boundaries
+- **UI / Presentational Components (Atomic UI)** (e.g. `src/components/ui/`):
+  - Must remain **100% pure**.
+  - Must only receive data and callbacks via `props`.
+  - **Forbidden** from accessing global Zustand stores or invoking API query hooks directly.
+- **Feature Components** (e.g. `src/features/converter/components/`):
+  - Can read and write directly to/from feature-specific Zustand stores (e.g. `useConverterStore`) to reduce prop-drilling.
+  - Sourced around a specific, modular business logic block.
+- **Container / Screen Components** (e.g. `src/app/`):
+  - Orchestrate layout by placing Feature Components.
+  - Access TanStack Query hooks (`useQuery`, `useMutation`).
+  - Manage route navigation and handle major page-level states (loaders, fallback errors).
+
+### 2. State & Caching Patterns
+- **Server State**: Managed strictly through TanStack Query (`useQuery`). Do not copy server state into local state or Zustand unless local edits/overrides are explicitly required.
+- **Global Client State**: Use Zustand with `persist` middleware powered by `react-native-mmkv` to automatically save user configurations (e.g. chosen converter list, active base currency, settings, theme preferences) across app restarts.
+- **Local UI State**: Use standard React `useState` for state scoped to a single component (e.g. modal search filter query).
+
+### 3. Responsive Layout & Theming
+- **Adaptive Layout**: Design components using Flexbox and Nativewind classes. Avoid hardcoding fixed heights/widths for containers to support various device aspect ratios. Wrap root screen views with `SafeAreaView` and use `FocusAwareStatusBar`.
+- **Theming**: Define CSS variables in `global.css` for Light and Dark modes. Tailwind utility classes (e.g. `bg-surface`, `text-ink`, `border-line`) will automatically map to active theme styles.
+- **Theme Selection**: Maintain a user settings control to toggle between Light, Dark, or System themes, persisted in the settings store.
+- **Wallpaper Selection & Theming System**:
+  - Implement the appearance settings store and a `ScreenBackground` container component to manage visual themes.
+  - Create the default palette matching the prototype's `styles.css` variables:
+    - **Light Mode**: `--bg: #F4F2EC`, `--surface: #FFFFFF`, `--surface-2: #F7F6F2`, `--ink: #0E0E10`, `--ink-mute: #6B7077`, `--line: rgba(14,14,16,0.07)`, `--accent: #FFD200`, `--chip: #F1EFE8`, etc.
+    - **Dark Mode**: `--bg: #0A0A0C`, `--surface: #131316`, `--surface-2: #1B1B1F`, `--ink: #FAFAFA`, `--ink-mute: #9CA0A8`, `--line: rgba(255,255,255,0.07)`, `--accent: #FFD200`, `--chip: #1F1F23`, etc.
+  - The default wallpaper is the flat solid theme background matching these CSS variables. The system structure should allow adding alternative wallpapers/skins in the settings in the future.
+
+### 4. Precision & Rounding Rules
+- **Dynamic Precision**: Format values in UI dynamically:
+  - **Fiat**: 2 to 4 decimal places depending on settings.
+  - **Crypto**: 6 to 8 decimal places for accuracy.
+- **Precision Configuration**: Provide a global setting to adjust precision rounding, which must be referenced by formatting helpers.
+
+### 5. Loading & UX UX/UI States
+- **Initial Load**: Display a full screen skeleton loader on first API fetch.
+- **Background Refresh**: Do not block the screen. Use silent indicators (e.g., small refresh indicators, spinner in header) or pull-to-refresh to fetch updates quietly.
+
+### 6. Localization
+- **No Hardcoded Strings**: Use the `i18next` framework immediately. Define all text keys inside JSON translation catalogs (`src/translations/`).
+
