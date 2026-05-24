@@ -2,14 +2,14 @@
 /* eslint-disable no-restricted-globals */
 
 // Mock react-native-worklets first
-jest.mock('react-native-worklets', () => ({
+jest.mock("react-native-worklets", () => ({
   __esModule: true,
   default: {},
 }));
 
 // Mock react-native-reanimated
-jest.mock('react-native-reanimated', () => {
-  const View = require('react-native').View;
+jest.mock("react-native-reanimated", () => {
+  const View = require("react-native").View;
 
   return {
     __esModule: true,
@@ -53,24 +53,24 @@ jest.mock('react-native-reanimated', () => {
 });
 
 // Mock expo-localization
-jest.mock('expo-localization', () => ({
+jest.mock("expo-localization", () => ({
   getLocales: jest.fn(() => [
     {
-      languageTag: 'en-US',
-      languageCode: 'en',
-      textDirection: 'ltr',
-      digitGroupingSeparator: ',',
-      decimalSeparator: '.',
-      measurementSystem: 'metric',
-      currencyCode: 'USD',
-      currencySymbol: '$',
-      regionCode: 'US',
+      languageTag: "en-US",
+      languageCode: "en",
+      textDirection: "ltr",
+      digitGroupingSeparator: ",",
+      decimalSeparator: ".",
+      measurementSystem: "metric",
+      currencyCode: "USD",
+      currencySymbol: "$",
+      regionCode: "US",
     },
   ]),
 }));
 
 // Mock react-native-mmkv
-jest.mock('react-native-mmkv', () => ({
+jest.mock("react-native-mmkv", () => ({
   MMKV: jest.fn(() => ({
     set: jest.fn(),
     getString: jest.fn(),

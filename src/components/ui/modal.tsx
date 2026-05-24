@@ -32,14 +32,14 @@
 import type {
   BottomSheetBackdropProps,
   BottomSheetModalProps,
-} from '@gorhom/bottom-sheet';
-import { BottomSheetModal, useBottomSheet } from '@gorhom/bottom-sheet';
-import * as React from 'react';
-import { Pressable, View } from 'react-native';
-import Animated, { FadeIn, FadeOut } from 'react-native-reanimated';
-import { Path, Svg } from 'react-native-svg';
+} from "@gorhom/bottom-sheet";
+import { BottomSheetModal, useBottomSheet } from "@gorhom/bottom-sheet";
+import * as React from "react";
+import { Pressable, View } from "react-native";
+import Animated, { FadeIn, FadeOut } from "react-native-reanimated";
+import { Path, Svg } from "react-native-svg";
 
-import { Text } from './text';
+import { Text } from "./text";
 
 type ModalProps = BottomSheetModalProps & {
   title?: string;
@@ -63,7 +63,7 @@ export function useModal() {
   return { ref, present, dismiss };
 }
 
-export function Modal({ ref, snapPoints: _snapPoints = ['60%'] as (string | number)[], title, detached = false, ...props }: ModalProps & { ref?: ModalRef }) {
+export function Modal({ ref, snapPoints: _snapPoints = ["60%"] as (string | number)[], title, detached = false, ...props }: ModalProps & { ref?: ModalRef }) {
   const detachedProps = React.useMemo(
     () => getDetachedProps(detached),
     [detached],
@@ -113,7 +113,7 @@ function CustomBackdrop({ style }: BottomSheetBackdropProps) {
       onPress={() => close()}
       entering={FadeIn.duration(50)}
       exiting={FadeOut.duration(20)}
-      style={[style, { backgroundColor: 'rgba(0, 0, 0, 0.4)' }]}
+      style={[style, { backgroundColor: "rgba(0, 0, 0, 0.4)" }]}
     />
   );
 }
@@ -136,7 +136,7 @@ function getDetachedProps(detached: boolean) {
     return {
       detached: true,
       bottomInset: 46,
-      style: { marginHorizontal: 16, overflow: 'hidden' },
+      style: { marginHorizontal: 16, overflow: "hidden" },
     } as Partial<BottomSheetModalProps>;
   }
   return {} as Partial<BottomSheetModalProps>;
