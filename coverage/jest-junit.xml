@@ -1,11 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuites name="jest tests" tests="4" failures="0" errors="0" time="1.071">
-  <testsuite name="src/__tests__/env.test.ts" errors="0" failures="0" skipped="0" timestamp="2026-05-24T16:47:04" time="0.907" tests="4">
-    <testcase classname="env" name="exposes EXPO_PUBLIC_API_URL" time="0.496">
+<testsuites name="jest tests" tests="11" failures="0" errors="0" time="1.26">
+  <testsuite name="src/__tests__/api-client.test.ts" errors="0" failures="0" skipped="0" timestamp="2026-05-24T18:09:45" time="0.847" tests="3">
+    <testcase classname="aPI client" name="has correct baseURL from env" time="0.113">
     </testcase>
-    <testcase classname="env" name="exposes EXPO_PUBLIC_APP_SERVICE_KEY" time="0.022">
+    <testcase classname="aPI client" name="has X-App-Key auth header" time="0.02">
     </testcase>
-    <testcase classname="env" name="has CurrencyConverter as app name" time="0.017">
+    <testcase classname="aPI client" name="has 10s timeout" time="0.019">
+    </testcase>
+  </testsuite>
+  <testsuite name="src/__tests__/converter-store.test.ts" errors="0" failures="0" skipped="0" timestamp="2026-05-24T18:09:46" time="0.09" tests="4">
+    <testcase classname="useConverterStore" name="has default fromCurrency USD" time="0">
+    </testcase>
+    <testcase classname="useConverterStore" name="has default toCurrency EUR" time="0">
+    </testcase>
+    <testcase classname="useConverterStore" name="setFromCurrency updates fromCurrency" time="0">
+    </testcase>
+    <testcase classname="useConverterStore" name="setToCurrency updates toCurrency" time="0.001">
+    </testcase>
+  </testsuite>
+  <testsuite name="src/__tests__/env.test.ts" errors="0" failures="0" skipped="0" timestamp="2026-05-24T18:09:46" time="0.147" tests="4">
+    <testcase classname="env" name="exposes EXPO_PUBLIC_API_URL" time="0.023">
+    </testcase>
+    <testcase classname="env" name="exposes EXPO_PUBLIC_APP_SERVICE_KEY" time="0.019">
+    </testcase>
+    <testcase classname="env" name="has CurrencyConverter as app name" time="0.018">
     </testcase>
     <testcase classname="env" name="has cimmetria bundle IDs" time="0.021">
     </testcase>

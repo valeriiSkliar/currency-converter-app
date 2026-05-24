@@ -5,7 +5,7 @@ export const client = axios.create({
   baseURL: `${Env.EXPO_PUBLIC_API_URL}`,
   headers: {
     "X-App-Key": Env.EXPO_PUBLIC_APP_SERVICE_KEY,
-    Accept: "application/json",
+    "Accept": "application/json",
     "Content-Type": "application/json",
   },
   timeout: 10_000,

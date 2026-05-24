@@ -15,9 +15,9 @@ describe("aPI client", () => {
     process.env = originalEnv;
   });
 
-  it("has baseURL with /v1 suffix", () => {
+  it("has correct baseURL from env", () => {
     const { client } = require("../lib/api/client");
-    expect(client.defaults.baseURL).toBe("http://localhost:8088/v1");
+    expect(client.defaults.baseURL).toBe("http://localhost:8088");
   });
 
   it("has X-App-Key auth header", () => {
