@@ -1,4 +1,4 @@
-describe('Env', () => {
+describe('env', () => {
   const originalEnv = process.env;
 
   beforeEach(() => {
