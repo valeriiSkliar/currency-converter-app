@@ -3,16 +3,19 @@ import { createJSONStorage, persist } from "zustand/middleware";
 import { storage } from "@/lib/storage";
 
 export type ThemeType = "light" | "dark" | "system";
+export type LanguageType = "en" | "ru";
 
 type SettingsState = {
   theme: ThemeType;
-  fiatPrecision: number;
-  cryptoPrecision: number;
+  language: LanguageType;
+  decimalPlaces: number;
   wallpaper: string;
+  privacyAccepted: boolean;
   setTheme: (theme: ThemeType) => void;
-  setFiatPrecision: (precision: number) => void;
-  setCryptoPrecision: (precision: number) => void;
+  setLanguage: (language: LanguageType) => void;
+  setDecimalPlaces: (decimalPlaces: number) => void;
   setWallpaper: (wallpaper: string) => void;
+  setPrivacyAccepted: (accepted: boolean) => void;
 };
 
 const mmkvStorage = {
@@ -31,13 +34,15 @@ export const useSettingsStore = create<SettingsState>()(
   persist(
     set => ({
       theme: "system",
-      fiatPrecision: 2,
-      cryptoPrecision: 6,
+      language: "en",
+      decimalPlaces: 2,
       wallpaper: "default",
+      privacyAccepted: false,
       setTheme: theme => set({ theme }),
-      setFiatPrecision: fiatPrecision => set({ fiatPrecision }),
-      setCryptoPrecision: cryptoPrecision => set({ cryptoPrecision }),
+      setLanguage: language => set({ language }),
+      setDecimalPlaces: decimalPlaces => set({ decimalPlaces }),
       setWallpaper: wallpaper => set({ wallpaper }),
+      setPrivacyAccepted: privacyAccepted => set({ privacyAccepted }),
     }),
     {
       name: "settings-store",

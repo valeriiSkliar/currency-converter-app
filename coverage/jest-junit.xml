@@ -1,31 +1,73 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuites name="jest tests" tests="11" failures="0" errors="0" time="1.26">
-  <testsuite name="src/__tests__/api-client.test.ts" errors="0" failures="0" skipped="0" timestamp="2026-05-24T18:09:45" time="0.847" tests="3">
-    <testcase classname="aPI client" name="has correct baseURL from env" time="0.113">
+<testsuites name="jest tests" tests="29" failures="0" errors="0" time="4.333">
+  <testsuite name="src/__tests__/i18n.test.ts" errors="0" failures="0" skipped="0" timestamp="2026-05-25T07:19:49" time="2.723" tests="4">
+    <testcase classname="i18n resources" name="has en, ru and ar locales" time="0.008">
     </testcase>
-    <testcase classname="aPI client" name="has X-App-Key auth header" time="0.02">
+    <testcase classname="i18n resources" name="en has required converter keys" time="0.001">
     </testcase>
-    <testcase classname="aPI client" name="has 10s timeout" time="0.019">
+    <testcase classname="i18n resources" name="ru has required converter keys" time="0.001">
     </testcase>
-  </testsuite>
-  <testsuite name="src/__tests__/converter-store.test.ts" errors="0" failures="0" skipped="0" timestamp="2026-05-24T18:09:46" time="0.09" tests="4">
-    <testcase classname="useConverterStore" name="has default fromCurrency USD" time="0">
-    </testcase>
-    <testcase classname="useConverterStore" name="has default toCurrency EUR" time="0">
-    </testcase>
-    <testcase classname="useConverterStore" name="setFromCurrency updates fromCurrency" time="0">
-    </testcase>
-    <testcase classname="useConverterStore" name="setToCurrency updates toCurrency" time="0.001">
+    <testcase classname="i18n resources" name="ru and ar have same top-level keys as en" time="0.001">
     </testcase>
   </testsuite>
-  <testsuite name="src/__tests__/env.test.ts" errors="0" failures="0" skipped="0" timestamp="2026-05-24T18:09:46" time="0.147" tests="4">
-    <testcase classname="env" name="exposes EXPO_PUBLIC_API_URL" time="0.023">
+  <testsuite name="src/__tests__/quota-store.test.ts" errors="0" failures="0" skipped="0" timestamp="2026-05-25T07:19:49" time="2.919" tests="5">
+    <testcase classname="useQuotaStore" name="has default state values" time="0.006">
     </testcase>
-    <testcase classname="env" name="exposes EXPO_PUBLIC_APP_SERVICE_KEY" time="0.019">
+    <testcase classname="useQuotaStore" name="increments custom rate change attempts count" time="0">
     </testcase>
-    <testcase classname="env" name="has CurrencyConverter as app name" time="0.018">
+    <testcase classname="useQuotaStore" name="increments OCR scans attempts count" time="0.001">
     </testcase>
-    <testcase classname="env" name="has cimmetria bundle IDs" time="0.021">
+    <testcase classname="useQuotaStore" name="unlocks PRO plan" time="0.001">
+    </testcase>
+    <testcase classname="useQuotaStore" name="resets attempts counter" time="0.004">
+    </testcase>
+  </testsuite>
+  <testsuite name="src/__tests__/settings-store.test.ts" errors="0" failures="0" skipped="0" timestamp="2026-05-25T07:19:49" time="2.924" tests="6">
+    <testcase classname="useSettingsStore" name="has default state values" time="0.007">
+    </testcase>
+    <testcase classname="useSettingsStore" name="updates theme" time="0">
+    </testcase>
+    <testcase classname="useSettingsStore" name="updates language" time="0.001">
+    </testcase>
+    <testcase classname="useSettingsStore" name="updates decimal places" time="0.001">
+    </testcase>
+    <testcase classname="useSettingsStore" name="updates wallpaper" time="0">
+    </testcase>
+    <testcase classname="useSettingsStore" name="updates privacy accepted status" time="0.001">
+    </testcase>
+  </testsuite>
+  <testsuite name="src/__tests__/converter-store.test.ts" errors="0" failures="0" skipped="0" timestamp="2026-05-25T07:19:49" time="2.92" tests="7">
+    <testcase classname="useConverterStore" name="has default state" time="0.011">
+    </testcase>
+    <testcase classname="useConverterStore" name="updates base currency and target currencies list" time="0.001">
+    </testcase>
+    <testcase classname="useConverterStore" name="updates amount" time="0.001">
+    </testcase>
+    <testcase classname="useConverterStore" name="adds new currency only if not already present" time="0.001">
+    </testcase>
+    <testcase classname="useConverterStore" name="removes currency" time="0">
+    </testcase>
+    <testcase classname="useConverterStore" name="swaps base currency with target row, placing old base at the row&apos;s index" time="0">
+    </testcase>
+    <testcase classname="useConverterStore" name="sets custom rate override" time="0.001">
+    </testcase>
+  </testsuite>
+  <testsuite name="src/__tests__/env.test.ts" errors="0" failures="0" skipped="0" timestamp="2026-05-25T07:19:49" time="3.009" tests="4">
+    <testcase classname="env" name="exposes EXPO_PUBLIC_API_URL" time="0.299">
+    </testcase>
+    <testcase classname="env" name="exposes EXPO_PUBLIC_APP_SERVICE_KEY" time="0.029">
+    </testcase>
+    <testcase classname="env" name="has CurrencyConverter as app name" time="0.024">
+    </testcase>
+    <testcase classname="env" name="has cimmetria bundle IDs" time="0.025">
+    </testcase>
+  </testsuite>
+  <testsuite name="src/__tests__/api-client.test.ts" errors="0" failures="0" skipped="0" timestamp="2026-05-25T07:19:49" time="3.069" tests="3">
+    <testcase classname="aPI client" name="has correct baseURL from env" time="0.369">
+    </testcase>
+    <testcase classname="aPI client" name="has X-App-Key auth header" time="0.025">
+    </testcase>
+    <testcase classname="aPI client" name="has 10s timeout" time="0.028">
     </testcase>
   </testsuite>
 </testsuites>
