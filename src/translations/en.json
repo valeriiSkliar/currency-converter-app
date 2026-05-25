@@ -14,6 +14,17 @@
     "title": "Currency Converter",
     "to": "To"
   },
+  "privacy": {
+    "accept": "Accept",
+    "bullet1": "No personal data collected",
+    "bullet2": "Anonymous analytics only",
+    "bullet3": "Data stays on your device",
+    "decline": "Decline",
+    "decline_blocked": "You must accept the privacy policy to use the app.",
+    "description": "We respect your privacy. Currency Converter does not collect personal data. Exchange rates are fetched from third-party providers (CurrencyFreaks, CoinMarketCap). Anonymous crash reports help us improve the app.",
+    "link": "Read full policy ›",
+    "title": "Privacy policy"
+  },
   "settings": {
     "english": "English",
     "language": "Language",
