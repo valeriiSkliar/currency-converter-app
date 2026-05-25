@@ -14,6 +14,18 @@
     "title": "Currency Converter",
     "to": "To"
   },
+  "drawer": {
+    "exchange_rates": "Exchange rates",
+    "feedback": "Send feedback",
+    "free_plan": "v1.0 · Free plan",
+    "my_rate": "My Rate",
+    "privacy": "Privacy policy",
+    "pro_plan": "v1.0 · PRO",
+    "rate_app": "Rate the app",
+    "remove_ads": "Remove ads — $2.99",
+    "settings": "Settings",
+    "share": "Share with friends"
+  },
   "privacy": {
     "accept": "Accept",
     "bullet1": "No personal data collected",
