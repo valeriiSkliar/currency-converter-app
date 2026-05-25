@@ -71,18 +71,18 @@ pnpm build:production:ios       # EAS production build
 
 ## Component Architecture & State Management Guidelines
 
-### 1. Component Responsibility Boundaries
-- **UI / Presentational Components (Atomic UI)** (e.g. `src/components/ui/`):
-  - Must remain **100% pure**.
-  - Must only receive data and callbacks via `props`.
-  - **Forbidden** from accessing global Zustand stores or invoking API query hooks directly.
-- **Feature Components** (e.g. `src/features/converter/components/`):
-  - Can read and write directly to/from feature-specific Zustand stores (e.g. `useConverterStore`) to reduce prop-drilling.
-  - Sourced around a specific, modular business logic block.
-- **Container / Screen Components** (e.g. `src/app/`):
-  - Orchestrate layout by placing Feature Components.
-  - Access TanStack Query hooks (`useQuery`, `useMutation`).
-  - Manage route navigation and handle major page-level states (loaders, fallback errors).
+### 1. Component Responsibility Boundaries & Separation of Logic
+- **UI / Presentational Components (Dumb Components)** (e.g., `src/components/ui/` and visual sub-components inside `src/features/[feature]/components/`):
+  - Must remain **100% pure and "dumb"**.
+  - Must only receive data, formatted display values, and event callbacks via `props`.
+  - **Strictly Forbidden** from directly importing, reading, or writing to global Zustand stores or TanStack Query hooks. This decoupling guarantees visual markup is fully interchangeable and easily replaceable without modifying core business rules.
+- **Smart Containers, Controllers & Screen Components** (e.g., `src/app/` router entries or feature-level layout wrappers):
+  - Act as the "smart" orchestrators and state controllers.
+  - Connect to Zustand stores (e.g., `useConverterStore`, `useQuotaStore`) and API query hooks, then pass the extracted data and handlers down as props to the presentational layer.
+  - Coordinate route navigation, lifecycle events, and major page-level states.
+- **Business Logic Isolation**:
+  - All calculation engines (e.g., rate conversions, precision rounding, quota limits checks, formatting helpers) must be defined in pure TypeScript utility modules, helper custom hooks, or as Zustand store actions.
+  - Visually oriented markup files must contain zero calculations, validations, or state management logic.
 
 ### 2. State & Caching Patterns
 - **Server State**: Managed strictly through TanStack Query (`useQuery`). Do not copy server state into local state or Zustand unless local edits/overrides are explicitly required.
