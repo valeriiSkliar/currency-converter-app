@@ -1,12 +1,10 @@
 import { useRouter } from "expo-router";
 import * as React from "react";
-import { useTranslation } from "react-i18next";
 import { Pressable, Text, View } from "react-native";
 import { ScreenBackground } from "@/components/ui";
 
 export default function AddCurrencyScreen() {
   const router = useRouter();
-  const { t } = useTranslation();
 
   return (
     <ScreenBackground className="p-6">
