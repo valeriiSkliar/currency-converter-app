@@ -1,21 +1,22 @@
 import { useRouter } from "expo-router";
 import * as React from "react";
 import { Pressable, Text, View } from "react-native";
+import { ScreenBackground } from "@/components/ui";
 import { Menu as MenuIcon } from "@/components/ui/icons";
-import { useThemeConfig } from "@/components/ui/use-theme-config";
 import { useDrawer } from "@/lib/drawer-context";
+import { useColors } from "@/lib/hooks";
 
 export default function HomeScreen() {
   const router = useRouter();
   const { openDrawer } = useDrawer();
-  const theme = useThemeConfig();
+  const colors = useColors();
 
-  const strokeColor = theme.dark ? "#FAFAFA" : "#0E0E10";
+  const strokeColor = colors.ink;
 
   return (
-    <View className="flex-1 bg-bg pt-16">
+    <ScreenBackground className="px-6 py-4">
       {/* Header bar */}
-      <View className="flex-row items-center justify-between px-6 py-4">
+      <View className="flex-row items-center justify-between pt-2 pb-4">
         {/* Burger Button */}
         <Pressable
           onPress={openDrawer}
@@ -34,7 +35,7 @@ export default function HomeScreen() {
       </View>
 
       {/* Main Body Content */}
-      <View className="flex-1 items-center justify-center p-6">
+      <View className="flex-1 items-center justify-center">
         <Text className="text-2xl font-bold text-ink">Currency Converter</Text>
         <Text className="mt-2 text-ink-mute">Coming soon</Text>
 
@@ -49,6 +50,6 @@ export default function HomeScreen() {
           </Pressable>
         )}
       </View>
-    </View>
+    </ScreenBackground>
   );
 }

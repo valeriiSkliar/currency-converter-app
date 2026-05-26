@@ -45,7 +45,10 @@ export const useConverterStore = create<ConverterState>()(
         }),
       addCurrency: code =>
         set((state) => {
-          if (state.targetCurrencies.includes(code) || state.baseCurrency === code) {
+          if (
+            state.targetCurrencies.includes(code)
+            || state.baseCurrency === code
+          ) {
             return {};
           }
           return {

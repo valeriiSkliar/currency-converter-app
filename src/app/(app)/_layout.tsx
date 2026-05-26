@@ -1,3 +1,4 @@
+import Env from "env";
 import { Slot, useRouter } from "expo-router";
 import * as React from "react";
 import { Linking, Pressable, Share, StyleSheet, View } from "react-native";
@@ -6,6 +7,7 @@ import { DrawerMenu } from "@/components/drawer-menu";
 import { useQuotaStore } from "@/features/converter/store/use-quota-store";
 import { useSettingsStore } from "@/features/settings/store/use-settings-store";
 import { DrawerContext } from "@/lib/drawer-context";
+import { platformSelect } from "@/lib/platform";
 
 const DRAWER_WIDTH = 280;
 
@@ -49,7 +51,7 @@ export default function AppLayout() {
     closeDrawer();
     try {
       await Share.share({
-        message: "Check out this amazing Currency Converter app! Download now at https://currencyconverterapp.com",
+        message: `Check out this amazing Currency Converter app! Download now at ${Env.EXPO_PUBLIC_SHARE_URL}`,
       });
     }
     catch {
@@ -59,7 +61,10 @@ export default function AppLayout() {
 
   const handleRate = () => {
     closeDrawer();
-    const url = "https://apps.apple.com/app/currency-converter";
+    const url = platformSelect({
+      android: Env.EXPO_PUBLIC_RATE_URL_ANDROID,
+      ios: Env.EXPO_PUBLIC_RATE_URL_IOS,
+    });
     Linking.openURL(url).catch(() => {});
   };
 

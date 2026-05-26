@@ -15,6 +15,10 @@ const envSchema = z.object({
   EXPO_PUBLIC_ASSOCIATED_DOMAIN: z.string().url().optional(),
   EXPO_PUBLIC_VAR_NUMBER: z.number(),
   EXPO_PUBLIC_VAR_BOOL: z.boolean(),
+  EXPO_PUBLIC_SHARE_URL: z.string().url(),
+  EXPO_PUBLIC_PRIVACY_POLICY_URL: z.string().url(),
+  EXPO_PUBLIC_RATE_URL_IOS: z.string().url(),
+  EXPO_PUBLIC_RATE_URL_ANDROID: z.string().url(),
 
   // only available for app.config.ts usage
   APP_BUILD_ONLY_VAR: z.string().optional(),
@@ -62,6 +66,10 @@ const _env: z.infer<typeof envSchema> = {
   EXPO_PUBLIC_ASSOCIATED_DOMAIN: process.env.EXPO_PUBLIC_ASSOCIATED_DOMAIN,
   EXPO_PUBLIC_VAR_NUMBER: Number(process.env.EXPO_PUBLIC_VAR_NUMBER ?? 0),
   EXPO_PUBLIC_VAR_BOOL: process.env.EXPO_PUBLIC_VAR_BOOL === "true",
+  EXPO_PUBLIC_SHARE_URL: process.env.EXPO_PUBLIC_SHARE_URL ?? "https://currencyconverterapp.com",
+  EXPO_PUBLIC_PRIVACY_POLICY_URL: process.env.EXPO_PUBLIC_PRIVACY_POLICY_URL ?? "https://currencyconverterapp.com/privacy-policy",
+  EXPO_PUBLIC_RATE_URL_IOS: process.env.EXPO_PUBLIC_RATE_URL_IOS ?? "https://apps.apple.com/app/currency-converter",
+  EXPO_PUBLIC_RATE_URL_ANDROID: process.env.EXPO_PUBLIC_RATE_URL_ANDROID ?? "https://play.google.com/store/apps/details?id=com.cimmetria.currencyconverter",
   APP_BUILD_ONLY_VAR: process.env.APP_BUILD_ONLY_VAR,
   EXPO_ACCOUNT_OWNER: process.env.EXPO_ACCOUNT_OWNER,
   EAS_PROJECT_ID: process.env.EAS_PROJECT_ID,

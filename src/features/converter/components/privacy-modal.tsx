@@ -1,7 +1,9 @@
+import Env from "env";
 import * as React from "react";
 import { useTranslation } from "react-i18next";
-import { Alert, BackHandler, Linking, Modal, Platform, Text, TouchableOpacity, View } from "react-native";
+import { Alert, Linking, Modal, Text, TouchableOpacity, View } from "react-native";
 import Svg, { Path } from "react-native-svg";
+import { exitApp, isAndroid } from "@/lib/platform";
 
 type PrivacyModalProps = {
   visible: boolean;
@@ -12,8 +14,8 @@ export function PrivacyModal({ visible, onAccept }: PrivacyModalProps) {
   const { t } = useTranslation();
 
   const handleDecline = () => {
-    if (Platform.OS === "android") {
-      BackHandler.exitApp();
+    if (isAndroid) {
+      exitApp();
     }
     else {
       Alert.alert(
@@ -24,7 +26,7 @@ export function PrivacyModal({ visible, onAccept }: PrivacyModalProps) {
   };
 
   const handleOpenLink = () => {
-    Linking.openURL("https://currencyconverterapp.com/privacy-policy").catch(() => {});
+    Linking.openURL(Env.EXPO_PUBLIC_PRIVACY_POLICY_URL).catch(() => {});
   };
 
   return (

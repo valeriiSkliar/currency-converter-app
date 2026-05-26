@@ -1,6 +1,6 @@
 import { BottomSheetBackdrop, BottomSheetModal, BottomSheetView } from "@gorhom/bottom-sheet";
 import * as React from "react";
-import { useThemeConfig } from "@/components/ui/use-theme-config";
+import { useColors } from "@/lib/hooks";
 
 export type BottomSheetProps = {
   children: React.ReactNode;
@@ -9,7 +9,7 @@ export type BottomSheetProps = {
 };
 
 export function BottomSheet({ ref, children, snapPoints = ["50%"], onDismiss }: BottomSheetProps & { ref?: React.RefObject<BottomSheetModal | null> }) {
-  const theme = useThemeConfig();
+  const colors = useColors();
 
   const renderBackdrop = React.useCallback(
     (props: any) => (
@@ -30,10 +30,10 @@ export function BottomSheet({ ref, children, snapPoints = ["50%"], onDismiss }: 
       onDismiss={onDismiss}
       backdropComponent={renderBackdrop}
       backgroundStyle={{
-        backgroundColor: theme.dark ? "#131316" : "#FFFFFF",
+        backgroundColor: colors.surface,
       }}
       handleIndicatorStyle={{
-        backgroundColor: theme.dark ? "#6B7077" : "#C9C9C9",
+        backgroundColor: colors.lineStrong,
       }}
     >
       <BottomSheetView className="flex-1 p-6">
