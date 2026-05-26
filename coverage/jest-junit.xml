@@ -1,73 +1,103 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuites name="jest tests" tests="29" failures="0" errors="0" time="5.212">
-  <testsuite name="src/__tests__/i18n.test.ts" errors="0" failures="0" skipped="0" timestamp="2026-05-26T07:23:21" time="2.894" tests="4">
-    <testcase classname="i18n resources" name="has en, ru and ar locales" time="0.007">
+<testsuites name="jest tests" tests="43" failures="0" errors="0" time="1.925">
+  <testsuite name="src/__tests__/calculator-engine.test.ts" errors="0" failures="0" skipped="0" timestamp="2026-05-26T09:16:30" time="1.028" tests="14">
+    <testcase classname="useCalculatorEngine - Init &amp; Digits" name="initializes with default value &apos;0&apos;" time="0.021">
     </testcase>
-    <testcase classname="i18n resources" name="en has required converter keys" time="0.001">
+    <testcase classname="useCalculatorEngine - Init &amp; Digits" name="initializes with a custom initial value" time="0.001">
     </testcase>
-    <testcase classname="i18n resources" name="ru has required converter keys" time="0">
+    <testcase classname="useCalculatorEngine - Init &amp; Digits" name="appends digits correctly" time="0.002">
     </testcase>
-    <testcase classname="i18n resources" name="ru and ar have same top-level keys as en" time="0">
+    <testcase classname="useCalculatorEngine - Init &amp; Digits" name="ignores leading duplicate zeros" time="0.001">
+    </testcase>
+    <testcase classname="useCalculatorEngine - Init &amp; Digits" name="supports decimal separator and prevents duplicates" time="0.003">
+    </testcase>
+    <testcase classname="useCalculatorEngine - Init &amp; Digits" name="clears state on &apos;C&apos;" time="0.002">
+    </testcase>
+    <testcase classname="useCalculatorEngine - Backspace, Sign &amp; Percent" name="handles backspace" time="0.001">
+    </testcase>
+    <testcase classname="useCalculatorEngine - Backspace, Sign &amp; Percent" name="toggles sign correctly" time="0.002">
+    </testcase>
+    <testcase classname="useCalculatorEngine - Backspace, Sign &amp; Percent" name="applies percentage correctly" time="0.002">
+    </testcase>
+    <testcase classname="useCalculatorEngine - Calculations &amp; Precision" name="performs addition correctly" time="0.002">
+    </testcase>
+    <testcase classname="useCalculatorEngine - Calculations &amp; Precision" name="performs multiplication with visual symbol" time="0.002">
+    </testcase>
+    <testcase classname="useCalculatorEngine - Calculations &amp; Precision" name="resolves float point inaccuracies (e.g. 0.1 + 0.2)" time="0.002">
+    </testcase>
+    <testcase classname="useCalculatorEngine - Calculations &amp; Precision" name="chains calculations automatically" time="0.002">
+    </testcase>
+    <testcase classname="useCalculatorEngine - Calculations &amp; Precision" name="handles division by zero and displays Error" time="0.001">
     </testcase>
   </testsuite>
-  <testsuite name="src/__tests__/quota-store.test.ts" errors="0" failures="0" skipped="0" timestamp="2026-05-26T07:23:21" time="3.132" tests="5">
-    <testcase classname="useQuotaStore" name="has default state values" time="0.01">
+  <testsuite name="src/__tests__/api-client.test.ts" errors="0" failures="0" skipped="0" timestamp="2026-05-26T09:16:31" time="0.227" tests="3">
+    <testcase classname="aPI client" name="has correct baseURL from env" time="0.12">
     </testcase>
-    <testcase classname="useQuotaStore" name="increments custom rate change attempts count" time="0.001">
+    <testcase classname="aPI client" name="has X-App-Key auth header" time="0.017">
     </testcase>
-    <testcase classname="useQuotaStore" name="increments OCR scans attempts count" time="0">
-    </testcase>
-    <testcase classname="useQuotaStore" name="unlocks PRO plan" time="0">
-    </testcase>
-    <testcase classname="useQuotaStore" name="resets attempts counter" time="0.001">
+    <testcase classname="aPI client" name="has 10s timeout" time="0.021">
     </testcase>
   </testsuite>
-  <testsuite name="src/__tests__/settings-store.test.ts" errors="0" failures="0" skipped="0" timestamp="2026-05-26T07:23:21" time="3.132" tests="6">
-    <testcase classname="useSettingsStore" name="has default state values" time="0.007">
+  <testsuite name="src/__tests__/env.test.ts" errors="0" failures="0" skipped="0" timestamp="2026-05-26T09:16:31" time="0.159" tests="4">
+    <testcase classname="env" name="exposes EXPO_PUBLIC_API_URL" time="0.024">
+    </testcase>
+    <testcase classname="env" name="exposes EXPO_PUBLIC_APP_SERVICE_KEY" time="0.034">
+    </testcase>
+    <testcase classname="env" name="has CurrencyConverter as app name" time="0.021">
+    </testcase>
+    <testcase classname="env" name="has cimmetria bundle IDs" time="0.02">
+    </testcase>
+  </testsuite>
+  <testsuite name="src/__tests__/converter-store.test.ts" errors="0" failures="0" skipped="0" timestamp="2026-05-26T09:16:31" time="0.093" tests="7">
+    <testcase classname="useConverterStore" name="has default state" time="0.001">
+    </testcase>
+    <testcase classname="useConverterStore" name="updates base currency and target currencies list" time="0">
+    </testcase>
+    <testcase classname="useConverterStore" name="updates amount" time="0.001">
+    </testcase>
+    <testcase classname="useConverterStore" name="adds new currency only if not already present" time="0">
+    </testcase>
+    <testcase classname="useConverterStore" name="removes currency" time="0.001">
+    </testcase>
+    <testcase classname="useConverterStore" name="swaps base currency with target row, placing old base at the row&apos;s index" time="0">
+    </testcase>
+    <testcase classname="useConverterStore" name="sets custom rate override" time="0.001">
+    </testcase>
+  </testsuite>
+  <testsuite name="src/__tests__/settings-store.test.ts" errors="0" failures="0" skipped="0" timestamp="2026-05-26T09:16:31" time="0.07" tests="6">
+    <testcase classname="useSettingsStore" name="has default state values" time="0.001">
     </testcase>
     <testcase classname="useSettingsStore" name="updates theme" time="0.001">
     </testcase>
     <testcase classname="useSettingsStore" name="updates language" time="0">
     </testcase>
-    <testcase classname="useSettingsStore" name="updates decimal places" time="0.001">
+    <testcase classname="useSettingsStore" name="updates decimal places" time="0">
     </testcase>
     <testcase classname="useSettingsStore" name="updates wallpaper" time="0.001">
     </testcase>
     <testcase classname="useSettingsStore" name="updates privacy accepted status" time="0">
     </testcase>
   </testsuite>
-  <testsuite name="src/__tests__/converter-store.test.ts" errors="0" failures="0" skipped="0" timestamp="2026-05-26T07:23:21" time="3.137" tests="7">
-    <testcase classname="useConverterStore" name="has default state" time="0.007">
+  <testsuite name="src/__tests__/quota-store.test.ts" errors="0" failures="0" skipped="0" timestamp="2026-05-26T09:16:31" time="0.068" tests="5">
+    <testcase classname="useQuotaStore" name="has default state values" time="0.001">
     </testcase>
-    <testcase classname="useConverterStore" name="updates base currency and target currencies list" time="0">
+    <testcase classname="useQuotaStore" name="increments custom rate change attempts count" time="0">
     </testcase>
-    <testcase classname="useConverterStore" name="updates amount" time="0.001">
+    <testcase classname="useQuotaStore" name="increments OCR scans attempts count" time="0.001">
     </testcase>
-    <testcase classname="useConverterStore" name="adds new currency only if not already present" time="0.001">
+    <testcase classname="useQuotaStore" name="unlocks PRO plan" time="0">
     </testcase>
-    <testcase classname="useConverterStore" name="removes currency" time="0.001">
-    </testcase>
-    <testcase classname="useConverterStore" name="swaps base currency with target row, placing old base at the row&apos;s index" time="0.001">
-    </testcase>
-    <testcase classname="useConverterStore" name="sets custom rate override" time="0">
+    <testcase classname="useQuotaStore" name="resets attempts counter" time="0.001">
     </testcase>
   </testsuite>
-  <testsuite name="src/__tests__/api-client.test.ts" errors="0" failures="0" skipped="0" timestamp="2026-05-26T07:23:21" time="3.258" tests="3">
-    <testcase classname="aPI client" name="has correct baseURL from env" time="0.405">
+  <testsuite name="src/__tests__/i18n.test.ts" errors="0" failures="0" skipped="0" timestamp="2026-05-26T09:16:31" time="0.068" tests="4">
+    <testcase classname="i18n resources" name="has en, ru and ar locales" time="0.001">
     </testcase>
-    <testcase classname="aPI client" name="has X-App-Key auth header" time="0.021">
+    <testcase classname="i18n resources" name="en has required converter keys" time="0.001">
     </testcase>
-    <testcase classname="aPI client" name="has 10s timeout" time="0.024">
+    <testcase classname="i18n resources" name="ru has required converter keys" time="0">
     </testcase>
-  </testsuite>
-  <testsuite name="src/__tests__/env.test.ts" errors="0" failures="0" skipped="0" timestamp="2026-05-26T07:23:21" time="3.261" tests="4">
-    <testcase classname="env" name="exposes EXPO_PUBLIC_API_URL" time="0.397">
-    </testcase>
-    <testcase classname="env" name="exposes EXPO_PUBLIC_APP_SERVICE_KEY" time="0.022">
-    </testcase>
-    <testcase classname="env" name="has CurrencyConverter as app name" time="0.019">
-    </testcase>
-    <testcase classname="env" name="has cimmetria bundle IDs" time="0.019">
+    <testcase classname="i18n resources" name="ru and ar have same top-level keys as en" time="0.001">
     </testcase>
   </testsuite>
 </testsuites>
