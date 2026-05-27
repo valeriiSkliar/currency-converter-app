@@ -2,7 +2,7 @@ import { useRouter } from "expo-router";
 import * as React from "react";
 import { useTranslation } from "react-i18next";
 import { Pressable, ScrollView, Text, View } from "react-native";
-import { ScreenBackground } from "@/components/ui";
+import { ProLimitModal, ScreenBackground } from "@/components/ui";
 import {
   Menu as MenuIcon,
   Settings as SettingsIcon,
@@ -11,13 +11,12 @@ import {
 import { AdBanner } from "@/features/converter/components/ad-banner";
 // Components
 import { BaseCard } from "@/features/converter/components/base-card";
-
 import { MultiList } from "@/features/converter/components/multi-list";
-
 import { Numpad } from "@/features/converter/components/numpad";
 import { UpdatedSubtitle } from "@/features/converter/components/updated-subtitle";
 // Hooks
 import { useHomeScreenState } from "@/features/converter/hooks/use-home-screen-state";
+import { useSettingsStore } from "@/features/settings/store/use-settings-store";
 import { useDrawer } from "@/lib/drawer-context";
 import { useColors } from "@/lib/hooks";
 
@@ -25,6 +24,8 @@ export default function HomeScreen() {
   const router = useRouter();
   const { openDrawer } = useDrawer();
   const { t } = useTranslation();
+  const { maxTargetCurrencies } = useSettingsStore();
+  const [isLimitModalOpen, setIsLimitModalOpen] = React.useState(false);
 
   const {
     baseCurrency,
@@ -75,22 +76,18 @@ export default function HomeScreen() {
         />
 
         {/* Scrollable Target Currencies List */}
-        <ScrollView
-          className="my-1 flex-1"
-          showsVerticalScrollIndicator={false}
-          keyboardShouldPersistTaps="handled"
-        >
-          <MultiList
-            baseCurrency={baseCurrency}
-            targets={targetCurrencies}
-            getCurrencyInfo={getCurrencyInfo}
-            getConvertedText={getConvertedText}
-            getRateText={getRateText}
-            onPromote={swapBaseWithRow}
-            onRemove={removeCurrency}
-            onAdd={() => router.push("/add-currency")}
-          />
-        </ScrollView>
+        <HomeTargetList
+          isPro={isPro}
+          baseCurrency={baseCurrency}
+          targetCurrencies={targetCurrencies}
+          maxTargetCurrencies={maxTargetCurrencies}
+          getCurrencyInfo={getCurrencyInfo}
+          getConvertedText={getConvertedText}
+          getRateText={getRateText}
+          swapBaseWithRow={swapBaseWithRow}
+          removeCurrency={removeCurrency}
+          onAddLimitReached={() => setIsLimitModalOpen(true)}
+        />
 
         {/* Sponsored Ad Banner */}
         {!isPro && (
@@ -107,7 +104,74 @@ export default function HomeScreen() {
           onTapDone={onTapDone}
         />
       </View>
+
+      <ProLimitModal
+        visible={isLimitModalOpen}
+        onClose={() => setIsLimitModalOpen(false)}
+        onUpgrade={() => {
+          setIsLimitModalOpen(false);
+          setTimeout(() => {
+            router.push("/paywall");
+          }, 150);
+        }}
+        limit={maxTargetCurrencies}
+        count={targetCurrencies.length}
+      />
     </ScreenBackground>
+  );
+}
+
+type HomeTargetListProps = {
+  isPro: boolean;
+  baseCurrency: string;
+  targetCurrencies: string[];
+  maxTargetCurrencies: number;
+  getCurrencyInfo: (code: string) => { symbol: string; name: string };
+  getConvertedText: (code: string) => string;
+  getRateText: (code: string) => string;
+  swapBaseWithRow: (code: string) => void;
+  removeCurrency: (code: string) => void;
+  onAddLimitReached: () => void;
+};
+
+function HomeTargetList({
+  isPro,
+  baseCurrency,
+  targetCurrencies,
+  maxTargetCurrencies,
+  getCurrencyInfo,
+  getConvertedText,
+  getRateText,
+  swapBaseWithRow,
+  removeCurrency,
+  onAddLimitReached,
+}: HomeTargetListProps) {
+  const router = useRouter();
+
+  return (
+    <ScrollView
+      className="my-1 flex-1"
+      showsVerticalScrollIndicator={false}
+      keyboardShouldPersistTaps="handled"
+    >
+      <MultiList
+        baseCurrency={baseCurrency}
+        targets={targetCurrencies}
+        getCurrencyInfo={getCurrencyInfo}
+        getConvertedText={getConvertedText}
+        getRateText={getRateText}
+        onPromote={swapBaseWithRow}
+        onRemove={removeCurrency}
+        onAdd={() => {
+          if (!isPro && targetCurrencies.length >= maxTargetCurrencies) {
+            onAddLimitReached();
+          }
+          else {
+            router.push("/add-currency");
+          }
+        }}
+      />
+    </ScrollView>
   );
 }
 

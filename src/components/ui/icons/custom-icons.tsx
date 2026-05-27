@@ -155,3 +155,18 @@ export function BackIcon({ color = "currentColor", size = 24, ...props }: Custom
     </Svg>
   );
 }
+
+export function CrownIcon({ color = "currentColor", size = 24, ...props }: CustomIconProps) {
+  return (
+    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none" {...props}>
+      <Path
+        d="M3 8l3 9h12l3-9-5 3-4-6-4 6-5-3z"
+        stroke={color}
+        strokeWidth={2}
+        strokeLinejoin="round"
+        fill={color}
+        fillOpacity={0.15}
+      />
+    </Svg>
+  );
+}

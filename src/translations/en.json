@@ -13,6 +13,7 @@
     "add_currency": "Add currency",
     "all": "All",
     "amount": "Amount",
+    "continueFree": "Not now",
     "convert": "Convert",
     "crypto": "Crypto",
     "fiat": "Fiat",
@@ -21,6 +22,9 @@
     "last_updated": "Updated",
     "min_ago": "m ago",
     "pro": "PRO",
+    "proLimitCounter": "{{count}} of {{limit}} used",
+    "proLimitText": "Your free plan supports up to {{limit}} currencies in the list. Upgrade to PRO to add as many as you like.",
+    "proLimitTitle": "Free limit reached",
     "result": "Result",
     "scan": "SCAN",
     "search": "Search currency or code",
@@ -29,6 +33,7 @@
     "tap_to_set_base": "Tap a currency to set it as base",
     "title": "Currency Converter",
     "to": "To",
+    "upgradeToPro": "Upgrade to PRO",
     "upgrade_pitch": "Hide all ads forever"
   },
   "drawer": {

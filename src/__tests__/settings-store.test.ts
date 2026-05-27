@@ -7,6 +7,7 @@ beforeEach(() => {
     decimalPlaces: 2,
     wallpaper: "default",
     privacyAccepted: false,
+    maxTargetCurrencies: 4,
   });
 });
 
@@ -18,6 +19,7 @@ describe("useSettingsStore", () => {
     expect(state.decimalPlaces).toBe(2);
     expect(state.wallpaper).toBe("default");
     expect(state.privacyAccepted).toBe(false);
+    expect(state.maxTargetCurrencies).toBe(4);
   });
 
   it("updates theme", () => {
@@ -46,5 +48,10 @@ describe("useSettingsStore", () => {
   it("updates privacy accepted status", () => {
     useSettingsStore.getState().setPrivacyAccepted(true);
     expect(useSettingsStore.getState().privacyAccepted).toBe(true);
+  });
+
+  it("updates max target currencies", () => {
+    useSettingsStore.getState().setMaxTargetCurrencies(6);
+    expect(useSettingsStore.getState().maxTargetCurrencies).toBe(6);
   });
 });

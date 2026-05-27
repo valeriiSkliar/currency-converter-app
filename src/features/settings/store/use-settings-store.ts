@@ -11,11 +11,13 @@ type SettingsState = {
   decimalPlaces: number;
   wallpaper: string;
   privacyAccepted: boolean;
+  maxTargetCurrencies: number;
   setTheme: (theme: ThemeType) => void;
   setLanguage: (language: LanguageType) => void;
   setDecimalPlaces: (decimalPlaces: number) => void;
   setWallpaper: (wallpaper: string) => void;
   setPrivacyAccepted: (accepted: boolean) => void;
+  setMaxTargetCurrencies: (limit: number) => void;
 };
 
 const mmkvStorage = {
@@ -38,11 +40,13 @@ export const useSettingsStore = create<SettingsState>()(
       decimalPlaces: 2,
       wallpaper: "default",
       privacyAccepted: false,
+      maxTargetCurrencies: 4,
       setTheme: theme => set({ theme }),
       setLanguage: language => set({ language }),
       setDecimalPlaces: decimalPlaces => set({ decimalPlaces }),
       setWallpaper: wallpaper => set({ wallpaper }),
       setPrivacyAccepted: privacyAccepted => set({ privacyAccepted }),
+      setMaxTargetCurrencies: maxTargetCurrencies => set({ maxTargetCurrencies }),
     }),
     {
       name: "settings-store",

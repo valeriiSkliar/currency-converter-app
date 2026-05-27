@@ -13,6 +13,7 @@
     "add_currency": "Add currency",
     "all": "All",
     "amount": "المبلغ",
+    "continueFree": "ليس الآن",
     "convert": "تحويل",
     "crypto": "Crypto",
     "fiat": "Fiat",
@@ -21,6 +22,9 @@
     "last_updated": "Updated",
     "min_ago": "m ago",
     "pro": "PRO",
+    "proLimitCounter": "تم استخدام {{count}} من {{limit}}",
+    "proLimitText": "تدعم خطتك المجانية ما يصل إلى {{limit}} عملات في القائمة. ترقية إلى PRO لإضافة أي عدد تريده.",
+    "proLimitTitle": "تم الوصول إلى الحد الأقصى المجاني",
     "result": "النتيجة",
     "scan": "SCAN",
     "search": "Search currency or code",
@@ -29,6 +33,7 @@
     "tap_to_set_base": "Tap a currency to set it as base",
     "title": "محول العملات",
     "to": "إلى",
+    "upgradeToPro": "الترقية إلى PRO",
     "upgrade_pitch": "Hide all ads forever"
   },
   "drawer": {

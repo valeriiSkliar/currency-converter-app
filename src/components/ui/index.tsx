@@ -10,6 +10,7 @@ export * from "./image";
 export * from "./input";
 export * from "./list";
 export * from "./modal";
+export * from "./pro-limit-modal";
 export * from "./progress-bar";
 export * from "./screen-background";
 export * from "./select";
