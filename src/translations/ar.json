@@ -6,13 +6,25 @@
     "retry": "إعادة المحاولة"
   },
   "converter": {
+    "ad_banner_title": "Ad",
+    "ad_label": "Sponsored",
+    "ad_label_admob": "AdMob",
+    "ad_remove": "Remove",
+    "add_currency": "Add currency",
     "amount": "المبلغ",
     "convert": "تحويل",
     "from": "من",
+    "last_updated": "Updated",
+    "min_ago": "m ago",
+    "pro": "PRO",
     "result": "النتيجة",
+    "scan": "SCAN",
+    "sec_ago": "s ago",
     "swap": "تبديل العملات",
+    "tap_to_set_base": "Tap a currency to set it as base",
     "title": "محول العملات",
-    "to": "إلى"
+    "to": "إلى",
+    "upgrade_pitch": "Hide all ads forever"
   },
   "drawer": {
     "exchange_rates": "أسعار الصرف",

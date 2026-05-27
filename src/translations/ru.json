@@ -6,13 +6,25 @@
     "retry": "Повторить"
   },
   "converter": {
+    "ad_banner_title": "Ad",
+    "ad_label": "Реклама",
+    "ad_label_admob": "AdMob",
+    "ad_remove": "Убрать",
+    "add_currency": "Добавить валюту",
     "amount": "Сумма",
     "convert": "Конвертировать",
     "from": "Из",
+    "last_updated": "Обновлено",
+    "min_ago": " мин назад",
+    "pro": "PRO",
     "result": "Результат",
+    "scan": "СКАН",
+    "sec_ago": " сек назад",
     "swap": "Поменять валюты",
+    "tap_to_set_base": "Коснитесь валюты, чтобы сделать её базовой",
     "title": "Конвертер валют",
-    "to": "В"
+    "to": "В",
+    "upgrade_pitch": "Скрыть всю рекламу навсегда"
   },
   "drawer": {
     "exchange_rates": "Курсы валют",

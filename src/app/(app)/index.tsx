@@ -1,55 +1,182 @@
 import { useRouter } from "expo-router";
 import * as React from "react";
-import { Pressable, Text, View } from "react-native";
+import { useTranslation } from "react-i18next";
+import { Pressable, ScrollView, Text, View } from "react-native";
 import { ScreenBackground } from "@/components/ui";
-import { Menu as MenuIcon } from "@/components/ui/icons";
+import {
+  Menu as MenuIcon,
+  Settings as SettingsIcon,
+  SparklesIcon,
+} from "@/components/ui/icons";
+import { AdBanner } from "@/features/converter/components/ad-banner";
+// Components
+import { BaseCard } from "@/features/converter/components/base-card";
+
+import { MultiList } from "@/features/converter/components/multi-list";
+
+import { Numpad } from "@/features/converter/components/numpad";
+import { UpdatedSubtitle } from "@/features/converter/components/updated-subtitle";
+// Hooks
+import { useHomeScreenState } from "@/features/converter/hooks/use-home-screen-state";
 import { useDrawer } from "@/lib/drawer-context";
 import { useColors } from "@/lib/hooks";
 
 export default function HomeScreen() {
   const router = useRouter();
   const { openDrawer } = useDrawer();
-  const colors = useColors();
+  const { t } = useTranslation();
 
-  const strokeColor = colors.ink;
+  const {
+    baseCurrency,
+    targetCurrencies,
+    amount,
+    isPro,
+    updatedAt,
+    isRefreshing,
+    getCurrencyInfo,
+    getConvertedText,
+    getRateText,
+    handleRefresh,
+    swapBaseWithRow,
+    removeCurrency,
+    onTapDigit,
+    onTapDot,
+    onTapBackspace,
+    onTapClear,
+    onTapOperator,
+    onTapDone,
+  } = useHomeScreenState();
+
+  const baseSymbol = getCurrencyInfo(baseCurrency).symbol;
 
   return (
-    <ScreenBackground className="px-6 py-4">
-      {/* Header bar */}
-      <View className="flex-row items-center justify-between pt-2 pb-4">
-        {/* Burger Button */}
-        <Pressable
-          onPress={openDrawer}
-          className="rounded-xl border border-line bg-surface p-3 active:opacity-80"
-          accessibilityLabel="Open Menu"
+    <ScreenBackground className="flex-1 bg-bg">
+      <View className="flex-1 gap-2 px-4 pb-4">
+        {/* Header Bar */}
+        <HomeHeader
+          isPro={isPro}
+          updatedAt={updatedAt}
+          isRefreshing={isRefreshing}
+          onOpenMenu={openDrawer}
+          onRefresh={handleRefresh}
+          onOpenSettings={() => router.push("/settings")}
+          onOpenPaywall={() => router.push("/paywall")}
+          title={t("converter.title")}
+          proLabel={t("converter.pro")}
+        />
+
+        {/* Base Currency Card */}
+        <BaseCard
+          baseCurrency={baseCurrency}
+          symbol={baseSymbol}
+          amount={amount}
+          onScan={() => router.push("/price-scanner")}
+          onEditBase={() => router.push("/my-rate")}
+        />
+
+        {/* Scrollable Target Currencies List */}
+        <ScrollView
+          className="my-1 flex-1"
+          showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled"
         >
-          <MenuIcon color={strokeColor} />
-        </Pressable>
+          <MultiList
+            baseCurrency={baseCurrency}
+            targets={targetCurrencies}
+            getCurrencyInfo={getCurrencyInfo}
+            getConvertedText={getConvertedText}
+            getRateText={getRateText}
+            onPromote={swapBaseWithRow}
+            onRemove={removeCurrency}
+            onAdd={() => router.push("/add-currency")}
+          />
+        </ScrollView>
 
-        <Text className="text-xl font-bold text-ink">
-          Currency Converter
-        </Text>
-
-        {/* Placeholder spacer */}
-        <View className="w-12" />
-      </View>
-
-      {/* Main Body Content */}
-      <View className="flex-1 items-center justify-center">
-        <Text className="text-2xl font-bold text-ink">Currency Converter</Text>
-        <Text className="mt-2 text-ink-mute">Coming soon</Text>
-
-        {__DEV__ && (
-          <Pressable
-            onPress={() => router.push("/style-guide")}
-            className="absolute bottom-10 rounded-full bg-accent px-6 py-3 active:opacity-80"
-          >
-            <Text className="text-sm font-bold text-accent-ink">
-              Open Style Guide
-            </Text>
-          </Pressable>
+        {/* Sponsored Ad Banner */}
+        {!isPro && (
+          <AdBanner onRemove={() => router.push("/paywall")} />
         )}
+
+        {/* Bottom Numpad */}
+        <Numpad
+          onTapDigit={onTapDigit}
+          onTapDot={onTapDot}
+          onTapBackspace={onTapBackspace}
+          onTapClear={onTapClear}
+          onTapOperator={onTapOperator}
+          onTapDone={onTapDone}
+        />
       </View>
     </ScreenBackground>
+  );
+}
+
+type HomeHeaderProps = {
+  isPro: boolean;
+  updatedAt: number | null;
+  isRefreshing: boolean;
+  onOpenMenu: () => void;
+  onRefresh: () => void;
+  onOpenSettings: () => void;
+  onOpenPaywall: () => void;
+  title: string;
+  proLabel: string;
+};
+
+function HomeHeader({
+  isPro,
+  updatedAt,
+  isRefreshing,
+  onOpenMenu,
+  onRefresh,
+  onOpenSettings,
+  onOpenPaywall,
+  title,
+  proLabel,
+}: HomeHeaderProps) {
+  const colors = useColors();
+
+  return (
+    <View className="flex-row items-center justify-between py-2">
+      <Pressable
+        onPress={onOpenMenu}
+        className="rounded-xl border border-line bg-surface p-3 active:opacity-80"
+        accessibilityLabel="Open Menu"
+      >
+        <MenuIcon color={colors.ink} />
+      </Pressable>
+
+      <View className="min-w-0 flex-1 flex-col items-center justify-center px-2">
+        <View className="flex-row items-center gap-1.5">
+          <Text className="text-base font-extrabold text-ink" numberOfLines={1}>
+            {title}
+          </Text>
+          {!isPro && (
+            <Pressable
+              onPress={onOpenPaywall}
+              className="flex-row items-center gap-0.5 rounded-full bg-accent px-2 py-0.5 active:opacity-80"
+            >
+              <SparklesIcon color="#1A1A1C" size={10} />
+              <Text className="text-[9px] font-black tracking-widest text-[#1A1A1C] uppercase">
+                {proLabel}
+              </Text>
+            </Pressable>
+          )}
+        </View>
+        <UpdatedSubtitle
+          updatedAt={updatedAt}
+          onRefresh={onRefresh}
+          isRefreshing={isRefreshing}
+        />
+      </View>
+
+      <Pressable
+        onPress={onOpenSettings}
+        className="rounded-xl border border-line bg-surface p-3 active:opacity-80"
+        accessibilityLabel="Open Settings"
+      >
+        <SettingsIcon color={colors.ink} width={20} height={20} />
+      </Pressable>
+    </View>
   );
 }

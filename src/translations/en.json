@@ -6,13 +6,25 @@
     "retry": "Retry"
   },
   "converter": {
+    "ad_banner_title": "Ad",
+    "ad_label": "Sponsored",
+    "ad_label_admob": "AdMob",
+    "ad_remove": "Remove",
+    "add_currency": "Add currency",
     "amount": "Amount",
     "convert": "Convert",
     "from": "From",
+    "last_updated": "Updated",
+    "min_ago": "m ago",
+    "pro": "PRO",
     "result": "Result",
+    "scan": "SCAN",
+    "sec_ago": "s ago",
     "swap": "Swap currencies",
+    "tap_to_set_base": "Tap a currency to set it as base",
     "title": "Currency Converter",
-    "to": "To"
+    "to": "To",
+    "upgrade_pitch": "Hide all ads forever"
   },
   "drawer": {
     "exchange_rates": "Exchange rates",
