@@ -170,3 +170,17 @@ export function CrownIcon({ color = "currentColor", size = 24, ...props }: Custo
     </Svg>
   );
 }
+
+export function SwapHIcon({ color = "currentColor", size = 24, ...props }: CustomIconProps) {
+  return (
+    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none" {...props}>
+      <Path
+        d="M4 9h16M20 9l-4-4M4 15h16M4 15l4 4"
+        stroke={color}
+        strokeWidth={2}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </Svg>
+  );
+}
