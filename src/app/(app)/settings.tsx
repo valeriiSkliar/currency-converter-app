@@ -3,7 +3,7 @@ import * as React from "react";
 import { useTranslation } from "react-i18next";
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { showMessage } from "react-native-flash-message";
-import { ProLimitModal, ScreenBackground } from "@/components/ui";
+import { FullscreenAd, ProLimitModal, RateModal, ScreenBackground } from "@/components/ui";
 import {
   ArrowRight,
   BackIcon,
@@ -258,6 +258,8 @@ function useSettingsScreenState() {
 
   const [isProLimitVisible, setIsProLimitVisible] = React.useState(false);
   const [isPrivacyVisible, setIsPrivacyVisible] = React.useState(false);
+  const [isRateVisible, setIsRateVisible] = React.useState(false);
+  const [isAdVisible, setIsAdVisible] = React.useState(false);
 
   const handleLanguageChange = (lang: "en" | "ru" | "ar") => {
     setStoreLanguage(lang);
@@ -292,6 +294,10 @@ function useSettingsScreenState() {
     setIsProLimitVisible,
     isPrivacyVisible,
     setIsPrivacyVisible,
+    isRateVisible,
+    setIsRateVisible,
+    isAdVisible,
+    setIsAdVisible,
   };
 }
 
@@ -387,23 +393,11 @@ export function DevSection({ state }: { state: SettingsState }) {
           privacy: state.t("settings.privacyTrigger"),
           fullscreenAd: state.t("settings.fullscreenAdTrigger"),
         }}
-        onTriggerRate={() => {
-          showMessage({
-            message: state.t("settings.rateTrigger"),
-            type: "success",
-            duration: 2000,
-          });
-        }}
+        onTriggerRate={() => state.setIsRateVisible(true)}
         onTriggerPaywall={() => state.router.push("/paywall")}
         onTriggerProLimit={() => state.setIsProLimitVisible(true)}
         onTriggerPrivacy={() => state.setIsPrivacyVisible(true)}
-        onTriggerFullscreenAd={() => {
-          showMessage({
-            message: state.t("settings.fullscreenAdTrigger"),
-            type: "info",
-            duration: 2000,
-          });
-        }}
+        onTriggerFullscreenAd={() => state.setIsAdVisible(true)}
       />
     </View>
   );
@@ -446,6 +440,16 @@ export default function SettingsScreen() {
       <PrivacyModal
         visible={state.isPrivacyVisible}
         onAccept={() => state.setIsPrivacyVisible(false)}
+      />
+
+      <RateModal
+        visible={state.isRateVisible}
+        onClose={() => state.setIsRateVisible(false)}
+      />
+
+      <FullscreenAd
+        visible={state.isAdVisible}
+        onClose={() => state.setIsAdVisible(false)}
       />
     </ScreenBackground>
   );
