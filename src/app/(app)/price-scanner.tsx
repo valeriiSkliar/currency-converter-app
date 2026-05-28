@@ -305,7 +305,7 @@ export function ScanResultCard({
         className="mt-6 w-full items-center justify-center rounded-full bg-ink py-4"
       >
         <Text className="text-sm font-black tracking-widest text-bg uppercase">
-          Dismiss
+          {t("converter.dismiss")}
         </Text>
       </TouchableOpacity>
     </View>
