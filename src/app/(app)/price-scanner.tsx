@@ -1,35 +1,659 @@
+import { CameraView, useCameraPermissions } from "expo-camera";
 import { useRouter } from "expo-router";
 import * as React from "react";
-import { Pressable, Text, View } from "react-native";
+import { useTranslation } from "react-i18next";
+import { ActivityIndicator, Modal, Pressable, ScrollView, Text, TouchableOpacity, View } from "react-native";
+import Svg, { Path } from "react-native-svg";
 import { ScreenBackground } from "@/components/ui";
+import { BackIcon, CameraIcon } from "@/components/ui/icons";
+import { useCurrencies } from "@/features/converter/api/use-rates";
+import { useExchangeRates } from "@/features/converter/hooks/use-exchange-rates";
+import { useConverterStore } from "@/features/converter/store/use-converter-store";
+import { useQuotaStore } from "@/features/converter/store/use-quota-store";
+import { getExchangeRate } from "@/features/converter/utils/conversion-helpers";
+import { useSettingsStore } from "@/features/settings/store/use-settings-store";
 
-export default function PriceScannerScreen() {
-  const router = useRouter();
+const styles = {
+  camera: {
+    position: "absolute" as const,
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 0,
+  },
+};
+
+function getCurrencyInfo(code: string, currenciesData: any[] | undefined) {
+  const found = currenciesData?.find(c => c.code === code);
+  if (found) {
+    return {
+      name: found.name || code,
+      flag: found.flag_emoji || "🏳️",
+    };
+  }
+  const fallbacks: Record<string, { name: string; flag: string }> = {
+    USD: { name: "US Dollar", flag: "🇺🇸" },
+    EUR: { name: "Euro", flag: "🇪🇺" },
+    RUB: { name: "Russian Ruble", flag: "🇷🇺" },
+    GBP: { name: "British Pound", flag: "🇬🇧" },
+    JPY: { name: "Japanese Yen", flag: "🇯🇵" },
+  };
+  return fallbacks[code] || { name: code, flag: "🏳️" };
+}
+
+export function ScannerHeader({
+  isPro,
+  onBack,
+  onOpenPaywall,
+}: {
+  isPro: boolean;
+  onBack: () => void;
+  onOpenPaywall: () => void;
+}) {
+  const { t } = useTranslation();
 
   return (
-    <ScreenBackground className="p-6">
-      {/* Header */}
-      <View className="mb-8 flex-row items-center pt-2">
-        <Pressable
-          onPress={() => router.back()}
-          className="mr-4 rounded-full border border-line bg-surface p-3 active:opacity-80"
-          accessibilityLabel="Go back"
+    <View className="absolute inset-x-0 top-0 z-10 h-[52px] flex-row items-center justify-between px-4 py-2">
+      <TouchableOpacity
+        onPress={onBack}
+        activeOpacity={0.7}
+        className="size-10 items-center justify-center rounded-full bg-black/40"
+      >
+        <BackIcon color="#FFFFFF" size={22} />
+      </TouchableOpacity>
+
+      <Text className="text-base font-extrabold text-white">
+        {t("converter.priceScanner")}
+      </Text>
+
+      {!isPro
+        ? (
+            <TouchableOpacity
+              onPress={onOpenPaywall}
+              activeOpacity={0.8}
+              className="rounded-full bg-accent px-3 py-1.5 shadow-sm"
+            >
+              <Text className="text-[10px] font-black text-accent-ink uppercase">
+                {t("converter.pro")}
+              </Text>
+            </TouchableOpacity>
+          )
+        : (
+            <View className="w-10" />
+          )}
+    </View>
+  );
+}
+
+export function CurrencySelectorBar({
+  from,
+  to,
+  onSwap,
+  onSelectBase,
+  onSelectTarget,
+  getCurrencyInfo: resolveInfo,
+}: {
+  from: string;
+  to: string;
+  onSwap: () => void;
+  onSelectBase: () => void;
+  onSelectTarget: () => void;
+  getCurrencyInfo: (code: string) => { name: string; flag: string };
+}) {
+  const fromInfo = resolveInfo(from);
+  const toInfo = resolveInfo(to);
+
+  return (
+    <View className="absolute inset-x-4 top-16 z-10 flex-row items-center justify-between rounded-full bg-black/40 px-4 py-2">
+      <TouchableOpacity
+        onPress={onSelectBase}
+        activeOpacity={0.7}
+        className="flex-row items-center gap-1.5"
+      >
+        <Text className="text-lg">{fromInfo.flag}</Text>
+        <Text className="text-sm font-bold text-white">{from}</Text>
+        <Text className="text-[10px] text-white/60">▼</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity
+        onPress={onSwap}
+        activeOpacity={0.7}
+        className="size-8 items-center justify-center rounded-full bg-white/10"
+      >
+        <Text className="text-base text-white">⇄</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity
+        onPress={onSelectTarget}
+        activeOpacity={0.7}
+        className="flex-row items-center gap-1.5"
+      >
+        <Text className="text-lg">{toInfo.flag}</Text>
+        <Text className="text-sm font-bold text-white">{to}</Text>
+        <Text className="text-[10px] text-white/60">▼</Text>
+      </TouchableOpacity>
+    </View>
+  );
+}
+
+export function ViewfinderControls({
+  zoom,
+  onZoomChange,
+  flashlight,
+  onFlashlightToggle,
+}: {
+  zoom: number;
+  onZoomChange: (val: number) => void;
+  flashlight: boolean;
+  onFlashlightToggle: () => void;
+}) {
+  return (
+    <View className="absolute inset-x-4 bottom-20 z-10 flex-row items-center justify-between px-4 py-2">
+      <View className="flex-row items-center gap-2 rounded-full bg-black/45 px-3 py-1.5">
+        <Text className="mr-1 text-[10px] font-black text-white/50 uppercase">Zoom</Text>
+        <TouchableOpacity
+          onPress={() => onZoomChange(Math.max(0, zoom - 0.25))}
+          activeOpacity={0.7}
+          className="size-6 items-center justify-center rounded-full bg-white/10"
         >
-          <Text className="text-xl font-bold text-ink">←</Text>
-        </Pressable>
-        <Text className="text-2xl font-bold text-ink">
-          Price Scanner
-        </Text>
+          <Text className="text-sm font-bold text-white">-</Text>
+        </TouchableOpacity>
+        <Text className="text-xs font-bold text-white">{`${Math.round(1 + zoom * 2)}x`}</Text>
+        <TouchableOpacity
+          onPress={() => onZoomChange(Math.min(1, zoom + 0.25))}
+          activeOpacity={0.7}
+          className="size-6 items-center justify-center rounded-full bg-white/10"
+        >
+          <Text className="text-sm font-bold text-white">+</Text>
+        </TouchableOpacity>
       </View>
 
-      {/* Content */}
-      <View className="flex-1 items-center justify-center rounded-3xl border border-line bg-surface p-6">
-        <Text className="mb-2 text-xl font-bold text-ink">
-          Price Scanner
+      <TouchableOpacity
+        onPress={onFlashlightToggle}
+        activeOpacity={0.7}
+        className={`size-11 items-center justify-center rounded-full border border-white/20 ${
+          flashlight ? "bg-white" : "bg-black/40"
+        }`}
+      >
+        <Svg width={20} height={20} viewBox="0 0 24 24" fill="none">
+          <Path
+            d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"
+            stroke={flashlight ? "#0E0E10" : "#FFFFFF"}
+            strokeWidth={2}
+            fill={flashlight ? "#FFD200" : "none"}
+            strokeLinejoin="round"
+          />
+        </Svg>
+      </TouchableOpacity>
+    </View>
+  );
+}
+
+export function LimitBanner({
+  count,
+  limit,
+  onOpenPaywall,
+}: {
+  count: number;
+  limit: number;
+  onOpenPaywall: () => void;
+}) {
+  const { t } = useTranslation();
+
+  return (
+    <View className="absolute inset-x-4 bottom-4 z-10 flex-row items-center justify-between rounded-2xl border border-white/10 bg-neutral-900/90 p-3.5">
+      <Text className="text-xs font-semibold text-white/70">
+        {t("converter.freeScansUsed", { count, limit })}
+      </Text>
+      <TouchableOpacity
+        onPress={onOpenPaywall}
+        activeOpacity={0.8}
+        className="rounded-full bg-accent px-3 py-1"
+      >
+        <Text className="text-[10px] font-black text-accent-ink uppercase">
+          {t("converter.pro")}
         </Text>
-        <Text className="text-center text-ink-mute">
-          Real-time price scanner utilizing the camera and OCR technology.
+      </TouchableOpacity>
+    </View>
+  );
+}
+
+export function ViewfinderOverlay({
+  isMockHighlight,
+  onTapToScan,
+}: {
+  isMockHighlight: boolean;
+  onTapToScan: () => void;
+}) {
+  return (
+    <View className="absolute inset-0">
+      {/* Chalkboard Menu mockup card */}
+      <View className="absolute inset-0 items-center justify-center p-8">
+        <View className="w-full max-w-[280px] rounded-3xl border border-white/10 bg-neutral-900/90 p-5 shadow-2xl">
+          <Text className="mb-4 text-center text-sm font-extrabold tracking-widest text-accent uppercase">
+            Menu
+          </Text>
+          <View className="space-y-3">
+            <View className="flex-row justify-between">
+              <Text className="text-xs font-semibold text-white/70">Espresso</Text>
+              <Text className="text-xs font-semibold text-white/70">$4.50</Text>
+            </View>
+            <View className="flex-row justify-between">
+              <Text className="text-xs font-semibold text-white/70">Cappuccino</Text>
+              <Text className="text-xs font-semibold text-white/70">$5.20</Text>
+            </View>
+            <View className={`flex-row justify-between rounded-xl border p-2 ${
+              isMockHighlight ? "scale-105 border-accent bg-accent/10" : "border-transparent"
+            } transition-all duration-300`}
+            >
+              <Text className="text-xs font-bold text-white">Croissant</Text>
+              <Text className="text-xs font-extrabold text-accent">$78.42</Text>
+            </View>
+            <View className="flex-row justify-between">
+              <Text className="text-xs font-semibold text-white/70">Avocado toast</Text>
+              <Text className="text-xs font-semibold text-white/70">$12.00</Text>
+            </View>
+          </View>
+        </View>
+      </View>
+
+      {/* Mask Overlays */}
+      <View className="absolute inset-x-0 top-0 h-[30%] bg-black/45" />
+      <View className="absolute inset-x-0 bottom-0 h-[40%] bg-black/45" />
+      <View className="absolute top-[30%] bottom-[40%] left-0 w-[12%] bg-black/45" />
+      <View className="absolute top-[30%] right-0 bottom-[40%] w-[12%] bg-black/45" />
+
+      {/* Brackets box */}
+      <Pressable
+        onPress={onTapToScan}
+        className="absolute top-[30%] right-[12%] bottom-[40%] left-[12%] items-center justify-center border border-transparent"
+      >
+        <View className="absolute top-0 left-0 size-6 border-t-2 border-l-2 border-white" />
+        <View className="absolute top-0 right-0 size-6 border-t-2 border-r-2 border-white" />
+        <View className="absolute bottom-0 left-0 size-6 border-b-2 border-l-2 border-white" />
+        <View className="absolute right-0 bottom-0 size-6 border-r-2 border-b-2 border-white" />
+        <View className="h-0.5 w-[90%] bg-red/60 shadow-lg shadow-red-500/50" />
+      </Pressable>
+    </View>
+  );
+}
+
+export function ScanResultCard({
+  scannedPrice,
+  from,
+  to,
+  rates,
+  decimalPlaces,
+  getCurrencyInfo: resolveInfo,
+  onDismiss,
+}: {
+  scannedPrice: number;
+  from: string;
+  to: string;
+  rates: any;
+  decimalPlaces: number;
+  getCurrencyInfo: (code: string) => { name: string; flag: string };
+  onDismiss: () => void;
+}) {
+  const { t } = useTranslation();
+  const rate = getExchangeRate({ from, to, rates, customRates: {} });
+  const convertedVal = scannedPrice * rate;
+
+  const fromInfo = resolveInfo(from);
+  const toInfo = resolveInfo(to);
+
+  return (
+    <View className="absolute inset-x-0 bottom-0 z-20 rounded-t-[32px] border-t border-line bg-surface p-6 shadow-2xl">
+      <View className="mb-4 flex-row items-center justify-between">
+        <Text className="text-lg font-extrabold text-ink">
+          {t("converter.result")}
         </Text>
+        <TouchableOpacity
+          onPress={onDismiss}
+          activeOpacity={0.7}
+          className="size-8 items-center justify-center rounded-full bg-chip"
+        >
+          <Text className="text-sm font-bold text-ink">✕</Text>
+        </TouchableOpacity>
+      </View>
+
+      <View className="space-y-4">
+        <View className="flex-row items-center justify-between border-b border-line pb-3">
+          <View className="flex-row items-center gap-2">
+            <Text className="text-xl">{fromInfo.flag}</Text>
+            <Text className="text-sm font-bold text-ink-mute">{from}</Text>
+          </View>
+          <Text className="text-lg font-bold text-ink">
+            {scannedPrice.toFixed(2)}
+          </Text>
+        </View>
+
+        <View className="flex-row items-center justify-between pt-1">
+          <View className="flex-row items-center gap-2">
+            <Text className="text-2xl">{toInfo.flag}</Text>
+            <Text className="text-base font-extrabold text-ink">{to}</Text>
+          </View>
+          <Text className="text-3xl font-black text-ink">
+            {convertedVal.toFixed(decimalPlaces)}
+          </Text>
+        </View>
+      </View>
+
+      <TouchableOpacity
+        onPress={onDismiss}
+        activeOpacity={0.8}
+        className="mt-6 w-full items-center justify-center rounded-full bg-ink py-4"
+      >
+        <Text className="text-sm font-black tracking-widest text-bg uppercase">
+          Dismiss
+        </Text>
+      </TouchableOpacity>
+    </View>
+  );
+}
+
+export function CurrencyPickerModal({
+  visible,
+  onClose,
+  onSelect,
+  currencies,
+  selectedCurrency,
+  getCurrencyInfo: resolveInfo,
+}: {
+  visible: boolean;
+  onClose: () => void;
+  onSelect: (code: string) => void;
+  currencies: string[];
+  selectedCurrency: string;
+  getCurrencyInfo: (code: string) => { name: string; flag: string };
+}) {
+  return (
+    <Modal
+      transparent
+      visible={visible}
+      animationType="fade"
+      statusBarTranslucent
+      onRequestClose={onClose}
+    >
+      <Pressable
+        className="flex-1 items-center justify-center bg-black/55 p-5"
+        onPress={onClose}
+      >
+        <Pressable className="w-full max-w-[300px] rounded-[24px] border border-line bg-surface p-4 shadow-2xl">
+          <ScrollView className="max-h-[300px]" showsVerticalScrollIndicator={false}>
+            {currencies.map((code) => {
+              const info = resolveInfo(code);
+              const isSelected = code === selectedCurrency;
+              return (
+                <TouchableOpacity
+                  key={code}
+                  onPress={() => onSelect(code)}
+                  activeOpacity={0.7}
+                  className={`flex-row items-center justify-between rounded-xl p-3 ${
+                    isSelected ? "bg-chip" : "bg-transparent"
+                  }`}
+                >
+                  <View className="flex-row items-center gap-2.5">
+                    <Text className="text-lg">{info.flag}</Text>
+                    <Text className="text-sm font-bold text-ink">{code}</Text>
+                  </View>
+                  {isSelected && <Text className="text-xs text-ink">✓</Text>}
+                </TouchableOpacity>
+              );
+            })}
+          </ScrollView>
+        </Pressable>
+      </Pressable>
+    </Modal>
+  );
+}
+
+export function PermissionFallback({
+  onBack,
+  onRequestPermission,
+}: {
+  onBack: () => void;
+  onRequestPermission: () => void;
+}) {
+  const { t } = useTranslation();
+
+  return (
+    <ScreenBackground className="flex-1 bg-bg">
+      <View className="mb-4 h-[52px] flex-row items-center justify-between px-4 py-2">
+        <View className="w-10 items-start">
+          <TouchableOpacity
+            onPress={onBack}
+            activeOpacity={0.7}
+            className="size-10 items-center justify-center rounded-full border border-line bg-surface active:opacity-75"
+            accessibilityLabel="Go back"
+          >
+            <BackIcon color="var(--color-ink)" size={22} />
+          </TouchableOpacity>
+        </View>
+        <Text className="flex-1 text-center text-[17px] font-extrabold text-ink" numberOfLines={1}>
+          {t("converter.priceScanner")}
+        </Text>
+        <View className="w-10" />
+      </View>
+
+      <View className="flex-1 items-center justify-center px-6 pb-12">
+        <View className="mb-6 size-20 items-center justify-center rounded-full bg-ink/5 dark:bg-ink/10">
+          <CameraIcon color="var(--color-ink)" size={36} />
+        </View>
+
+        <Text className="mb-3 text-center text-2xl font-black text-ink">
+          {t("converter.cameraPermissionTitle")}
+        </Text>
+
+        <Text className="mb-8 text-center text-sm/relaxed font-semibold text-ink-mute">
+          {t("converter.cameraPermissionText")}
+        </Text>
+
+        <View className="w-full max-w-[280px]">
+          <TouchableOpacity
+            onPress={onRequestPermission}
+            activeOpacity={0.8}
+            className="mb-3 w-full items-center justify-center rounded-full bg-ink py-4"
+          >
+            <Text className="text-sm font-black tracking-widest text-bg uppercase">
+              {t("converter.allow")}
+            </Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            onPress={onBack}
+            activeOpacity={0.8}
+            className="w-full items-center justify-center rounded-full border border-line bg-surface py-4"
+          >
+            <Text className="text-sm font-black tracking-widest text-ink-mute uppercase">
+              {t("converter.dontAllow")}
+            </Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+    </ScreenBackground>
+  );
+}
+
+function usePriceScannerState() {
+  const router = useRouter();
+  const [permission, requestPermission] = useCameraPermissions();
+
+  const { baseCurrency, targetCurrencies } = useConverterStore();
+  const { isPro, ocrScanAttempts, incrementScanAttempt } = useQuotaStore();
+  const { data: currenciesData } = useCurrencies();
+  const { rates } = useExchangeRates();
+  const decimalPlaces = useSettingsStore(state => state.decimalPlaces);
+
+  const [from, setFrom] = React.useState(baseCurrency);
+  const [to, setTo] = React.useState(targetCurrencies[0] || "EUR");
+  const [flashlight, setFlashlight] = React.useState(false);
+  const [zoom, setZoom] = React.useState(0);
+  const [scannedPrice, setScannedPrice] = React.useState<number | null>(null);
+  const [isPickerOpen, setIsPickerOpen] = React.useState<{ side: "from" | "to" } | null>(null);
+  const [isMockHighlight, setIsMockHighlight] = React.useState(false);
+
+  const selectableCurrencies = React.useMemo(() => {
+    return [baseCurrency, ...targetCurrencies];
+  }, [baseCurrency, targetCurrencies]);
+
+  const handleBack = () => router.back();
+  const handleOpenPaywall = () => router.push("/paywall");
+
+  const handleSwap = () => {
+    setFrom(to);
+    setTo(from);
+  };
+
+  const handleTriggerScan = React.useCallback((price: number) => {
+    const limitReached = !isPro && ocrScanAttempts >= 3;
+    if (limitReached) {
+      router.push("/paywall");
+      return;
+    }
+    setScannedPrice(price);
+    incrementScanAttempt();
+  }, [isPro, ocrScanAttempts, router, incrementScanAttempt]);
+
+  // Mock auto-scan timer
+  React.useEffect(() => {
+    if (permission?.granted && scannedPrice === null) {
+      const timer = setTimeout(() => {
+        setIsMockHighlight(true);
+        const scanTimer = setTimeout(() => {
+          handleTriggerScan(78.42);
+        }, 1200);
+        return () => clearTimeout(scanTimer);
+      }, 2500);
+      return () => clearTimeout(timer);
+    }
+  }, [permission?.granted, scannedPrice, handleTriggerScan]);
+
+  return {
+    permission,
+    requestPermission,
+    isPro,
+    ocrScanAttempts,
+    currenciesData,
+    rates,
+    decimalPlaces,
+    from,
+    setFrom,
+    to,
+    setTo,
+    flashlight,
+    setFlashlight,
+    zoom,
+    setZoom,
+    scannedPrice,
+    setScannedPrice,
+    isPickerOpen,
+    setIsPickerOpen,
+    isMockHighlight,
+    setIsMockHighlight,
+    selectableCurrencies,
+    handleBack,
+    handleOpenPaywall,
+    handleSwap,
+    handleTriggerScan,
+  };
+}
+
+export default function PriceScannerScreen() {
+  const state = usePriceScannerState();
+
+  if (state.permission === null) {
+    return (
+      <ScreenBackground className="flex-1 items-center justify-center bg-bg">
+        <ActivityIndicator size="large" color="var(--color-ink)" />
+      </ScreenBackground>
+    );
+  }
+
+  if (!state.permission.granted) {
+    return (
+      <PermissionFallback
+        onBack={state.handleBack}
+        onRequestPermission={state.requestPermission}
+      />
+    );
+  }
+
+  return (
+    <ScreenBackground className="flex-1 bg-black">
+      <View className="relative flex-1">
+        <CameraView
+          style={styles.camera}
+          facing="back"
+          zoom={state.zoom}
+          enableTorch={state.flashlight}
+        />
+
+        <ViewfinderOverlay
+          isMockHighlight={state.isMockHighlight}
+          onTapToScan={() => state.handleTriggerScan(78.42)}
+        />
+
+        <ScannerHeader
+          isPro={state.isPro}
+          onBack={state.handleBack}
+          onOpenPaywall={state.handleOpenPaywall}
+        />
+
+        <CurrencySelectorBar
+          from={state.from}
+          to={state.to}
+          onSwap={state.handleSwap}
+          onSelectBase={() => state.setIsPickerOpen({ side: "from" })}
+          onSelectTarget={() => state.setIsPickerOpen({ side: "to" })}
+          getCurrencyInfo={code => getCurrencyInfo(code, state.currenciesData)}
+        />
+
+        <ViewfinderControls
+          zoom={state.zoom}
+          onZoomChange={state.setZoom}
+          flashlight={state.flashlight}
+          onFlashlightToggle={() => state.setFlashlight(!state.flashlight)}
+        />
+
+        {!state.isPro && (
+          <LimitBanner
+            count={state.ocrScanAttempts}
+            limit={3}
+            onOpenPaywall={state.handleOpenPaywall}
+          />
+        )}
+
+        {state.scannedPrice !== null && (
+          <ScanResultCard
+            scannedPrice={state.scannedPrice}
+            from={state.from}
+            to={state.to}
+            rates={state.rates}
+            decimalPlaces={state.decimalPlaces}
+            getCurrencyInfo={code => getCurrencyInfo(code, state.currenciesData)}
+            onDismiss={() => {
+              state.setScannedPrice(null);
+              state.setIsMockHighlight(false);
+            }}
+          />
+        )}
+
+        {state.isPickerOpen !== null && (
+          <CurrencyPickerModal
+            visible={state.isPickerOpen !== null}
+            onClose={() => state.setIsPickerOpen(null)}
+            onSelect={(code) => {
+              if (state.isPickerOpen?.side === "from")
+                state.setFrom(code);
+              else state.setTo(code);
+              state.setIsPickerOpen(null);
+            }}
+            currencies={state.selectableCurrencies}
+            selectedCurrency={state.isPickerOpen?.side === "from" ? state.from : state.to}
+            getCurrencyInfo={code => getCurrencyInfo(code, state.currenciesData)}
+          />
+        )}
       </View>
     </ScreenBackground>
   );
