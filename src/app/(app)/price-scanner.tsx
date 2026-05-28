@@ -8,6 +8,7 @@ import { ScreenBackground } from "@/components/ui";
 import { BackIcon, CameraIcon } from "@/components/ui/icons";
 import { useCurrencies } from "@/features/converter/api/use-rates";
 import { useExchangeRates } from "@/features/converter/hooks/use-exchange-rates";
+import { usePriceScannerEngine } from "@/features/converter/hooks/use-price-scanner-engine";
 import { useConverterStore } from "@/features/converter/store/use-converter-store";
 import { useQuotaStore } from "@/features/converter/store/use-quota-store";
 import { getExchangeRate } from "@/features/converter/utils/conversion-helpers";
@@ -218,62 +219,21 @@ export function LimitBanner({
   );
 }
 
-export function ViewfinderOverlay({
-  isMockHighlight,
-  onTapToScan,
-}: {
-  isMockHighlight: boolean;
-  onTapToScan: () => void;
-}) {
+export function ViewfinderOverlay() {
   return (
     <View className="absolute inset-0">
-      {/* Chalkboard Menu mockup card */}
-      <View className="absolute inset-0 items-center justify-center p-8">
-        <View className="w-full max-w-[280px] rounded-3xl border border-white/10 bg-neutral-900/90 p-5 shadow-2xl">
-          <Text className="mb-4 text-center text-sm font-extrabold tracking-widest text-accent uppercase">
-            Menu
-          </Text>
-          <View className="space-y-3">
-            <View className="flex-row justify-between">
-              <Text className="text-xs font-semibold text-white/70">Espresso</Text>
-              <Text className="text-xs font-semibold text-white/70">$4.50</Text>
-            </View>
-            <View className="flex-row justify-between">
-              <Text className="text-xs font-semibold text-white/70">Cappuccino</Text>
-              <Text className="text-xs font-semibold text-white/70">$5.20</Text>
-            </View>
-            <View className={`flex-row justify-between rounded-xl border p-2 ${
-              isMockHighlight ? "scale-105 border-accent bg-accent/10" : "border-transparent"
-            } transition-all duration-300`}
-            >
-              <Text className="text-xs font-bold text-white">Croissant</Text>
-              <Text className="text-xs font-extrabold text-accent">$78.42</Text>
-            </View>
-            <View className="flex-row justify-between">
-              <Text className="text-xs font-semibold text-white/70">Avocado toast</Text>
-              <Text className="text-xs font-semibold text-white/70">$12.00</Text>
-            </View>
-          </View>
-        </View>
-      </View>
-
-      {/* Mask Overlays */}
       <View className="absolute inset-x-0 top-0 h-[30%] bg-black/45" />
       <View className="absolute inset-x-0 bottom-0 h-[40%] bg-black/45" />
       <View className="absolute top-[30%] bottom-[40%] left-0 w-[12%] bg-black/45" />
       <View className="absolute top-[30%] right-0 bottom-[40%] w-[12%] bg-black/45" />
 
-      {/* Brackets box */}
-      <Pressable
-        onPress={onTapToScan}
-        className="absolute top-[30%] right-[12%] bottom-[40%] left-[12%] items-center justify-center border border-transparent"
-      >
+      <View className="absolute top-[30%] right-[12%] bottom-[40%] left-[12%] items-center justify-center">
         <View className="absolute top-0 left-0 size-6 border-t-2 border-l-2 border-white" />
         <View className="absolute top-0 right-0 size-6 border-t-2 border-r-2 border-white" />
         <View className="absolute bottom-0 left-0 size-6 border-b-2 border-l-2 border-white" />
         <View className="absolute right-0 bottom-0 size-6 border-r-2 border-b-2 border-white" />
         <View className="h-0.5 w-[90%] bg-red/60 shadow-lg shadow-red-500/50" />
-      </Pressable>
+      </View>
     </View>
   );
 }
@@ -478,6 +438,7 @@ export function PermissionFallback({
 function usePriceScannerState() {
   const router = useRouter();
   const [permission, requestPermission] = useCameraPermissions();
+  const cameraRef = React.useRef<CameraView>(null);
 
   const { baseCurrency, targetCurrencies } = useConverterStore();
   const { isPro, ocrScanAttempts, incrementScanAttempt } = useQuotaStore();
@@ -485,51 +446,55 @@ function usePriceScannerState() {
   const { rates } = useExchangeRates();
   const decimalPlaces = useSettingsStore(state => state.decimalPlaces);
 
-  const [from, setFrom] = React.useState(baseCurrency);
-  const [to, setTo] = React.useState(targetCurrencies[0] || "EUR");
-  const [flashlight, setFlashlight] = React.useState(false);
-  const [zoom, setZoom] = React.useState(0);
-  const [scannedPrice, setScannedPrice] = React.useState<number | null>(null);
   const [isPickerOpen, setIsPickerOpen] = React.useState<{ side: "from" | "to" } | null>(null);
-  const [isMockHighlight, setIsMockHighlight] = React.useState(false);
 
-  const selectableCurrencies = React.useMemo(() => {
-    return [baseCurrency, ...targetCurrencies];
-  }, [baseCurrency, targetCurrencies]);
+  const selectableCurrencies = React.useMemo(
+    () => [baseCurrency, ...targetCurrencies],
+    [baseCurrency, targetCurrencies],
+  );
 
-  const handleBack = () => router.back();
-  const handleOpenPaywall = () => router.push("/paywall");
+  const captureFrame = React.useCallback(async () => {
+    const photo = await cameraRef.current?.takePictureAsync({
+      quality: 0.5,
+      skipProcessing: true,
+    });
+    return photo?.uri ?? null;
+  }, []);
 
-  const handleSwap = () => {
-    setFrom(to);
-    setTo(from);
-  };
+  const engine = usePriceScannerEngine({
+    initialFrom: baseCurrency,
+    initialTo: targetCurrencies[0] ?? "EUR",
+    captureFrame,
+  });
 
-  const handleTriggerScan = React.useCallback((price: number) => {
-    const limitReached = !isPro && ocrScanAttempts >= 3;
-    if (limitReached) {
-      router.push("/paywall");
-      return;
-    }
-    setScannedPrice(price);
-    incrementScanAttempt();
-  }, [isPro, ocrScanAttempts, router, incrementScanAttempt]);
+  // Destructure stable callbacks so effects have correct deps without eslint-disable.
+  const { startScan, dismiss: engineDismiss } = engine;
+  const enginePhase = engine.phase;
 
-  // Mock auto-scan timer
+  // Auto-start scanning when camera permission is granted.
   React.useEffect(() => {
-    if (permission?.granted && scannedPrice === null) {
-      const timer = setTimeout(() => {
-        setIsMockHighlight(true);
-        const scanTimer = setTimeout(() => {
-          handleTriggerScan(78.42);
-        }, 1200);
-        return () => clearTimeout(scanTimer);
-      }, 2500);
-      return () => clearTimeout(timer);
+    if (permission?.granted) {
+      startScan();
     }
-  }, [permission?.granted, scannedPrice, handleTriggerScan]);
+  }, [permission?.granted, startScan]);
+
+  // Quota guard: intercept the transition into "found".
+  const prevPhaseRef = React.useRef(enginePhase);
+  React.useEffect(() => {
+    if (prevPhaseRef.current !== "found" && enginePhase === "found") {
+      if (!isPro && ocrScanAttempts >= 3) {
+        engineDismiss();
+        router.push("/paywall");
+      }
+      else {
+        incrementScanAttempt();
+      }
+    }
+    prevPhaseRef.current = enginePhase;
+  }, [enginePhase, isPro, ocrScanAttempts, incrementScanAttempt, router, engineDismiss]);
 
   return {
+    cameraRef,
     permission,
     requestPermission,
     isPro,
@@ -537,25 +502,12 @@ function usePriceScannerState() {
     currenciesData,
     rates,
     decimalPlaces,
-    from,
-    setFrom,
-    to,
-    setTo,
-    flashlight,
-    setFlashlight,
-    zoom,
-    setZoom,
-    scannedPrice,
-    setScannedPrice,
     isPickerOpen,
     setIsPickerOpen,
-    isMockHighlight,
-    setIsMockHighlight,
     selectableCurrencies,
-    handleBack,
-    handleOpenPaywall,
-    handleSwap,
-    handleTriggerScan,
+    handleBack: router.back,
+    handleOpenPaywall: () => router.push("/paywall"),
+    engine,
   };
 }
 
@@ -583,16 +535,14 @@ export default function PriceScannerScreen() {
     <ScreenBackground className="flex-1 bg-black">
       <View className="relative flex-1">
         <CameraView
+          ref={state.cameraRef}
           style={styles.camera}
           facing="back"
-          zoom={state.zoom}
-          enableTorch={state.flashlight}
+          zoom={state.engine.zoom}
+          enableTorch={state.engine.flashlight}
         />
 
-        <ViewfinderOverlay
-          isMockHighlight={state.isMockHighlight}
-          onTapToScan={() => state.handleTriggerScan(78.42)}
-        />
+        <ViewfinderOverlay />
 
         <ScannerHeader
           isPro={state.isPro}
@@ -601,19 +551,19 @@ export default function PriceScannerScreen() {
         />
 
         <CurrencySelectorBar
-          from={state.from}
-          to={state.to}
-          onSwap={state.handleSwap}
+          from={state.engine.from}
+          to={state.engine.to}
+          onSwap={state.engine.swapCurrencies}
           onSelectBase={() => state.setIsPickerOpen({ side: "from" })}
           onSelectTarget={() => state.setIsPickerOpen({ side: "to" })}
           getCurrencyInfo={code => getCurrencyInfo(code, state.currenciesData)}
         />
 
         <ViewfinderControls
-          zoom={state.zoom}
-          onZoomChange={state.setZoom}
-          flashlight={state.flashlight}
-          onFlashlightToggle={() => state.setFlashlight(!state.flashlight)}
+          zoom={state.engine.zoom}
+          onZoomChange={state.engine.setZoom}
+          flashlight={state.engine.flashlight}
+          onFlashlightToggle={state.engine.toggleFlashlight}
         />
 
         {!state.isPro && (
@@ -624,33 +574,35 @@ export default function PriceScannerScreen() {
           />
         )}
 
-        {state.scannedPrice !== null && (
+        {state.engine.phase === "found" && state.engine.detectedPrice !== null && (
           <ScanResultCard
-            scannedPrice={state.scannedPrice}
-            from={state.from}
-            to={state.to}
+            scannedPrice={state.engine.detectedPrice}
+            from={state.engine.from}
+            to={state.engine.to}
             rates={state.rates}
             decimalPlaces={state.decimalPlaces}
             getCurrencyInfo={code => getCurrencyInfo(code, state.currenciesData)}
-            onDismiss={() => {
-              state.setScannedPrice(null);
-              state.setIsMockHighlight(false);
-            }}
+            onDismiss={state.engine.dismiss}
           />
         )}
 
         {state.isPickerOpen !== null && (
           <CurrencyPickerModal
-            visible={state.isPickerOpen !== null}
+            visible
             onClose={() => state.setIsPickerOpen(null)}
             onSelect={(code) => {
-              if (state.isPickerOpen?.side === "from")
-                state.setFrom(code);
-              else state.setTo(code);
+              if (state.isPickerOpen?.side === "from") {
+                state.engine.setFrom(code);
+              }
+              else {
+                state.engine.setTo(code);
+              }
               state.setIsPickerOpen(null);
             }}
             currencies={state.selectableCurrencies}
-            selectedCurrency={state.isPickerOpen?.side === "from" ? state.from : state.to}
+            selectedCurrency={
+              state.isPickerOpen?.side === "from" ? state.engine.from : state.engine.to
+            }
             getCurrencyInfo={code => getCurrencyInfo(code, state.currenciesData)}
           />
         )}
