@@ -73,13 +73,23 @@
     "title": "Privacy policy"
   },
   "settings": {
+    "appearance": "Appearance",
+    "arabic": "Arabic",
+    "dev": "DEV debug panel",
+    "devHint": "Developer triggers for testing application flows",
     "english": "English",
+    "fullscreenAdTrigger": "Trigger fullscreen ad modal",
     "language": "Language",
+    "paywallTrigger": "Trigger paywall screen",
     "precision": {
       "crypto": "Crypto decimal places",
       "fiat": "Fiat decimal places",
       "title": "Precision"
     },
+    "precisionHint": "Decimal places in lists",
+    "privacyTrigger": "Trigger privacy modal",
+    "proLimitTrigger": "Trigger PRO limit modal",
+    "rateTrigger": "Trigger rating prompt",
     "russian": "Russian",
     "theme": {
       "dark": "Dark",
@@ -87,6 +97,8 @@
       "system": "System",
       "title": "Theme"
     },
-    "title": "Settings"
+    "title": "Settings",
+    "wallpaper": "Wallpaper",
+    "wallpaperHint": "Default"
   }
 }

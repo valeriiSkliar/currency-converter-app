@@ -3,7 +3,7 @@ import { createJSONStorage, persist } from "zustand/middleware";
 import { storage } from "@/lib/storage";
 
 export type ThemeType = "light" | "dark" | "system";
-export type LanguageType = "en" | "ru";
+export type LanguageType = "en" | "ru" | "ar";
 
 type SettingsState = {
   theme: ThemeType;

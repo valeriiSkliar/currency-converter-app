@@ -184,3 +184,62 @@ export function SwapHIcon({ color = "currentColor", size = 24, ...props }: Custo
     </Svg>
   );
 }
+
+export function SunIcon({ color = "currentColor", size = 24, ...props }: CustomIconProps) {
+  return (
+    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none" {...props}>
+      <Circle cx={12} cy={12} r={5} stroke={color} strokeWidth={2} />
+      <Path
+        d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"
+        stroke={color}
+        strokeWidth={2}
+        strokeLinecap="round"
+      />
+    </Svg>
+  );
+}
+
+export function MoonIcon({ color = "currentColor", size = 24, ...props }: CustomIconProps) {
+  return (
+    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none" {...props}>
+      <Path
+        d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"
+        stroke={color}
+        strokeWidth={2}
+        strokeLinejoin="round"
+      />
+    </Svg>
+  );
+}
+
+export function GlobeIcon({ color = "currentColor", size = 24, ...props }: CustomIconProps) {
+  return (
+    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none" {...props}>
+      <Circle cx={12} cy={12} r={10} stroke={color} strokeWidth={2} />
+      <Path
+        d="M2 12h20M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"
+        stroke={color}
+        strokeWidth={2}
+      />
+    </Svg>
+  );
+}
+
+export function WallpaperIcon({ color = "currentColor", size = 24, ...props }: CustomIconProps) {
+  return (
+    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none" {...props}>
+      <Path
+        d="M4 22h16a2 2 0 002-2V4a2 2 0 00-2-2H4a2 2 0 00-2 2v16a2 2 0 002 2z"
+        stroke={color}
+        strokeWidth={2}
+      />
+      <Path
+        d="M12 18l-4-4-6 6M22 20l-8-8-4 4"
+        stroke={color}
+        strokeWidth={2}
+        strokeLinejoin="round"
+      />
+      <Circle cx={16} cy={8} r={2} stroke={color} strokeWidth={2} />
+    </Svg>
+  );
+}

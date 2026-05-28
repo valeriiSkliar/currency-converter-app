@@ -33,6 +33,9 @@ describe("useSettingsStore", () => {
   it("updates language", () => {
     useSettingsStore.getState().setLanguage("ru");
     expect(useSettingsStore.getState().language).toBe("ru");
+
+    useSettingsStore.getState().setLanguage("ar");
+    expect(useSettingsStore.getState().language).toBe("ar");
   });
 
   it("updates decimal places", () => {

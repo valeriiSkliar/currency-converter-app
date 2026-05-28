@@ -73,13 +73,23 @@
     "title": "سياسة الخصوصية"
   },
   "settings": {
+    "appearance": "المظهر",
+    "arabic": "العربية",
+    "dev": "لوحة مطور البرامج",
+    "devHint": "محفزات المطور لاختبار تدفقات التطبيق",
     "english": "الإنجليزية",
+    "fullscreenAdTrigger": "إعلان ملء الشاشة",
     "language": "اللغة",
+    "paywallTrigger": "شاشة الدفع (Paywall)",
     "precision": {
       "crypto": "المنازل العشرية (كريبتو)",
       "fiat": "المنازل العشرية (فيات)",
       "title": "الدقة"
     },
+    "precisionHint": "المنازل العشرية في القوائم",
+    "privacyTrigger": "سياسة الخصوصية",
+    "proLimitTrigger": "حد المخطط المجاني",
+    "rateTrigger": "تقييم التطبيق",
     "russian": "الروسية",
     "theme": {
       "dark": "داكن",
@@ -87,6 +97,8 @@
       "system": "النظام",
       "title": "المظهر"
     },
-    "title": "الإعدادات"
+    "title": "الإعدادات",
+    "wallpaper": "الخلفية",
+    "wallpaperHint": "الافتراضي"
   }
 }
