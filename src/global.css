@@ -121,39 +121,40 @@
   --color-chip-ink: #0E0E10;
 }
 
+/* Dark mode variant for Tailwind CSS v4 class strategy */
+@custom-variant dark (&:where(.dark, .dark *));
+
 /* Dark mode colors */
-@media (prefers-color-scheme: dark) {
-  @theme {
-    --color-background: #0a0a0a;
-    --color-foreground: #fafafa;
+.dark {
+  --color-background: #0a0a0a;
+  --color-foreground: #fafafa;
 
-    --color-card: #171717;
-    --color-card-foreground: #fafafa;
+  --color-card: #171717;
+  --color-card-foreground: #fafafa;
 
-    --color-muted: #262626;
-    --color-muted-foreground: #a3a3a3;
+  --color-muted: #262626;
+  --color-muted-foreground: #a3a3a3;
 
-    --color-border: #404040;
-    --color-input: #404040;
+  --color-border: #404040;
+  --color-input: #404040;
 
-    /* Design B Currency Converter dark colors */
-    --color-bg: #0A0A0C;
-    --color-surface: #131316;
-    --color-surface-2: #1B1B1F;
-    --color-ink: #FAFAFA;
-    --color-ink-2: #E5E5E7;
-    --color-ink-mute: #9CA0A8;
-    --color-ink-soft: #6B7077;
-    --color-line: rgba(255,255,255,0.07);
-    --color-line-strong: rgba(255,255,255,0.14);
-    --color-accent: #FFD200;
-    --color-accent-ink: #0E0E10;
-    --color-blue: #5C9CFF;
-    --color-green: #2EDB7E;
-    --color-red: #FF6259;
-    --color-chip: #1F1F23;
-    --color-chip-ink: #FAFAFA;
-  }
+  /* Design B Currency Converter dark colors */
+  --color-bg: #0A0A0C;
+  --color-surface: #131316;
+  --color-surface-2: #1B1B1F;
+  --color-ink: #FAFAFA;
+  --color-ink-2: #E5E5E7;
+  --color-ink-mute: #9CA0A8;
+  --color-ink-soft: #6B7077;
+  --color-line: rgba(255,255,255,0.07);
+  --color-line-strong: rgba(255,255,255,0.14);
+  --color-accent: #FFD200;
+  --color-accent-ink: #0E0E10;
+  --color-blue: #5C9CFF;
+  --color-green: #2EDB7E;
+  --color-red: #FF6259;
+  --color-chip: #1F1F23;
+  --color-chip-ink: #FAFAFA;
 }
 
 /* Custom utilities (if needed) */
