@@ -1,4 +1,6 @@
 import * as React from "react";
+import MlkitOcr from "react-native-mlkit-ocr";
+import { parsePriceFromOcrText } from "@/features/converter/utils/price-ocr-parser";
 
 export type ScanPhase = "idle" | "scanning" | "found";
 
@@ -60,7 +62,7 @@ export function usePriceScannerEngine({
   initialFrom,
   initialTo,
   captureFrame,
-  scanIntervalMs: _scanIntervalMs = 2500,
+  scanIntervalMs = 2500,
 }: PriceScannerEngineOptions) {
   const [state, dispatch] = React.useReducer(scannerReducer, {
     phase: "idle",
@@ -73,6 +75,30 @@ export function usePriceScannerEngine({
 
   const captureFrameRef = React.useRef(captureFrame);
   captureFrameRef.current = captureFrame;
+
+  React.useEffect(() => {
+    if (state.phase !== "scanning")
+      return;
+
+    const intervalId = setInterval(async () => {
+      try {
+        const uri = await captureFrameRef.current();
+        if (!uri)
+          return;
+        const blocks = await MlkitOcr.detectFromUri(uri);
+        const text = (blocks as Array<{ text: string }>).map(b => b.text).join(" ");
+        const price = parsePriceFromOcrText(text);
+        if (price !== null) {
+          dispatch({ type: "PRICE_FOUND", price });
+        }
+      }
+      catch {
+        // OCR error — retry on next tick
+      }
+    }, scanIntervalMs);
+
+    return () => clearInterval(intervalId);
+  }, [state.phase, scanIntervalMs]);
 
   return {
     phase: state.phase,

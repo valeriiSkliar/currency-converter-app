@@ -1,17 +1,28 @@
-import { act, renderHook } from "@testing-library/react-native";
+import { act, renderHook, waitFor } from "@testing-library/react-native";
+import MlkitOcr from "react-native-mlkit-ocr";
 import { usePriceScannerEngine } from "../use-price-scanner-engine";
 
 jest.mock("react-native-mlkit-ocr", () => ({
+  __esModule: true,
   default: { detectFromUri: jest.fn() },
 }));
 
 const noop = () => Promise.resolve(null);
 
-describe("usePriceScannerEngine — state machine", () => {
+function renderEngine(captureFrame = noop, scanIntervalMs?: number) {
+  return renderHook(() =>
+    usePriceScannerEngine({
+      initialFrom: "USD",
+      initialTo: "EUR",
+      captureFrame,
+      scanIntervalMs,
+    }),
+  );
+}
+
+describe("usePriceScannerEngine — phase transitions", () => {
   it("starts in idle phase with null detectedPrice", () => {
-    const { result } = renderHook(() =>
-      usePriceScannerEngine({ initialFrom: "USD", initialTo: "EUR", captureFrame: noop }),
-    );
+    const { result } = renderEngine();
     expect(result.current.phase).toBe("idle");
     expect(result.current.detectedPrice).toBeNull();
     expect(result.current.from).toBe("USD");
@@ -19,9 +30,7 @@ describe("usePriceScannerEngine — state machine", () => {
   });
 
   it("transitions to scanning on startScan", () => {
-    const { result } = renderHook(() =>
-      usePriceScannerEngine({ initialFrom: "USD", initialTo: "EUR", captureFrame: noop }),
-    );
+    const { result } = renderEngine();
     act(() => {
       result.current.startScan();
     });
@@ -29,9 +38,7 @@ describe("usePriceScannerEngine — state machine", () => {
   });
 
   it("transitions back to idle on stopScan", () => {
-    const { result } = renderHook(() =>
-      usePriceScannerEngine({ initialFrom: "USD", initialTo: "EUR", captureFrame: noop }),
-    );
+    const { result } = renderEngine();
     act(() => {
       result.current.startScan();
     });
@@ -42,30 +49,26 @@ describe("usePriceScannerEngine — state machine", () => {
   });
 
   it("dismiss resets phase to idle and clears detectedPrice", () => {
-    const { result } = renderHook(() =>
-      usePriceScannerEngine({ initialFrom: "USD", initialTo: "EUR", captureFrame: noop }),
-    );
+    const { result } = renderEngine();
     act(() => {
       result.current.dismiss();
     });
     expect(result.current.phase).toBe("idle");
     expect(result.current.detectedPrice).toBeNull();
   });
+});
 
+describe("usePriceScannerEngine — controls", () => {
   it("clamps zoom to 0–1", () => {
-    const { result } = renderHook(() =>
-      usePriceScannerEngine({ initialFrom: "USD", initialTo: "EUR", captureFrame: noop }),
-    );
+    const { result } = renderEngine();
     act(() => {
       result.current.setZoom(0.5);
     });
     expect(result.current.zoom).toBe(0.5);
-
     act(() => {
       result.current.setZoom(2);
     });
     expect(result.current.zoom).toBe(1);
-
     act(() => {
       result.current.setZoom(-1);
     });
@@ -73,9 +76,7 @@ describe("usePriceScannerEngine — state machine", () => {
   });
 
   it("toggles flashlight", () => {
-    const { result } = renderHook(() =>
-      usePriceScannerEngine({ initialFrom: "USD", initialTo: "EUR", captureFrame: noop }),
-    );
+    const { result } = renderEngine();
     expect(result.current.flashlight).toBe(false);
     act(() => {
       result.current.toggleFlashlight();
@@ -88,9 +89,7 @@ describe("usePriceScannerEngine — state machine", () => {
   });
 
   it("swaps from and to", () => {
-    const { result } = renderHook(() =>
-      usePriceScannerEngine({ initialFrom: "USD", initialTo: "EUR", captureFrame: noop }),
-    );
+    const { result } = renderEngine();
     act(() => {
       result.current.swapCurrencies();
     });
@@ -99,9 +98,7 @@ describe("usePriceScannerEngine — state machine", () => {
   });
 
   it("sets from and to independently", () => {
-    const { result } = renderHook(() =>
-      usePriceScannerEngine({ initialFrom: "USD", initialTo: "EUR", captureFrame: noop }),
-    );
+    const { result } = renderEngine();
     act(() => {
       result.current.setFrom("GBP");
     });
@@ -110,5 +107,107 @@ describe("usePriceScannerEngine — state machine", () => {
       result.current.setTo("JPY");
     });
     expect(result.current.to).toBe("JPY");
+  });
+});
+
+describe("usePriceScannerEngine — OCR pipeline", () => {
+  beforeEach(() => {
+    jest.useFakeTimers();
+    (MlkitOcr.detectFromUri as jest.Mock).mockClear();
+  });
+
+  afterEach(() => {
+    jest.useRealTimers();
+  });
+
+  it("detects price and transitions to found after one interval tick", async () => {
+    const uri = "file:///mock/photo.jpg";
+    const captureFrame = jest.fn().mockResolvedValue(uri);
+    (MlkitOcr.detectFromUri as jest.Mock).mockResolvedValue([{ text: "Espresso $4.50" }]);
+    const { result } = renderEngine(captureFrame, 1000);
+
+    act(() => {
+      result.current.startScan();
+    });
+    expect(result.current.phase).toBe("scanning");
+    act(() => {
+      jest.advanceTimersByTime(1000);
+    });
+
+    await waitFor(() => {
+      expect(result.current.phase).toBe("found");
+      expect(result.current.detectedPrice).toBe(4.5);
+    });
+  });
+
+  it("keeps scanning when captureFrame returns null", async () => {
+    const captureFrame = jest.fn().mockResolvedValue(null);
+    const { result } = renderEngine(captureFrame, 1000);
+
+    act(() => {
+      result.current.startScan();
+    });
+    act(() => {
+      jest.advanceTimersByTime(2000);
+    });
+
+    await waitFor(() => {
+      expect(result.current.phase).toBe("scanning");
+      expect(MlkitOcr.detectFromUri).not.toHaveBeenCalled();
+    });
+  });
+
+  it("keeps scanning when OCR text contains no price", async () => {
+    const captureFrame = jest.fn().mockResolvedValue("file:///mock/photo.jpg");
+    (MlkitOcr.detectFromUri as jest.Mock).mockResolvedValue([{ text: "Welcome to Coffee Shop" }]);
+    const { result } = renderEngine(captureFrame, 1000);
+
+    act(() => {
+      result.current.startScan();
+    });
+    act(() => {
+      jest.advanceTimersByTime(1000);
+    });
+
+    await waitFor(() => {
+      expect(result.current.phase).toBe("scanning");
+    });
+  });
+
+  it("does not crash and keeps scanning when OCR throws", async () => {
+    const captureFrame = jest.fn().mockResolvedValue("file:///mock/photo.jpg");
+    (MlkitOcr.detectFromUri as jest.Mock).mockRejectedValue(new Error("OCR failed"));
+    const { result } = renderEngine(captureFrame, 1000);
+
+    act(() => {
+      result.current.startScan();
+    });
+    act(() => {
+      jest.advanceTimersByTime(1000);
+    });
+
+    await waitFor(() => {
+      expect(result.current.phase).toBe("scanning");
+    });
+  });
+
+  it("stops calling captureFrame after stopScan", async () => {
+    const captureFrame = jest.fn().mockResolvedValue(null);
+    const { result } = renderEngine(captureFrame, 1000);
+
+    act(() => {
+      result.current.startScan();
+    });
+    act(() => {
+      result.current.stopScan();
+    });
+    const callsBefore = captureFrame.mock.calls.length;
+    act(() => {
+      jest.advanceTimersByTime(2000);
+    });
+
+    await waitFor(() => {
+      expect(captureFrame.mock.calls.length).toBe(callsBefore);
+    });
   });
 });
