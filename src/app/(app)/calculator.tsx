@@ -1,6 +1,6 @@
+import type { TextStyle, ViewStyle } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import * as React from "react";
-import type { TextStyle, ViewStyle } from "react-native";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import Svg, { Path } from "react-native-svg";
 import { ScreenBackground } from "@/components/ui";
@@ -46,9 +46,9 @@ export default function CalculatorScreen() {
 
   return (
     <ScreenBackground className="flex-1 bg-bg">
-      <View className="flex-1 px-4 pb-4">
+      <View style={calculatorStyles.screen}>
         {/* Header Bar */}
-        <View className="flex-row items-center pt-2 pb-4">
+        <View style={calculatorStyles.header}>
           <Pressable
             onPress={() => router.back()}
             className="mr-4 rounded-full border border-line bg-surface p-3 active:opacity-80"
@@ -60,8 +60,8 @@ export default function CalculatorScreen() {
         </View>
 
         {/* Display Panel */}
-        <View className="mb-4 shrink-0 py-2">
-          <View className="items-end justify-center rounded-2xl border border-line bg-chip px-5 py-6">
+        <View style={calculatorStyles.displayWrap}>
+          <View style={calculatorStyles.displayPanel} className="rounded-2xl border border-line bg-chip">
             <Text className="mb-2 text-sm font-semibold text-ink-mute">
               {expression || " "}
             </Text>
@@ -249,28 +249,53 @@ function BackspaceIcon({ color, size = 22 }: { color: string; size?: number }) {
 }
 
 const calculatorStyles = StyleSheet.create({
+  displayPanel: {
+    alignItems: "flex-end",
+    justifyContent: "center",
+    minHeight: 112,
+    paddingHorizontal: 20,
+    paddingVertical: 24,
+  },
+  displayWrap: {
+    flexShrink: 0,
+    marginBottom: 16,
+    paddingVertical: 8,
+  },
+  header: {
+    alignItems: "center",
+    flexDirection: "row",
+    minHeight: 64,
+    paddingBottom: 16,
+    paddingTop: 8,
+  },
   key: {
     alignItems: "center",
     borderRadius: 16,
     borderWidth: 1,
     flex: 1,
     justifyContent: "center",
-    minHeight: 58,
+    minHeight: 48,
   },
   keypad: {
     flex: 1,
+    flexShrink: 1,
     gap: 10,
-    minHeight: 360,
+    minHeight: 280,
     paddingBottom: 16,
   },
   keypadRow: {
     flex: 1,
     flexDirection: "row",
     gap: 10,
-    minHeight: 58,
+    minHeight: 48,
   },
   keyText: {
     fontVariant: ["tabular-nums"],
     letterSpacing: -0.5,
+  },
+  screen: {
+    flex: 1,
+    paddingBottom: 16,
+    paddingHorizontal: 16,
   },
 });

@@ -1,7 +1,7 @@
 import { useRouter } from "expo-router";
 import * as React from "react";
 import { useTranslation } from "react-i18next";
-import { Pressable, ScrollView, Text, View } from "react-native";
+import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { ProLimitModal, ScreenBackground } from "@/components/ui";
 import {
   Menu as MenuIcon,
@@ -52,7 +52,7 @@ export default function HomeScreen() {
 
   return (
     <ScreenBackground className="flex-1 bg-bg">
-      <View className="flex-1 gap-2 px-4 pb-4">
+      <View style={homeStyles.container}>
         {/* Header Bar */}
         <HomeHeader
           isPro={isPro}
@@ -150,7 +150,8 @@ function HomeTargetList({
 
   return (
     <ScrollView
-      className="my-1 flex-1"
+      style={homeStyles.targetList}
+      contentContainerStyle={homeStyles.targetListContent}
       showsVerticalScrollIndicator={false}
       keyboardShouldPersistTaps="handled"
     >
@@ -201,7 +202,7 @@ function HomeHeader({
   const colors = useColors();
 
   return (
-    <View className="flex-row items-center justify-between py-2">
+    <View style={homeStyles.header}>
       <Pressable
         onPress={onOpenMenu}
         className="rounded-xl border border-line bg-surface p-3 active:opacity-80"
@@ -244,3 +245,25 @@ function HomeHeader({
     </View>
   );
 }
+
+const homeStyles = StyleSheet.create({
+  container: {
+    flex: 1,
+    paddingBottom: 16,
+    paddingHorizontal: 16,
+  },
+  header: {
+    alignItems: "center",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    minHeight: 60,
+    paddingVertical: 8,
+  },
+  targetList: {
+    flex: 1,
+    marginVertical: 8,
+  },
+  targetListContent: {
+    paddingBottom: 4,
+  },
+});

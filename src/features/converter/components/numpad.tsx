@@ -168,8 +168,9 @@ function NumpadDigit({ digit, onPress }: NumpadDigitProps) {
 const styles = StyleSheet.create({
   container: {
     flexDirection: "row",
+    flexShrink: 1,
     gap: 8,
-    minHeight: 300,
+    minHeight: 240,
     width: "100%",
   },
   digitRow: {
