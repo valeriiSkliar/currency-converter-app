@@ -1,7 +1,8 @@
 import * as React from "react";
 import { useTranslation } from "react-i18next";
-import { Pressable, Text, View } from "react-native";
+import { Pressable, StyleSheet, Text, View } from "react-native";
 import Svg, { Defs, LinearGradient, Rect, Stop } from "react-native-svg";
+import { useThemeColors } from "@/components/ui/use-theme-colors";
 
 type AdBannerProps = {
   onRemove: () => void;
@@ -9,13 +10,20 @@ type AdBannerProps = {
 
 export function AdBanner({ onRemove }: AdBannerProps) {
   const { t } = useTranslation();
+  const colors = useThemeColors();
 
   return (
     <View
-      className="relative h-14 flex-row items-center gap-3 overflow-hidden rounded-[14px] border border-dashed border-line-strong bg-surface-2 px-3.5"
+      style={[
+        styles.banner,
+        {
+          backgroundColor: colors.surface2,
+          borderColor: colors.lineStrong,
+        },
+      ]}
     >
       {/* Gradient Ad Icon */}
-      <View className="size-9 items-center justify-center overflow-hidden rounded-[10px]">
+      <View style={styles.icon}>
         <Svg className="absolute inset-0" width="100%" height="100%">
           <Defs>
             <LinearGradient id="adGrad" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -25,18 +33,18 @@ export function AdBanner({ onRemove }: AdBannerProps) {
           </Defs>
           <Rect width="100%" height="100%" fill="url(#adGrad)" />
         </Svg>
-        <Text className="text-sm font-extrabold text-white">Ad</Text>
+        <Text style={styles.iconText}>Ad</Text>
       </View>
 
       {/* Ad Pitch Text */}
-      <View className="flex-1 justify-center leading-tight">
+      <View style={styles.copy}>
         <Text
-          className="text-xs font-bold text-ink"
+          style={[styles.title, { color: colors.ink }]}
           numberOfLines={1}
         >
           {t("converter.upgrade_pitch")}
         </Text>
-        <Text className="mt-0.5 text-[9.5px] font-bold tracking-widest text-ink-soft uppercase">
+        <Text style={[styles.meta, { color: colors.inkSoft }]} numberOfLines={1}>
           {t("converter.ad_label")}
           {" "}
           ·
@@ -47,13 +55,69 @@ export function AdBanner({ onRemove }: AdBannerProps) {
       {/* Remove Button */}
       <Pressable
         onPress={onRemove}
-        className="rounded-full bg-ink px-3 py-1.5 active:opacity-80"
+        style={[styles.removeButton, { backgroundColor: colors.ink }]}
         accessibilityLabel={t("converter.ad_remove")}
       >
-        <Text className="text-[11px] font-extrabold text-bg">
+        <Text style={[styles.removeText, { color: colors.bg }]}>
           {t("converter.ad_remove")}
         </Text>
       </Pressable>
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  banner: {
+    alignItems: "center",
+    borderRadius: 16,
+    borderStyle: "dashed",
+    borderWidth: 1,
+    flexDirection: "row",
+    gap: 14,
+    minHeight: 68,
+    overflow: "hidden",
+    paddingHorizontal: 14,
+    paddingVertical: 10,
+    width: "100%",
+  },
+  copy: {
+    flex: 1,
+    justifyContent: "center",
+    minWidth: 0,
+  },
+  icon: {
+    alignItems: "center",
+    borderRadius: 10,
+    height: 42,
+    justifyContent: "center",
+    overflow: "hidden",
+    width: 42,
+  },
+  iconText: {
+    color: "#FFFFFF",
+    fontSize: 14,
+    fontWeight: "800",
+  },
+  meta: {
+    fontSize: 10,
+    fontWeight: "800",
+    letterSpacing: 2,
+    marginTop: 4,
+    textTransform: "uppercase",
+  },
+  removeButton: {
+    alignItems: "center",
+    borderRadius: 22,
+    justifyContent: "center",
+    minHeight: 40,
+    paddingHorizontal: 18,
+  },
+  removeText: {
+    fontSize: 12,
+    fontWeight: "800",
+  },
+  title: {
+    fontSize: 14,
+    fontWeight: "800",
+  },
+});

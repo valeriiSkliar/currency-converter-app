@@ -91,7 +91,9 @@ export default function HomeScreen() {
 
         {/* Sponsored Ad Banner */}
         {!isPro && (
-          <AdBanner onRemove={() => router.push("/paywall")} />
+          <View style={homeStyles.adSlot}>
+            <AdBanner onRemove={() => router.push("/paywall")} />
+          </View>
         )}
 
         {/* Bottom Numpad */}
@@ -247,6 +249,12 @@ function HomeHeader({
 }
 
 const homeStyles = StyleSheet.create({
+  adSlot: {
+    flexShrink: 0,
+    justifyContent: "center",
+    marginBottom: 12,
+    marginTop: 4,
+  },
   container: {
     flex: 1,
     paddingBottom: 16,
