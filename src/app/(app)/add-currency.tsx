@@ -5,6 +5,7 @@ import { useTranslation } from "react-i18next";
 import { Pressable, ScrollView, Text, TextInput, View } from "react-native";
 import { ScreenBackground } from "@/components/ui";
 import { BackIcon, SearchIcon } from "@/components/ui/icons";
+import { useThemeColors } from "@/components/ui/use-theme-colors";
 import { CurrencyMedallion } from "@/features/converter/components/currency-medallion";
 import { useCurrencyPickerState } from "@/features/converter/hooks/use-currency-picker-state";
 import { useConverterStore } from "@/features/converter/store/use-converter-store";
@@ -13,6 +14,7 @@ export default function AddCurrencyScreen() {
   const router = useRouter();
   const { t } = useTranslation();
   const addCurrency = useConverterStore(state => state.addCurrency);
+  const colors = useThemeColors();
 
   const {
     q,
@@ -40,7 +42,7 @@ export default function AddCurrencyScreen() {
               className="size-10 items-center justify-center rounded-full border border-line bg-surface active:opacity-80"
               accessibilityLabel="Go back"
             >
-              <BackIcon color="var(--color-ink)" size={22} />
+              <BackIcon color={colors.ink} size={22} />
             </Pressable>
           </View>
           <Text className="flex-1 text-center text-[17px] font-extrabold text-ink" numberOfLines={1}>
@@ -110,14 +112,15 @@ type SearchBoxProps = {
 };
 
 function SearchBox({ value, onChange, placeholder }: SearchBoxProps) {
+  const colors = useThemeColors();
   return (
     <View className="mb-4 flex-row items-center gap-2.5 rounded-2xl border border-line bg-surface px-3.5 py-3">
-      <SearchIcon color="var(--color-ink-mute)" size={20} />
+      <SearchIcon color={colors.inkMute} size={20} />
       <TextInput
         value={value}
         onChangeText={onChange}
         placeholder={placeholder}
-        placeholderTextColor="var(--color-ink-soft)"
+        placeholderTextColor={colors.inkSoft}
         className="flex-1 bg-transparent text-[15px] font-medium text-ink"
         style={{ padding: 0 }}
       />

@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { ScreenBackground } from "@/components/ui";
 import { BackIcon, CheckIcon } from "@/components/ui/icons";
+import { useThemeColors } from "@/components/ui/use-theme-colors";
 
 const FEEDBACK_OPTIONS = [
   { id: "opt1", translationKey: "converter.feedbackOpt1" },
@@ -23,6 +24,7 @@ export function FeedbackHeader({
   title: string;
   sub?: string;
 }) {
+  const colors = useThemeColors();
   return (
     <View className="mb-6 w-full">
       <View className="h-[52px] flex-row items-center justify-between py-2">
@@ -33,7 +35,7 @@ export function FeedbackHeader({
             className="size-10 items-center justify-center rounded-full border border-line bg-surface active:opacity-75"
             accessibilityLabel="Go back"
           >
-            <BackIcon color="var(--color-ink)" size={22} />
+            <BackIcon color={colors.ink} size={22} />
           </TouchableOpacity>
         </View>
         <View className="flex-1" />

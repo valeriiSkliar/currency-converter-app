@@ -6,6 +6,7 @@ import { ActivityIndicator, Modal, Pressable, ScrollView, Text, TouchableOpacity
 import Svg, { Path } from "react-native-svg";
 import { ScreenBackground } from "@/components/ui";
 import { BackIcon, CameraIcon } from "@/components/ui/icons";
+import { useThemeColors } from "@/components/ui/use-theme-colors";
 import { useCurrencies } from "@/features/converter/api/use-rates";
 import { useExchangeRates } from "@/features/converter/hooks/use-exchange-rates";
 import { usePriceScannerEngine } from "@/features/converter/hooks/use-price-scanner-engine";
@@ -376,6 +377,7 @@ export function PermissionFallback({
   onRequestPermission: () => void;
 }) {
   const { t } = useTranslation();
+  const colors = useThemeColors();
 
   return (
     <ScreenBackground className="flex-1 bg-bg">
@@ -387,7 +389,7 @@ export function PermissionFallback({
             className="size-10 items-center justify-center rounded-full border border-line bg-surface active:opacity-75"
             accessibilityLabel="Go back"
           >
-            <BackIcon color="var(--color-ink)" size={22} />
+            <BackIcon color={colors.ink} size={22} />
           </TouchableOpacity>
         </View>
         <Text className="flex-1 text-center text-[17px] font-extrabold text-ink" numberOfLines={1}>
@@ -398,7 +400,7 @@ export function PermissionFallback({
 
       <View className="flex-1 items-center justify-center px-6 pb-12">
         <View className="mb-6 size-20 items-center justify-center rounded-full bg-ink/5 dark:bg-ink/10">
-          <CameraIcon color="var(--color-ink)" size={36} />
+          <CameraIcon color={colors.ink} size={36} />
         </View>
 
         <Text className="mb-3 text-center text-2xl font-black text-ink">
@@ -513,11 +515,12 @@ function usePriceScannerState() {
 
 export default function PriceScannerScreen() {
   const state = usePriceScannerState();
+  const colors = useThemeColors();
 
   if (state.permission === null) {
     return (
       <ScreenBackground className="flex-1 items-center justify-center bg-bg">
-        <ActivityIndicator size="large" color="var(--color-ink)" />
+        <ActivityIndicator size="large" color={colors.ink} />
       </ScreenBackground>
     );
   }

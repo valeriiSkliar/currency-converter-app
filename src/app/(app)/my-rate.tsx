@@ -5,6 +5,7 @@ import { Modal, Pressable, ScrollView, StyleSheet, Text, TextInput, TouchableOpa
 import Svg, { Defs, LinearGradient, Rect, Stop } from "react-native-svg";
 import { ScreenBackground } from "@/components/ui";
 import { BackIcon, CaretDown, SparklesIcon, SwapHIcon } from "@/components/ui/icons";
+import { useThemeColors } from "@/components/ui/use-theme-colors";
 import { useCurrencies } from "@/features/converter/api/use-rates";
 import { useExchangeRates } from "@/features/converter/hooks/use-exchange-rates";
 import { useConverterStore } from "@/features/converter/store/use-converter-store";
@@ -220,6 +221,7 @@ type MyRateHeaderProps = {
 
 export function MyRateHeader({ isPro, onBack, onOpenPaywall }: MyRateHeaderProps) {
   const { t } = useTranslation();
+  const colors = useThemeColors();
 
   return (
     <View className="h-[52px] flex-row items-center justify-between border-b border-line px-1.5 py-2">
@@ -230,7 +232,7 @@ export function MyRateHeader({ isPro, onBack, onOpenPaywall }: MyRateHeaderProps
         accessibilityLabel="Go back"
       >
         <BackIcon
-          color="var(--color-ink)"
+          color={colors.ink}
           size={22}
         />
       </TouchableOpacity>
@@ -436,6 +438,7 @@ export function SandboxConversionForm({
   toFlag,
 }: SandboxConversionFormProps) {
   const { t } = useTranslation();
+  const colors = useThemeColors();
 
   return (
     <View className="mt-6 flex-row items-start gap-2.5">
@@ -451,7 +454,7 @@ export function SandboxConversionForm({
             code={from}
           />
           <Text className="text-lg font-bold text-ink">{from}</Text>
-          <CaretDown color="var(--color-ink-mute)" />
+          <CaretDown color={colors.inkMute} />
         </TouchableOpacity>
 
         <TextInput
@@ -470,7 +473,7 @@ export function SandboxConversionForm({
         className="mt-1 size-9 items-center justify-center rounded-full border border-line bg-surface active:bg-chip"
       >
         <SwapHIcon
-          color="var(--color-ink)"
+          color={colors.ink}
           size={20}
         />
       </TouchableOpacity>
@@ -487,7 +490,7 @@ export function SandboxConversionForm({
             code={to}
           />
           <Text className="text-lg font-bold text-ink">{to}</Text>
-          <CaretDown color="var(--color-ink-mute)" />
+          <CaretDown color={colors.inkMute} />
         </TouchableOpacity>
 
         <View className="w-full items-end pr-1.5">

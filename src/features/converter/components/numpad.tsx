@@ -1,6 +1,7 @@
 import * as React from "react";
 import { Pressable, Text, View } from "react-native";
 import { BackspaceIcon, CheckIcon } from "@/components/ui/icons";
+import { useThemeColors } from "@/components/ui/use-theme-colors";
 
 type NumpadProps = {
   onTapDigit: (digit: string) => void;
@@ -19,6 +20,7 @@ export function Numpad({
   onTapOperator,
   onTapDone,
 }: NumpadProps) {
+  const colors = useThemeColors();
   return (
     <View className="min-h-[300px] w-full flex-row gap-2">
       {/* Left Column Component */}
@@ -69,7 +71,7 @@ export function Numpad({
             className="flex-1 items-center justify-center rounded-[18px] bg-chip active:bg-black/10 dark:active:bg-white/10"
             accessibilityLabel="Backspace"
           >
-            <BackspaceIcon color="var(--color-ink)" size={22} />
+            <BackspaceIcon color={colors.ink} size={22} />
           </Pressable>
         </View>
       </View>
@@ -84,6 +86,8 @@ type LeftColumnProps = {
 };
 
 function LeftColumn({ onTapClear, onTapOperator, onTapDone }: LeftColumnProps) {
+  const colors = useThemeColors();
+
   return (
     <View style={{ flex: 1.4 }} className="gap-2">
       {/* Clear Button */}
@@ -97,7 +101,6 @@ function LeftColumn({ onTapClear, onTapOperator, onTapDone }: LeftColumnProps) {
 
       {/* 2x2 Operator Quadrant */}
       <View className="flex-2 justify-between rounded-[18px] bg-accent p-2.5">
-        {/* Row 1 */}
         <View className="flex-1 flex-row items-center justify-between">
           <Pressable
             onPress={() => onTapOperator("+")}
@@ -113,7 +116,6 @@ function LeftColumn({ onTapClear, onTapOperator, onTapDone }: LeftColumnProps) {
           </Pressable>
         </View>
 
-        {/* Row 2 */}
         <View className="flex-1 flex-row items-center justify-between">
           <Pressable
             onPress={() => onTapOperator("*")}
@@ -136,7 +138,7 @@ function LeftColumn({ onTapClear, onTapOperator, onTapDone }: LeftColumnProps) {
         className="flex-1 items-center justify-center rounded-[18px] bg-ink active:opacity-85"
         accessibilityLabel="Done"
       >
-        <CheckIcon color="var(--color-bg)" size={22} />
+        <CheckIcon color={colors.bg} size={22} />
       </Pressable>
     </View>
   );

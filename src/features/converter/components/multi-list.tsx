@@ -2,6 +2,7 @@ import * as React from "react";
 import { useTranslation } from "react-i18next";
 import { Pressable, Text, View } from "react-native";
 import { PlusIcon } from "@/components/ui/icons";
+import { useThemeColors } from "@/components/ui/use-theme-colors";
 import { TargetRow } from "./target-row";
 
 type MultiListProps = {
@@ -26,6 +27,7 @@ export function MultiList({
   onAdd,
 }: MultiListProps) {
   const { t } = useTranslation();
+  const colors = useThemeColors();
 
   return (
     <View className="overflow-hidden rounded-[20px] border border-line bg-surface">
@@ -65,7 +67,7 @@ export function MultiList({
         accessibilityLabel={t("converter.add_currency")}
       >
         <View className="size-[30px] items-center justify-center rounded-full border border-line bg-chip text-ink">
-          <PlusIcon color="var(--color-ink)" size={16} />
+          <PlusIcon color={colors.ink} size={16} />
         </View>
         <Text className="text-[13.5px] font-bold text-ink">
           {t("converter.add_currency")}

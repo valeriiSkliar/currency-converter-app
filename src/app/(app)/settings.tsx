@@ -12,6 +12,7 @@ import {
   SunIcon,
   WallpaperIcon,
 } from "@/components/ui/icons";
+import { useThemeColors } from "@/components/ui/use-theme-colors";
 import { PrivacyModal } from "@/features/converter/components/privacy-modal";
 import { useSettingsStore } from "@/features/settings/store/use-settings-store";
 import { useSelectedTheme } from "@/lib/hooks/use-selected-theme";
@@ -20,6 +21,7 @@ import { useSelectedLanguage } from "@/lib/i18n";
 // Helper components split to keep function sizes below 110 physical lines limit
 
 export function SettingsHeader({ onBack, title }: { onBack: () => void; title: string }) {
+  const colors = useThemeColors();
   return (
     <View className="h-[52px] flex-row items-center justify-between border-b border-line px-1.5 py-2">
       <TouchableOpacity
@@ -28,7 +30,7 @@ export function SettingsHeader({ onBack, title }: { onBack: () => void; title: s
         className="size-8 items-center justify-center rounded-full bg-transparent active:opacity-75"
         accessibilityLabel="Go back"
       >
-        <BackIcon color="var(--color-ink)" size={22} />
+        <BackIcon color={colors.ink} size={22} />
       </TouchableOpacity>
       <Text className="flex-1 px-2.5 text-[17px] font-extrabold text-ink" numberOfLines={1}>
         {title}
@@ -84,6 +86,7 @@ export function Segmented<T extends string>({
   onChange: (val: T) => void;
   options: SegmentedOption<T>[];
 }) {
+  const colors = useThemeColors();
   return (
     <View className="flex-row gap-0.5 rounded-full bg-chip p-[3px]">
       {options.map((o) => {
@@ -103,8 +106,8 @@ export function Segmented<T extends string>({
                   <o.I
                     color={
                       isSelected
-                        ? "var(--color-bg)"
-                        : "var(--color-ink-mute)"
+                        ? colors.bg
+                        : colors.inkMute
                     }
                     size={15}
                   />
@@ -304,12 +307,13 @@ function useSettingsScreenState() {
 type SettingsState = ReturnType<typeof useSettingsScreenState>;
 
 export function AppearanceSection({ state }: { state: SettingsState }) {
+  const colors = useThemeColors();
   return (
     <View>
       <SectionLabel>{state.t("settings.appearance")}</SectionLabel>
 
       <SettingsRow
-        icon={<SunIcon size={20} color="var(--color-ink)" />}
+        icon={<SunIcon size={20} color={colors.ink} />}
         label={state.t("settings.theme.title")}
         right={(
           <Segmented
@@ -325,7 +329,7 @@ export function AppearanceSection({ state }: { state: SettingsState }) {
       />
 
       <SettingsRow
-        icon={<GlobeIcon size={20} color="var(--color-ink)" />}
+        icon={<GlobeIcon size={20} color={colors.ink} />}
         label={state.t("settings.language")}
         right={(
           <Segmented
@@ -341,7 +345,7 @@ export function AppearanceSection({ state }: { state: SettingsState }) {
       />
 
       <SettingsRow
-        icon={<WallpaperIcon size={20} color="var(--color-ink)" />}
+        icon={<WallpaperIcon size={20} color={colors.ink} />}
         label={state.t("settings.wallpaper")}
         onPress={() => {
           showMessage({
@@ -356,7 +360,7 @@ export function AppearanceSection({ state }: { state: SettingsState }) {
             <Text className="text-[13px] font-semibold text-ink-mute">
               {state.t("settings.wallpaperHint")}
             </Text>
-            <ArrowRight color="var(--color-ink-mute)" />
+            <ArrowRight color={colors.inkMute} />
           </View>
         )}
       />

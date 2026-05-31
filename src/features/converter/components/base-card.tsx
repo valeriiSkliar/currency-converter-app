@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import { Pressable, Text, View } from "react-native";
 import { FlagIcon } from "@/components/flag-icon";
 import { CameraIcon, EditIcon } from "@/components/ui/icons";
+import { useThemeColors } from "@/components/ui/use-theme-colors";
 import { AmountDisplay } from "./amount-display";
 
 type BaseCardProps = {
@@ -21,6 +22,7 @@ export function BaseCard({
   onEditBase,
 }: BaseCardProps) {
   const { t } = useTranslation();
+  const colors = useThemeColors();
 
   return (
     <View
@@ -55,7 +57,7 @@ export function BaseCard({
             className="rounded-full p-1 active:bg-black/10 dark:active:bg-white/10"
             accessibilityLabel="Edit rate"
           >
-            <EditIcon color="var(--color-ink-mute)" size={16} />
+            <EditIcon color={colors.inkMute} size={16} />
           </Pressable>
         </View>
       </View>
@@ -75,7 +77,7 @@ export function BaseCard({
         accessibilityLabel={t("converter.scan")}
       >
         <View className="flex-col items-center justify-center pr-2">
-          <CameraIcon color="var(--color-bg)" size={20} />
+          <CameraIcon color={colors.bg} size={20} />
           <Text className="mt-0.5 text-[9px] font-extrabold tracking-widest text-bg uppercase">
             {t("converter.scan")}
           </Text>

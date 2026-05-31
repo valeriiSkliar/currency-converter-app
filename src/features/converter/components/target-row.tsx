@@ -2,6 +2,7 @@ import * as React from "react";
 import { Pressable, Text, View } from "react-native";
 import { FlagIcon } from "@/components/flag-icon";
 import { CloseIcon } from "@/components/ui/icons";
+import { useThemeColors } from "@/components/ui/use-theme-colors";
 
 type TargetRowProps = {
   code: string;
@@ -24,6 +25,7 @@ export function TargetRow({
   onRemove,
   divider = false,
 }: TargetRowProps) {
+  const colors = useThemeColors();
   return (
     <View
       className={`flex-row items-center gap-3 px-3.5 py-3 ${
@@ -71,7 +73,7 @@ export function TargetRow({
         className="size-[26px] items-center justify-center rounded-full border border-line bg-chip active:bg-black/10 dark:active:bg-white/10"
         accessibilityLabel={`Remove ${code}`}
       >
-        <CloseIcon color="var(--color-ink-mute)" size={12} />
+        <CloseIcon color={colors.inkMute} size={12} />
       </Pressable>
     </View>
   );

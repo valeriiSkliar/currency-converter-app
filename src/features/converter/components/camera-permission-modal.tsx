@@ -2,6 +2,7 @@ import * as React from "react";
 import { useTranslation } from "react-i18next";
 import { Modal, Text, TouchableOpacity, View } from "react-native";
 import { CameraIcon } from "@/components/ui/icons";
+import { useThemeColors } from "@/components/ui/use-theme-colors";
 
 type CameraPermissionModalProps = {
   visible: boolean;
@@ -15,6 +16,7 @@ export function CameraPermissionModal({
   onDecline,
 }: CameraPermissionModalProps) {
   const { t } = useTranslation();
+  const colors = useThemeColors();
 
   return (
     <Modal
@@ -28,7 +30,7 @@ export function CameraPermissionModal({
         <View className="w-full max-w-[320px] items-center rounded-[28px] border border-line bg-surface p-6 shadow-2xl">
           {/* Circular Camera Icon Container */}
           <View className="mb-4 rounded-full bg-ink/5 p-4 dark:bg-ink/10">
-            <CameraIcon color="var(--color-ink)" size={32} />
+            <CameraIcon color={colors.ink} size={32} />
           </View>
 
           {/* Title */}
