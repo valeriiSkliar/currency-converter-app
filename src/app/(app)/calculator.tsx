@@ -1,14 +1,17 @@
 import { useLocalSearchParams, useRouter } from "expo-router";
 import * as React from "react";
-import { Pressable, Text, View } from "react-native";
+import type { TextStyle, ViewStyle } from "react-native";
+import { Pressable, StyleSheet, Text, View } from "react-native";
 import Svg, { Path } from "react-native-svg";
 import { ScreenBackground } from "@/components/ui";
+import { useThemeColors } from "@/components/ui/use-theme-colors";
 import { evaluate, useCalculatorEngine } from "@/features/converter/hooks/use-calculator-engine";
 import { useConverterStore } from "@/features/converter/store/use-converter-store";
 
 export default function CalculatorScreen() {
   const router = useRouter();
   const { operator } = useLocalSearchParams<{ operator?: string }>();
+  const colors = useThemeColors();
 
   const initialAmount = useConverterStore(state => state.amount);
   const baseCurrency = useConverterStore(state => state.baseCurrency);
@@ -51,7 +54,7 @@ export default function CalculatorScreen() {
             className="mr-4 rounded-full border border-line bg-surface p-3 active:opacity-80"
             accessibilityLabel="Go back"
           >
-            <BackIcon className="text-ink" />
+            <BackIcon color={colors.ink} />
           </Pressable>
           <Text className="text-xl font-bold text-ink">{title}</Text>
         </View>
@@ -95,9 +98,9 @@ type CalculatorKeypadProps = {
 
 function CalculatorKeypad({ pressKey, operation, handleApply }: CalculatorKeypadProps) {
   return (
-    <View className="flex-1 gap-2.5 pb-4">
+    <View style={calculatorStyles.keypad}>
       {/* Row 1 */}
-      <View className="flex-1 flex-row gap-2.5">
+      <View style={calculatorStyles.keypadRow}>
         <CalcKey kind="clear" onPress={() => pressKey("C")}>C</CalcKey>
         <CalcKey kind="op" onPress={() => pressKey("%")}>%</CalcKey>
         <CalcKey kind="op" onPress={() => pressKey("±")}>±</CalcKey>
@@ -105,7 +108,7 @@ function CalculatorKeypad({ pressKey, operation, handleApply }: CalculatorKeypad
       </View>
 
       {/* Row 2 */}
-      <View className="flex-1 flex-row gap-2.5">
+      <View style={calculatorStyles.keypadRow}>
         <CalcKey onPress={() => pressKey("7")}>7</CalcKey>
         <CalcKey onPress={() => pressKey("8")}>8</CalcKey>
         <CalcKey onPress={() => pressKey("9")}>9</CalcKey>
@@ -113,7 +116,7 @@ function CalculatorKeypad({ pressKey, operation, handleApply }: CalculatorKeypad
       </View>
 
       {/* Row 3 */}
-      <View className="flex-1 flex-row gap-2.5">
+      <View style={calculatorStyles.keypadRow}>
         <CalcKey onPress={() => pressKey("4")}>4</CalcKey>
         <CalcKey onPress={() => pressKey("5")}>5</CalcKey>
         <CalcKey onPress={() => pressKey("6")}>6</CalcKey>
@@ -121,7 +124,7 @@ function CalculatorKeypad({ pressKey, operation, handleApply }: CalculatorKeypad
       </View>
 
       {/* Row 4 */}
-      <View className="flex-1 flex-row gap-2.5">
+      <View style={calculatorStyles.keypadRow}>
         <CalcKey onPress={() => pressKey("1")}>1</CalcKey>
         <CalcKey onPress={() => pressKey("2")}>2</CalcKey>
         <CalcKey onPress={() => pressKey("3")}>3</CalcKey>
@@ -129,7 +132,7 @@ function CalculatorKeypad({ pressKey, operation, handleApply }: CalculatorKeypad
       </View>
 
       {/* Row 5 */}
-      <View className="flex-1 flex-row gap-2.5">
+      <View style={calculatorStyles.keypadRow}>
         <CalcKey onPress={() => pressKey("0")}>0</CalcKey>
         <CalcKey onPress={() => pressKey(".")}>.</CalcKey>
         <CalcKey kind="backspace" onPress={() => pressKey("⌫")} />
@@ -147,48 +150,77 @@ type CalcKeyProps = {
 };
 
 function CalcKey({ children, onPress, kind = "digit", active = false }: CalcKeyProps) {
-  let btnStyle = "flex-1 h-full items-center justify-center rounded-2xl active:opacity-75 ";
-  let textStyle = "font-variant-numeric-tabular-nums tracking-tighter ";
+  const colors = useThemeColors();
+  const isDark = colors.bg === "#0A0A0C";
+  let buttonStyle: Pick<ViewStyle, "backgroundColor" | "borderColor"> = {
+    backgroundColor: colors.surface,
+    borderColor: colors.line,
+  };
+  let textColor: string = colors.ink;
+  let textSize = 24;
+  let textWeight: TextStyle["fontWeight"] = "700";
 
   if (kind === "clear") {
-    btnStyle += "bg-[#FCEDEE] border border-[rgba(215,38,61,0.18)] dark:bg-[#3B1519] dark:border-[rgba(239,68,68,0.2)]";
-    textStyle += "text-[#D7263D] dark:text-[#FF8E99] font-extrabold text-3xl";
+    buttonStyle = {
+      backgroundColor: isDark ? "#3B1519" : "#FCEDEE",
+      borderColor: isDark ? "rgba(239,68,68,0.2)" : "rgba(215,38,61,0.18)",
+    };
+    textColor = isDark ? "#FF8E99" : "#D7263D";
+    textSize = 30;
+    textWeight = "800";
   }
   else if (kind === "op") {
-    btnStyle += active ? "bg-ink border border-transparent" : "bg-surface border border-line";
-    textStyle += active ? "text-surface font-bold text-3xl" : "text-ink-mute font-bold text-3xl";
+    buttonStyle = active
+      ? { backgroundColor: colors.ink, borderColor: "transparent" }
+      : { backgroundColor: colors.surface, borderColor: colors.line };
+    textColor = active ? colors.surface : colors.inkMute;
+    textSize = 30;
   }
   else if (kind === "backspace") {
-    btnStyle += "bg-ink border border-transparent";
+    buttonStyle = {
+      backgroundColor: colors.ink,
+      borderColor: "transparent",
+    };
   }
   else if (kind === "apply") {
-    btnStyle += "bg-[#FFE9D6] border border-[rgba(230,120,34,0.18)] dark:bg-[#3D2513] dark:border-[rgba(230,120,34,0.3)]";
-    textStyle += "text-[#E67822] dark:text-[#FFA052] font-black text-2xl";
-  }
-  else {
-    btnStyle += "bg-surface border border-line";
-    textStyle += "text-ink font-bold text-2xl";
+    buttonStyle = {
+      backgroundColor: isDark ? "#3D2513" : "#FFE9D6",
+      borderColor: isDark ? "rgba(230,120,34,0.3)" : "rgba(230,120,34,0.18)",
+    };
+    textColor = isDark ? "#FFA052" : "#E67822";
+    textWeight = "900";
   }
 
   return (
-    <Pressable onPress={onPress} className={btnStyle}>
+    <Pressable
+      onPress={onPress}
+      className="active:opacity-75"
+      style={[calculatorStyles.key, buttonStyle]}
+    >
       {kind === "backspace"
         ? (
-            <BackspaceIcon className="text-surface" />
+            <BackspaceIcon color={colors.surface} />
           )
         : (
-            <Text className={textStyle}>{children}</Text>
+            <Text
+              style={[
+                calculatorStyles.keyText,
+                { color: textColor, fontSize: textSize, fontWeight: textWeight },
+              ]}
+            >
+              {children}
+            </Text>
           )}
     </Pressable>
   );
 }
 
-function BackIcon({ className, size = 22 }: { className?: string; size?: number }) {
+function BackIcon({ color, size = 22 }: { color: string; size?: number }) {
   return (
-    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none" className={className}>
+    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
       <Path
         d="M15 6l-6 6 6 6"
-        stroke="currentColor"
+        stroke={color}
         strokeWidth={2.2}
         strokeLinecap="round"
         strokeLinejoin="round"
@@ -197,21 +229,48 @@ function BackIcon({ className, size = 22 }: { className?: string; size?: number 
   );
 }
 
-function BackspaceIcon({ className, size = 22 }: { className?: string; size?: number }) {
+function BackspaceIcon({ color, size = 22 }: { color: string; size?: number }) {
   return (
-    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none" className={className}>
+    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
       <Path
         d="M9 5h10a2 2 0 012 2v10a2 2 0 01-2 2H9l-6-7 6-7z"
-        stroke="currentColor"
+        stroke={color}
         strokeWidth={2}
         strokeLinejoin="round"
       />
       <Path
         d="M13 9l4 6m0-6l-4 6"
-        stroke="currentColor"
+        stroke={color}
         strokeWidth={2}
         strokeLinecap="round"
       />
     </Svg>
   );
 }
+
+const calculatorStyles = StyleSheet.create({
+  key: {
+    alignItems: "center",
+    borderRadius: 16,
+    borderWidth: 1,
+    flex: 1,
+    justifyContent: "center",
+    minHeight: 58,
+  },
+  keypad: {
+    flex: 1,
+    gap: 10,
+    minHeight: 360,
+    paddingBottom: 16,
+  },
+  keypadRow: {
+    flex: 1,
+    flexDirection: "row",
+    gap: 10,
+    minHeight: 58,
+  },
+  keyText: {
+    fontVariant: ["tabular-nums"],
+    letterSpacing: -0.5,
+  },
+});

@@ -13,7 +13,7 @@ type Props = {
 export function ScreenBackground({
   children,
   className = "",
-  edges = ["top", "left", "right"],
+  edges = ["top", "bottom", "left", "right"],
 }: Props) {
   const wallpaper = useSettingsStore(state => state.wallpaper);
 

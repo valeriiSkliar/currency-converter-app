@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Pressable, Text, View } from "react-native";
+import { Pressable, StyleSheet, Text, View } from "react-native";
 import { BackspaceIcon, CheckIcon } from "@/components/ui/icons";
 import { useThemeColors } from "@/components/ui/use-theme-colors";
 
@@ -22,7 +22,7 @@ export function Numpad({
 }: NumpadProps) {
   const colors = useThemeColors();
   return (
-    <View className="min-h-[300px] w-full flex-row gap-2">
+    <View style={styles.container}>
       {/* Left Column Component */}
       <LeftColumn
         onTapClear={onTapClear}
@@ -31,30 +31,30 @@ export function Numpad({
       />
 
       {/* Right Section: 3x4 Digits & Backspace Grid */}
-      <View className="flex-3 gap-2">
+      <View style={styles.digitsPanel}>
         {/* Row 1: 7, 8, 9 */}
-        <View className="flex-1 flex-row gap-2">
+        <View style={styles.digitRow}>
           <NumpadDigit digit="7" onPress={onTapDigit} />
           <NumpadDigit digit="8" onPress={onTapDigit} />
           <NumpadDigit digit="9" onPress={onTapDigit} />
         </View>
 
         {/* Row 2: 4, 5, 6 */}
-        <View className="flex-1 flex-row gap-2">
+        <View style={styles.digitRow}>
           <NumpadDigit digit="4" onPress={onTapDigit} />
           <NumpadDigit digit="5" onPress={onTapDigit} />
           <NumpadDigit digit="6" onPress={onTapDigit} />
         </View>
 
         {/* Row 3: 1, 2, 3 */}
-        <View className="flex-1 flex-row gap-2">
+        <View style={styles.digitRow}>
           <NumpadDigit digit="1" onPress={onTapDigit} />
           <NumpadDigit digit="2" onPress={onTapDigit} />
           <NumpadDigit digit="3" onPress={onTapDigit} />
         </View>
 
         {/* Row 4: 0, Comma, Backspace */}
-        <View className="flex-1 flex-row gap-2">
+        <View style={styles.digitRow}>
           <NumpadDigit digit="0" onPress={onTapDigit} />
 
           {/* Comma/Dot */}
@@ -100,7 +100,7 @@ function LeftColumn({ onTapClear, onTapOperator, onTapDone }: LeftColumnProps) {
       </Pressable>
 
       {/* 2x2 Operator Quadrant */}
-      <View className="flex-2 justify-between rounded-[18px] bg-accent p-2.5">
+      <View style={styles.operatorPad} className="justify-between rounded-[18px] bg-accent p-2.5">
         <View className="flex-1 flex-row items-center justify-between">
           <Pressable
             onPress={() => onTapOperator("+")}
@@ -164,3 +164,24 @@ function NumpadDigit({ digit, onPress }: NumpadDigitProps) {
     </Pressable>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flexDirection: "row",
+    gap: 8,
+    minHeight: 300,
+    width: "100%",
+  },
+  digitRow: {
+    flex: 1,
+    flexDirection: "row",
+    gap: 8,
+  },
+  digitsPanel: {
+    flex: 3,
+    gap: 8,
+  },
+  operatorPad: {
+    flex: 2,
+  },
+});

@@ -2,7 +2,7 @@
 @import 'tailwindcss';
 @import 'uniwind';
 
-/* Define your theme in CSS (replaces tailwind.config.js) */
+/* Static Tailwind tokens. Theme-switched app tokens are defined below via Uniwind variants. */
 @theme {
   /* Font families */
   --font-family-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
@@ -84,77 +84,81 @@
   --color-danger-700: #B91C1C;
   --color-danger-800: #991B1B;
   --color-danger-900: #7F1D1D;
-
-  /* Semantic colors - using primary for main brand color */
-  --color-background: #ffffff;
-  --color-foreground: #0a0a0a;
-
-  --color-card: #ffffff;
-  --color-card-foreground: #0a0a0a;
-
-  --color-muted: #f5f5f5;
-  --color-muted-foreground: #737373;
-
-  --color-border: #e5e5e5;
-  --color-input: #e5e5e5;
-  --color-ring: #FF6C00;
-
-  --color-destructive: #ef4444;
-  --color-destructive-foreground: #ffffff;
-
-  /* Design B Currency Converter colors */
-  --color-bg: #F4F2EC;
-  --color-surface: #FFFFFF;
-  --color-surface-2: #F7F6F2;
-  --color-ink: #0E0E10;
-  --color-ink-2: #2A2A2D;
-  --color-ink-mute: #6B7077;
-  --color-ink-soft: #9CA0A8;
-  --color-line: rgba(14,14,16,0.07);
-  --color-line-strong: rgba(14,14,16,0.13);
-  --color-accent: #FFD200;
-  --color-accent-ink: #0E0E10;
-  --color-blue: #0057B7;
-  --color-green: #00C566;
-  --color-red: #FF3B30;
-  --color-chip: #F1EFE8;
-  --color-chip-ink: #0E0E10;
 }
 
-/* Dark mode variant for Tailwind CSS v4 class strategy */
-@custom-variant dark (&:where(.dark, .dark *));
+/* Theme-aware tokens. Uniwind resolves these to concrete native values on iOS/Android. */
+@layer theme {
+  :root {
+    @variant light {
+      --color-background: #ffffff;
+      --color-foreground: #0a0a0a;
 
-/* Dark mode colors */
-.dark {
-  --color-background: #0a0a0a;
-  --color-foreground: #fafafa;
+      --color-card: #ffffff;
+      --color-card-foreground: #0a0a0a;
 
-  --color-card: #171717;
-  --color-card-foreground: #fafafa;
+      --color-muted: #f5f5f5;
+      --color-muted-foreground: #737373;
 
-  --color-muted: #262626;
-  --color-muted-foreground: #a3a3a3;
+      --color-border: #e5e5e5;
+      --color-input: #e5e5e5;
+      --color-ring: #FF6C00;
 
-  --color-border: #404040;
-  --color-input: #404040;
+      --color-destructive: #ef4444;
+      --color-destructive-foreground: #ffffff;
 
-  /* Design B Currency Converter dark colors */
-  --color-bg: #0A0A0C;
-  --color-surface: #131316;
-  --color-surface-2: #1B1B1F;
-  --color-ink: #FAFAFA;
-  --color-ink-2: #E5E5E7;
-  --color-ink-mute: #9CA0A8;
-  --color-ink-soft: #6B7077;
-  --color-line: rgba(255,255,255,0.07);
-  --color-line-strong: rgba(255,255,255,0.14);
-  --color-accent: #FFD200;
-  --color-accent-ink: #0E0E10;
-  --color-blue: #5C9CFF;
-  --color-green: #2EDB7E;
-  --color-red: #FF6259;
-  --color-chip: #1F1F23;
-  --color-chip-ink: #FAFAFA;
+      --color-bg: #F4F2EC;
+      --color-surface: #FFFFFF;
+      --color-surface-2: #F7F6F2;
+      --color-ink: #0E0E10;
+      --color-ink-2: #2A2A2D;
+      --color-ink-mute: #6B7077;
+      --color-ink-soft: #9CA0A8;
+      --color-line: rgba(14,14,16,0.07);
+      --color-line-strong: rgba(14,14,16,0.13);
+      --color-accent: #FFD200;
+      --color-accent-ink: #0E0E10;
+      --color-blue: #0057B7;
+      --color-green: #00C566;
+      --color-red: #FF3B30;
+      --color-chip: #F1EFE8;
+      --color-chip-ink: #0E0E10;
+    }
+
+    @variant dark {
+      --color-background: #0a0a0a;
+      --color-foreground: #fafafa;
+
+      --color-card: #171717;
+      --color-card-foreground: #fafafa;
+
+      --color-muted: #262626;
+      --color-muted-foreground: #a3a3a3;
+
+      --color-border: #404040;
+      --color-input: #404040;
+      --color-ring: #FF6C00;
+
+      --color-destructive: #ef4444;
+      --color-destructive-foreground: #ffffff;
+
+      --color-bg: #0A0A0C;
+      --color-surface: #131316;
+      --color-surface-2: #1B1B1F;
+      --color-ink: #FAFAFA;
+      --color-ink-2: #E5E5E7;
+      --color-ink-mute: #9CA0A8;
+      --color-ink-soft: #6B7077;
+      --color-line: rgba(255,255,255,0.07);
+      --color-line-strong: rgba(255,255,255,0.14);
+      --color-accent: #FFD200;
+      --color-accent-ink: #0E0E10;
+      --color-blue: #5C9CFF;
+      --color-green: #2EDB7E;
+      --color-red: #FF6259;
+      --color-chip: #1F1F23;
+      --color-chip-ink: #FAFAFA;
+    }
+  }
 }
 
 /* Custom utilities (if needed) */
