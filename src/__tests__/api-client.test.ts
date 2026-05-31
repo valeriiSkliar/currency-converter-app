@@ -20,10 +20,10 @@ describe("aPI client", () => {
     expect(client.defaults.baseURL).toBe("http://localhost:8088");
   });
 
-  it("has X-App-Key auth header", () => {
+  it("has X-App-Service-Key auth header", () => {
     const { client } = require("../lib/api/client");
     const headers = client.defaults.headers as Record<string, unknown>;
-    expect(headers["X-App-Key"]).toBe("test-service-key");
+    expect(headers["X-App-Service-Key"]).toBe("test-service-key");
   });
 
   it("has 10s timeout", () => {
