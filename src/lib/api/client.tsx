@@ -25,9 +25,8 @@ client.interceptors.response.use(
   },
   (error) => {
     console.warn(
-      `[API Error] ${error.response?.status ?? error.message} ${error.config?.url || ""}`
+      `[API Error] ${error.response?.status ?? error.message} ${error.config?.url || ""}`,
     );
     return Promise.reject(error);
-  }
+  },
 );
-

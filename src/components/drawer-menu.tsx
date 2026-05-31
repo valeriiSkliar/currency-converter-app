@@ -1,6 +1,7 @@
 import * as React from "react";
 import { useTranslation } from "react-i18next";
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Svg, { Circle, Defs, LinearGradient, Path, Rect, Stop } from "react-native-svg";
 import { Settings as SettingsIcon } from "./ui/icons/settings";
 import { Share as ShareIcon } from "./ui/icons/share";
@@ -23,9 +24,14 @@ export function DrawerMenu({
   onRate,
   onOpenPrivacy,
 }: DrawerMenuProps) {
+  const insets = useSafeAreaInsets();
+
   return (
-    <View className="h-full w-[280px] flex-1 bg-surface">
-      <DrawerHeader isPro={isPro} />
+    <View
+      className="h-full w-70 flex-1 bg-surface"
+      style={{ paddingTop: 0, paddingBottom: 0 }}
+    >
+      <DrawerHeader isPro={isPro} topInset={insets.top} />
       <DrawerContent
         isPro={isPro}
         onNavigate={onNavigate}
@@ -34,15 +40,18 @@ export function DrawerMenu({
         onRate={onRate}
         onOpenPrivacy={onOpenPrivacy}
       />
-      <DrawerFooter onNavigate={onNavigate} />
+      <DrawerFooter onNavigate={onNavigate} bottomInset={insets.bottom} />
     </View>
   );
 }
 
-function DrawerHeader({ isPro }: { isPro: boolean }) {
+function DrawerHeader({ isPro, topInset = 0 }: { isPro: boolean; topInset?: number }) {
   const { t } = useTranslation();
   return (
-    <View className="relative h-[160px] justify-end overflow-hidden p-5">
+    <View
+      className="relative justify-end overflow-hidden p-5"
+      style={{ minHeight: 160 + topInset }}
+    >
       <Svg style={StyleSheet.absoluteFill}>
         <Defs>
           <LinearGradient id="drawerHeaderGrad" x1="0" y1="0" x2="0" y2="1">
@@ -185,10 +194,19 @@ function DrawerContent({
   );
 }
 
-function DrawerFooter({ onNavigate }: { onNavigate: (route: string) => void }) {
+function DrawerFooter({
+  onNavigate,
+  bottomInset = 0,
+}: {
+  onNavigate: (route: string) => void;
+  bottomInset?: number;
+}) {
   const { t } = useTranslation();
   return (
-    <View className="border-t border-line bg-surface-2 p-4">
+    <View
+      className="border-t border-line bg-surface-2 px-4 pt-4"
+      style={{ paddingBottom: bottomInset }}
+    >
       <TouchableOpacity
         onPress={() => onNavigate("/settings")}
         activeOpacity={0.7}

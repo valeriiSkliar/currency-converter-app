@@ -3,6 +3,7 @@ import * as React from "react";
 import { useTranslation } from "react-i18next";
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { showMessage } from "react-native-flash-message";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Svg, {
   Circle,
   Defs,
@@ -183,6 +184,7 @@ export function CTADock({
   termsText,
   onPress,
   onBack,
+  bottomInset = 0,
 }: {
   ctaText: string;
   trialNote: string;
@@ -190,9 +192,13 @@ export function CTADock({
   termsText: string;
   onPress: () => void;
   onBack: () => void;
+  bottomInset?: number;
 }) {
   return (
-    <View className="bg-linear-to-b from-transparent via-bg/85 to-bg px-[22px] pt-3 pb-[18px]">
+    <View
+      className="bg-linear-to-b from-transparent via-bg/85 to-bg px-5.5 pt-3"
+      style={{ paddingBottom: Math.max(bottomInset + 10, 18) }}
+    >
       <TouchableOpacity
         onPress={onPress}
         activeOpacity={0.85}
@@ -295,6 +301,8 @@ function usePaywallScreenState() {
 }
 
 export default function PaywallScreen() {
+  const insets = useSafeAreaInsets();
+
   const {
     router,
     t,
@@ -308,7 +316,10 @@ export default function PaywallScreen() {
   return (
     <PaywallBackground>
       {/* Close Button */}
-      <View className="absolute top-3.5 right-3.5 z-10">
+      <View
+        className="absolute right-3.5 z-10"
+        style={{ top: insets.top + 8 }}
+      >
         <TouchableOpacity
           onPress={() => router.back()}
           activeOpacity={0.7}
@@ -321,7 +332,11 @@ export default function PaywallScreen() {
 
       <ScrollView
         className="flex-1"
-        contentContainerStyle={{ paddingHorizontal: 22, paddingTop: 40, paddingBottom: 24 }}
+        contentContainerStyle={{
+          paddingHorizontal: 22,
+          paddingTop: insets.top + 44,
+          paddingBottom: Math.max(insets.bottom + 24, 32),
+        }}
         showsVerticalScrollIndicator={false}
       >
         <HeroMedallion />
@@ -357,6 +372,7 @@ export default function PaywallScreen() {
         termsText={t("converter.termsAndPrivacy")}
         onPress={handlePurchase}
         onBack={() => router.back()}
+        bottomInset={insets.bottom}
       />
     </PaywallBackground>
   );
