@@ -3,7 +3,6 @@ import { useTranslation } from "react-i18next";
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Svg, { Circle, Defs, LinearGradient, Path, Rect, Stop } from "react-native-svg";
-import { Settings as SettingsIcon } from "./ui/icons/settings";
 import { Share as ShareIcon } from "./ui/icons/share";
 import { Support as SupportIcon } from "./ui/icons/support";
 
@@ -40,7 +39,6 @@ export function DrawerMenu({
         onRate={onRate}
         onOpenPrivacy={onOpenPrivacy}
       />
-      <DrawerFooter onNavigate={onNavigate} bottomInset={insets.bottom} />
     </View>
   );
 }
@@ -191,36 +189,6 @@ function DrawerContent({
         </TouchableOpacity>
       </View>
     </ScrollView>
-  );
-}
-
-function DrawerFooter({
-  onNavigate,
-  bottomInset = 0,
-}: {
-  onNavigate: (route: string) => void;
-  bottomInset?: number;
-}) {
-  const { t } = useTranslation();
-  return (
-    <View
-      className="border-t border-line bg-surface-2 px-4 pt-4"
-      style={{ paddingBottom: bottomInset }}
-    >
-      <TouchableOpacity
-        onPress={() => onNavigate("/settings")}
-        activeOpacity={0.7}
-        className="flex-row items-center justify-between py-2"
-      >
-        <View className="flex-row items-center">
-          <SettingsIcon color="#6B7077" />
-          <Text className="ml-4 text-sm font-semibold text-ink-2">
-            {t("drawer.settings")}
-          </Text>
-        </View>
-        <Text className="text-lg font-bold text-ink-soft">›</Text>
-      </TouchableOpacity>
-    </View>
   );
 }
 
