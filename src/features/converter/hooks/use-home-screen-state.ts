@@ -37,23 +37,10 @@ export function useHomeScreenState() {
         name: found.name || code,
       };
     }
-    const fallbacks: Record<string, { symbol: string; name: string }> = {
-      USD: { symbol: "$", name: "US Dollar" },
-      EUR: { symbol: "€", name: "Euro" },
-      RUB: { symbol: "₽", name: "Russian Ruble" },
-      GBP: { symbol: "£", name: "British Pound" },
-      JPY: { symbol: "¥", name: "Japanese Yen" },
-      CNY: { symbol: "¥", name: "Chinese Yuan" },
-      CHF: { symbol: "Fr", name: "Swiss Franc" },
-      CAD: { symbol: "C$", name: "Canadian Dollar" },
-      AUD: { symbol: "A$", name: "Australian Dollar" },
-      NZD: { symbol: "NZ$", name: "New Zealand Dollar" },
-      BTC: { symbol: "₿", name: "Bitcoin" },
-      ETH: { symbol: "Ξ", name: "Ethereum" },
-      USDT: { symbol: "₮", name: "Tether" },
-    };
-    return fallbacks[code] || { symbol: code, name: code };
+    // API data not yet available — use code as neutral placeholder
+    return { symbol: code, name: code };
   }, [currenciesData]);
+
 
   // Conversions
   const getConvertedText = React.useCallback((code: string) => {

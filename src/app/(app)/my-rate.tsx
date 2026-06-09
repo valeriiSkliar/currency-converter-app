@@ -19,7 +19,7 @@ function useMyRateState() {
 
   const [from, setFrom] = React.useState(baseCurrency);
   const [to, setTo] = React.useState(targetCurrencies[0] || "EUR");
-  const [amount, setAmount] = React.useState("21.36");
+  const [amount, setAmount] = React.useState("1");
   const [isEditOpen, setIsEditOpen] = React.useState(false);
   const [isPickerOpen, setIsPickerOpen] = React.useState<{ side: "from" | "to" } | null>(null);
   const [draft, setDraft] = React.useState("");
@@ -775,35 +775,7 @@ function getCurrencyInfo(code: string, currenciesData: any[] | undefined) {
       flag: found.flag_emoji || code,
     };
   }
-  const fallbacks: Record<string, { name: string; symbol: string; flag: string }> = {
-    USD: { name: "US Dollar", symbol: "$", flag: "🇺🇸" },
-    EUR: { name: "Euro", symbol: "€", flag: "🇪🇺" },
-    RUB: { name: "Russian Ruble", symbol: "₽", flag: "🇷🇺" },
-    GBP: { name: "British Pound", symbol: "£", flag: "🇬🇧" },
-    JPY: { name: "Japanese Yen", symbol: "¥", flag: "🇯🇵" },
-    CNY: { name: "Chinese Yuan", symbol: "¥", flag: "🇨🇳" },
-    CHF: { name: "Swiss Franc", symbol: "Fr", flag: "🇨🇭" },
-    CAD: { name: "Canadian Dollar", symbol: "C$", flag: "🇨🇦" },
-    AUD: { name: "Australian Dollar", symbol: "A$", flag: "🇦🇺" },
-    NZD: { name: "New Zealand Dollar", symbol: "NZ$", flag: "🇳🇿" },
-    INR: { name: "Indian Rupee", symbol: "₹", flag: "🇮🇳" },
-    KRW: { name: "South Korean Won", symbol: "₩", flag: "🇰🇷" },
-    TRY: { name: "Turkish Lira", symbol: "₺", flag: "🇹🇷" },
-    BRL: { name: "Brazilian Real", symbol: "R$", flag: "🇧🇷" },
-    MXN: { name: "Mexican Peso", symbol: "Mex$", flag: "🇲🇽" },
-    SEK: { name: "Swedish Krona", symbol: "kr", flag: "🇸🇪" },
-    PLN: { name: "Polish Złoty", symbol: "zł", flag: "🇵🇱" },
-    AED: { name: "UAE Dirham", symbol: "د.إ", flag: "🇦🇪" },
-    SGD: { name: "Singapore Dollar", symbol: "S$", flag: "🇸🇬" },
-    HKD: { name: "Hong Kong Dollar", symbol: "HK$", flag: "🇭🇰" },
-    BTC: { name: "Bitcoin", symbol: "₿", flag: "₿" },
-    ETH: { name: "Ethereum", symbol: "Ξ", flag: "Ξ" },
-    USDT: { name: "Tether", symbol: "₮", flag: "₮" },
-    BNB: { name: "BNB", symbol: "BNB", flag: "B" },
-    SOL: { name: "Solana", symbol: "◎", flag: "◎" },
-    XRP: { name: "XRP", symbol: "XRP", flag: "X" },
-    ADA: { name: "Cardano", symbol: "₳", flag: "₳" },
-    DOGE: { name: "Dogecoin", symbol: "Ð", flag: "Ð" },
-  };
-  return fallbacks[code] || { name: code, symbol: code, flag: code };
+  // API data not yet available — use code as neutral placeholder
+  return { name: code, symbol: code, flag: code };
 }
+

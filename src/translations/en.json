@@ -52,6 +52,7 @@
     "feedbackText": "Tell us what we can do better.",
     "feedbackThanks": "Thanks for your feedback!",
     "feedbackThanksSub": "We read every message and use it to make the app better.",
+    "feedbackError": "Failed to send feedback. Please try again.",
     "feedbackTitle": "Sorry to hear that",
     "fiat": "Fiat",
     "freeAttemptsAllUsed": "You’ve used all 3 free rate changes",

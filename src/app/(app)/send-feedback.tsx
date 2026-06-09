@@ -1,10 +1,11 @@
 import { useRouter } from "expo-router";
 import * as React from "react";
 import { useTranslation } from "react-i18next";
-import { ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, Alert, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { ScreenBackground } from "@/components/ui";
 import { BackIcon, CheckIcon } from "@/components/ui/icons";
 import { useThemeColors } from "@/components/ui/use-theme-colors";
+import { useSubmitFeedback } from "@/features/converter/api/use-feedback";
 
 const FEEDBACK_OPTIONS = [
   { id: "opt1", translationKey: "converter.feedbackOpt1" },
@@ -98,27 +99,35 @@ export function SubmitButton({
   disabled,
   onPress,
   label,
+  isLoading,
 }: {
   disabled: boolean;
   onPress: () => void;
   label: string;
+  isLoading?: boolean;
 }) {
   return (
     <TouchableOpacity
-      disabled={disabled}
+      disabled={disabled || isLoading}
       onPress={onPress}
       activeOpacity={0.8}
       className={`mt-4 w-full items-center justify-center rounded-full py-4.5 ${
-        disabled ? "bg-line" : "bg-ink active:opacity-90"
+        disabled || isLoading ? "bg-line" : "bg-ink active:opacity-90"
       }`}
     >
-      <Text
-        className={`text-sm font-black tracking-widest uppercase ${
-          disabled ? "text-ink-soft/50" : "text-bg"
-        }`}
-      >
-        {label}
-      </Text>
+      {isLoading
+        ? (
+            <ActivityIndicator size="small" color="#888" />
+          )
+        : (
+            <Text
+              className={`text-sm font-black tracking-widest uppercase ${
+                disabled ? "text-ink-soft/50" : "text-bg"
+              }`}
+            >
+              {label}
+            </Text>
+          )}
     </TouchableOpacity>
   );
 }
@@ -129,8 +138,22 @@ export default function SendFeedbackScreen() {
   const [selectedOption, setSelectedOption] = React.useState<string | null>(null);
   const [isSubmitted, setIsSubmitted] = React.useState(false);
 
+  const { mutate: submitFeedback, isPending } = useSubmitFeedback();
+
   const handleSubmit = () => {
-    setIsSubmitted(true);
+    if (!selectedOption) return;
+    submitFeedback(
+      { option_id: selectedOption },
+      {
+        onSuccess: () => setIsSubmitted(true),
+        onError: () => {
+          Alert.alert(
+            t("common.error"),
+            t("converter.feedbackError"),
+          );
+        },
+      },
+    );
   };
 
   const handleBack = () => {
@@ -191,6 +214,7 @@ export default function SendFeedbackScreen() {
 
         <SubmitButton
           disabled={selectedOption === null}
+          isLoading={isPending}
           onPress={handleSubmit}
           label={t("converter.submit")}
         />

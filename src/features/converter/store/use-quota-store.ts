@@ -9,7 +9,7 @@ type QuotaState = {
   incrementRateAttempt: () => void;
   incrementScanAttempt: () => void;
   unlockPro: () => void;
-  resetAttempts: () => void; // Added for testing/dev ease
+  resetAttempts: () => void;
 };
 
 const mmkvStorage = {
