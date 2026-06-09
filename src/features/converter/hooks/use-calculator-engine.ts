@@ -256,14 +256,12 @@ export function useCalculatorEngine(initialValue: string = "0") {
     isWaitingForNewInput: false,
   });
 
-  const lastInitialValue = React.useRef(initialValue);
-  if (lastInitialValue.current !== initialValue) {
-    lastInitialValue.current = initialValue;
-    dispatch({ type: "RESET", payload: initialValue });
-  }
-
   const pressKey = React.useCallback((key: CalculatorKey) => {
     dispatch({ type: "PRESS_KEY", key });
+  }, []);
+
+  const reset = React.useCallback((value: string) => {
+    dispatch({ type: "RESET", payload: value });
   }, []);
 
   const expression = React.useMemo(() => {
@@ -284,5 +282,6 @@ export function useCalculatorEngine(initialValue: string = "0") {
     operation: state.operation,
     expression,
     pressKey,
+    reset,
   };
 }

@@ -1,5 +1,5 @@
 import type { TextStyle, ViewStyle } from "react-native";
-import { useLocalSearchParams, useRouter } from "expo-router";
+import { useFocusEffect, useLocalSearchParams, useRouter } from "expo-router";
 import * as React from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import Svg, { Path } from "react-native-svg";
@@ -17,15 +17,20 @@ export default function CalculatorScreen() {
   const baseCurrency = useConverterStore(state => state.baseCurrency);
   const updateAmount = useConverterStore(state => state.updateAmount);
 
-  const { displayValue, expression, pressKey, previousValue, operation }
+  const { displayValue, expression, pressKey, previousValue, operation, reset }
     = useCalculatorEngine(initialAmount);
 
-  // Apply initial operator on mount if navigated from the Home screen
-  React.useEffect(() => {
-    if (operator) {
-      pressKey(operator as any);
-    }
-  }, [operator, pressKey]);
+  // Reset state and apply operator every time the screen gains focus.
+  // Using useFocusEffect instead of useEffect handles the case where Expo Router
+  // reuses the screen instance (via <Slot>) rather than unmounting it on back navigation.
+  useFocusEffect(
+    React.useCallback(() => {
+      reset(initialAmount);
+      if (operator) {
+        pressKey(operator as any);
+      }
+    }, [operator, initialAmount, reset, pressKey]),
+  );
 
   const handleApply = () => {
     if (displayValue === "Error")
