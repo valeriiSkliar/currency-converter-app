@@ -22,13 +22,14 @@ import { useSelectedLanguage } from "@/lib/i18n";
 
 export function SettingsHeader({ onBack, title }: { onBack: () => void; title: string }) {
   const colors = useThemeColors();
+  const { t } = useTranslation();
   return (
     <View className="h-[52px] flex-row items-center justify-between border-b border-line px-1.5 py-2">
       <TouchableOpacity
         onPress={onBack}
         activeOpacity={0.7}
         className="size-8 items-center justify-center rounded-full bg-transparent active:opacity-75"
-        accessibilityLabel="Go back"
+        accessibilityLabel={t("converter.go_back")}
       >
         <BackIcon color={colors.ink} size={22} />
       </TouchableOpacity>
@@ -61,6 +62,8 @@ export function SettingsRow({ icon, label, right, onPress }: SettingsRowProps) {
       onPress={onPress}
       activeOpacity={0.7}
       className="mb-2 min-h-[60px] w-full flex-row items-center gap-3.5 rounded-[18px] border border-line bg-surface px-3.5 py-3"
+      accessibilityRole={onPress ? "button" : undefined}
+      accessibilityLabel={label}
     >
       <View className="size-9 items-center justify-center rounded-xl bg-chip text-ink">
         {icon}
@@ -74,6 +77,7 @@ export function SettingsRow({ icon, label, right, onPress }: SettingsRowProps) {
 type SegmentedOption<T> = {
   id: T;
   label?: string;
+  accessibilityLabel?: string;
   I?: React.ComponentType<{ color: string; size: number }>;
 };
 
@@ -91,6 +95,7 @@ export function Segmented<T extends string>({
     <View className="flex-row gap-0.5 rounded-full bg-chip p-[3px]">
       {options.map((o) => {
         const isSelected = o.id === value;
+        const optionLabel = o.accessibilityLabel || o.label || o.id;
         return (
           <TouchableOpacity
             key={o.id}
@@ -100,6 +105,9 @@ export function Segmented<T extends string>({
             className={`flex-row items-center justify-center rounded-full px-2.5 ${
               isSelected ? "bg-ink" : "bg-transparent"
             }`}
+            accessibilityRole="tab"
+            accessibilityState={{ selected: isSelected }}
+            accessibilityLabel={optionLabel}
           >
             {o.I
               ? (
@@ -150,6 +158,15 @@ export function PrecisionSlider({
     onChange(newVal);
   };
 
+  const handleAccessibilityAction = (event: any) => {
+    if (event.nativeEvent.actionName === "increment") {
+      onChange(Math.min(max, value + 1));
+    }
+    else if (event.nativeEvent.actionName === "decrement") {
+      onChange(Math.max(min, value - 1));
+    }
+  };
+
   return (
     <View
       onLayout={e => setWidth(e.nativeEvent.layout.width)}
@@ -157,6 +174,13 @@ export function PrecisionSlider({
       onResponderGrant={handleTouch}
       onResponderMove={handleTouch}
       className="relative h-6 w-full justify-center"
+      accessibilityRole="adjustable"
+      accessibilityValue={{ min, max, now: value }}
+      accessibilityActions={[
+        { name: "increment", label: "increment" },
+        { name: "decrement", label: "decrement" },
+      ]}
+      onAccessibilityAction={handleAccessibilityAction}
     >
       <View pointerEvents="none" className="h-1.5 w-full rounded-full bg-line" />
       <View
@@ -242,6 +266,8 @@ function DevButton({ onPress, label }: { onPress: () => void; label: string }) {
       onPress={onPress}
       activeOpacity={0.7}
       className="w-full items-center justify-center rounded-xl border border-line bg-chip py-3 active:bg-chip/80"
+      accessibilityRole="button"
+      accessibilityLabel={label}
     >
       <Text className="text-xs font-extrabold text-ink">{label}</Text>
     </TouchableOpacity>
@@ -320,9 +346,9 @@ export function AppearanceSection({ state }: { state: SettingsState }) {
             value={state.selectedTheme}
             onChange={state.setSelectedTheme}
             options={[
-              { id: "light", I: SunIcon },
-              { id: "system", I: GlobeIcon },
-              { id: "dark", I: MoonIcon },
+              { id: "light", I: SunIcon, accessibilityLabel: state.t("settings.theme.light") },
+              { id: "system", I: GlobeIcon, accessibilityLabel: state.t("settings.theme.system") },
+              { id: "dark", I: MoonIcon, accessibilityLabel: state.t("settings.theme.dark") },
             ]}
           />
         )}
