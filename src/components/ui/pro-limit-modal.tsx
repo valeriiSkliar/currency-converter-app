@@ -115,7 +115,7 @@ function GradientButton({
     <TouchableOpacity
       onPress={onPress}
       activeOpacity={0.8}
-      className={`relative items-center justify-center overflow-hidden rounded-full py-3.5 ${className}`}
+      className={`relative overflow-hidden rounded-full ${className}`}
       style={{ elevation: 3 }}
     >
       <Svg style={StyleSheet.absoluteFillObject} width="100%" height="100%">
@@ -128,9 +128,11 @@ function GradientButton({
         </Defs>
         <Rect width="100%" height="100%" fill="url(#btnGrad)" />
       </Svg>
-      <Text className="text-sm font-black text-[#1A1A1C]">
-        {label}
-      </Text>
+      <View className="items-center justify-center py-3.5">
+        <Text className="text-sm font-black text-[#1A1A1C]">
+          {label}
+        </Text>
+      </View>
     </TouchableOpacity>
   );
 }
