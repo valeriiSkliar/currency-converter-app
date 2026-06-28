@@ -26,6 +26,7 @@ export function FeedbackHeader({
   sub?: string;
 }) {
   const colors = useThemeColors();
+  const { t } = useTranslation();
   return (
     <View className="mb-6 w-full">
       <View className="h-[52px] flex-row items-center justify-between py-2">
@@ -34,7 +35,7 @@ export function FeedbackHeader({
             onPress={onBack}
             activeOpacity={0.7}
             className="size-10 items-center justify-center rounded-full border border-line bg-surface active:opacity-75"
-            accessibilityLabel="Go back"
+            accessibilityLabel={t("converter.go_back")}
           >
             <BackIcon color={colors.ink} size={22} />
           </TouchableOpacity>
@@ -72,6 +73,8 @@ export function RadioRow({
       className={`mb-3 min-h-[60px] w-full flex-row items-center justify-between rounded-[18px] border bg-surface px-4 py-3.5 ${
         isSelected ? "border-ink" : "border-line"
       }`}
+      accessibilityRole="radio"
+      accessibilityState={{ checked: isSelected }}
     >
       <Text className="mr-4 flex-1 text-[15px] font-bold text-ink">
         {label}
@@ -106,6 +109,8 @@ export function SubmitButton({
   label: string;
   isLoading?: boolean;
 }) {
+  const colors = useThemeColors();
+  const { t } = useTranslation();
   return (
     <TouchableOpacity
       disabled={disabled || isLoading}
@@ -114,10 +119,13 @@ export function SubmitButton({
       className={`mt-4 w-full items-center justify-center rounded-full py-4.5 ${
         disabled || isLoading ? "bg-line" : "bg-ink active:opacity-90"
       }`}
+      accessibilityRole="button"
+      accessibilityState={{ disabled: disabled || isLoading }}
+      accessibilityLabel={isLoading ? t("common.loading") : label}
     >
       {isLoading
         ? (
-            <ActivityIndicator size="small" color="#888" />
+            <ActivityIndicator size="small" color={colors.inkMute} />
           )
         : (
             <Text
