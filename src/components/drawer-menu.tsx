@@ -8,6 +8,7 @@ import { Support as SupportIcon } from "./ui/icons/support";
 
 type DrawerMenuProps = {
   isPro: boolean;
+  enableExchangeRates?: boolean;
   onNavigate: (route: string) => void;
   onRemoveAds: () => void;
   onShare: () => void;
@@ -17,6 +18,7 @@ type DrawerMenuProps = {
 
 export function DrawerMenu({
   isPro,
+  enableExchangeRates,
   onNavigate,
   onRemoveAds,
   onShare,
@@ -33,6 +35,7 @@ export function DrawerMenu({
       <DrawerHeader isPro={isPro} topInset={insets.top} />
       <DrawerContent
         isPro={isPro}
+        enableExchangeRates={enableExchangeRates}
         onNavigate={onNavigate}
         onRemoveAds={onRemoveAds}
         onShare={onShare}
@@ -83,6 +86,7 @@ function DrawerHeader({ isPro, topInset = 0 }: { isPro: boolean; topInset?: numb
 
 type DrawerContentProps = {
   isPro: boolean;
+  enableExchangeRates?: boolean;
   onNavigate: (route: string) => void;
   onRemoveAds: () => void;
   onShare: () => void;
@@ -92,6 +96,7 @@ type DrawerContentProps = {
 
 function DrawerContent({
   isPro,
+  enableExchangeRates,
   onNavigate,
   onRemoveAds,
   onShare,
@@ -117,16 +122,18 @@ function DrawerContent({
       {/* Navigation Rows */}
       <View className="space-y-1">
         {/* Exchange Rates */}
-        <TouchableOpacity
-          onPress={() => onNavigate("/exchange-rates")}
-          activeOpacity={0.7}
-          className="flex-row items-center rounded-2xl px-3 py-3.5 active:bg-surface-2"
-        >
-          <TrendIcon color="#6B7077" />
-          <Text className="ml-4 text-sm font-semibold text-ink-2">
-            {t("drawer.exchange_rates")}
-          </Text>
-        </TouchableOpacity>
+        {enableExchangeRates && (
+          <TouchableOpacity
+            onPress={() => onNavigate("/exchange-rates")}
+            activeOpacity={0.7}
+            className="flex-row items-center rounded-2xl px-3 py-3.5 active:bg-surface-2"
+          >
+            <TrendIcon color="#6B7077" />
+            <Text className="ml-4 text-sm font-semibold text-ink-2">
+              {t("drawer.exchange_rates")}
+            </Text>
+          </TouchableOpacity>
+        )}
 
         {/* My Rate */}
         <TouchableOpacity

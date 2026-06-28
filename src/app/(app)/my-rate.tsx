@@ -11,11 +11,49 @@ import { useExchangeRates } from "@/features/converter/hooks/use-exchange-rates"
 import { useConverterStore } from "@/features/converter/store/use-converter-store";
 import { useQuotaStore } from "@/features/converter/store/use-quota-store";
 import { getExchangeRate } from "@/features/converter/utils/conversion-helpers";
+import { useSettingsStore } from "@/features/settings/store/use-settings-store";
+
+type FormatRateOptions = {
+  rate: number;
+  isToCrypto: boolean;
+  decimalPlaces: number;
+  locale: string;
+};
+
+function formatRateText({ rate, isToCrypto, decimalPlaces, locale }: FormatRateOptions): string {
+  const d = isToCrypto
+    ? 8
+    : rate >= 1000
+      ? 0
+      : rate >= 1
+        ? Math.min(4, decimalPlaces)
+        : Math.min(6, Math.max(4, decimalPlaces));
+  return rate.toLocaleString(locale, {
+    maximumFractionDigits: d,
+  });
+}
+
+type FormatConversionOptions = {
+  convertedValue: number;
+  isToCrypto: boolean;
+  decimalPlaces: number;
+  locale: string;
+};
+
+function formatConvertedValueText({ convertedValue, isToCrypto, decimalPlaces, locale }: FormatConversionOptions): string {
+  const minDecimals = isToCrypto ? 6 : Math.min(decimalPlaces, 2);
+  const maxDecimals = isToCrypto ? 8 : decimalPlaces;
+  return convertedValue.toLocaleString(locale, {
+    minimumFractionDigits: minDecimals,
+    maximumFractionDigits: maxDecimals,
+  });
+}
 
 function useMyRateState() {
   const router = useRouter();
   const { baseCurrency, targetCurrencies, customRates, setCustomRate } = useConverterStore();
   const { isPro, customRateAttempts, incrementRateAttempt } = useQuotaStore();
+  const { decimalPlaces, language } = useSettingsStore();
 
   const [from, setFrom] = React.useState(baseCurrency);
   const [to, setTo] = React.useState(targetCurrencies[0] || "EUR");
@@ -31,9 +69,7 @@ function useMyRateState() {
   const used = Math.min(customRateAttempts, FREE);
   const limitReached = !isPro && used >= FREE;
 
-  const liveRate = React.useMemo(() => {
-    return getExchangeRate({ from, to, rates, customRates: {} });
-  }, [from, to, rates]);
+  const liveRate = React.useMemo(() => getExchangeRate({ from, to, rates, customRates: {} }), [from, to, rates]);
 
   const directPair = `${from}_${to}`;
   const customRate = customRates[directPair];
@@ -42,17 +78,32 @@ function useMyRateState() {
   const parsedAmount = Number.parseFloat(amount.replace(/,/g, ".")) || 0;
   const convertedValue = parsedAmount * effectiveRate;
 
+  const locale = language === "ru" ? "ru-RU" : "en-US";
+  const isToCrypto = currenciesData?.find(c => c.code === to)?.type === "crypto";
+
+  const formattedEffectiveRateText = React.useMemo(
+    () => formatRateText({ rate: effectiveRate, isToCrypto, decimalPlaces, locale }),
+    [effectiveRate, isToCrypto, decimalPlaces, locale],
+  );
+  const formattedLiveRateText = React.useMemo(
+    () => formatRateText({ rate: liveRate, isToCrypto, decimalPlaces, locale }),
+    [liveRate, isToCrypto, decimalPlaces, locale],
+  );
+  const formattedConvertedValueText = React.useMemo(
+    () => formatConvertedValueText({ convertedValue, isToCrypto, decimalPlaces, locale }),
+    [convertedValue, isToCrypto, decimalPlaces, locale],
+  );
+
   const handleSwap = () => {
     setFrom(to);
     setTo(from);
   };
 
   const handleReset = () => {
-    const nextCustomRates = { ...customRates };
-    delete nextCustomRates[directPair];
-    const inversePair = `${to}_${from}`;
-    delete nextCustomRates[inversePair];
-    useConverterStore.setState({ customRates: nextCustomRates });
+    const next = { ...customRates };
+    delete next[directPair];
+    delete next[`${to}_${from}`];
+    useConverterStore.setState({ customRates: next });
   };
 
   const handleOpenEdit = () => {
@@ -60,7 +111,7 @@ function useMyRateState() {
       router.push("/paywall");
       return;
     }
-    setDraft(effectiveRate.toFixed(4));
+    setDraft(effectiveRate.toFixed(isToCrypto ? 8 : 4).replace(/\.?0+$/, ""));
     setIsEditOpen(true);
   };
 
@@ -72,9 +123,7 @@ function useMyRateState() {
     setIsEditOpen(false);
   };
 
-  const selectableCurrencies = React.useMemo(() => {
-    return [baseCurrency, ...targetCurrencies];
-  }, [baseCurrency, targetCurrencies]);
+  const selectableCurrencies = React.useMemo(() => [baseCurrency, ...targetCurrencies], [baseCurrency, targetCurrencies]);
 
   const fromInfo = getCurrencyInfo(from, currenciesData);
   const toInfo = getCurrencyInfo(to, currenciesData);
@@ -95,10 +144,10 @@ function useMyRateState() {
     setIsPickerOpen,
     draft,
     setDraft,
-    liveRate,
-    effectiveRate,
     customRate,
-    convertedValue,
+    formattedEffectiveRateText,
+    formattedLiveRateText,
+    formattedConvertedValueText,
     handleSwap,
     handleReset,
     handleOpenEdit,
@@ -127,10 +176,10 @@ export default function MyRateScreen() {
     setIsPickerOpen,
     draft,
     setDraft,
-    liveRate,
-    effectiveRate,
     customRate,
-    convertedValue,
+    formattedEffectiveRateText,
+    formattedLiveRateText,
+    formattedConvertedValueText,
     handleSwap,
     handleReset,
     handleOpenEdit,
@@ -162,8 +211,8 @@ export default function MyRateScreen() {
           <ExchangeComparisonCard
             from={from}
             to={to}
-            liveRate={liveRate}
-            effectiveRate={effectiveRate}
+            formattedEffectiveRateText={formattedEffectiveRateText}
+            formattedLiveRateText={formattedLiveRateText}
             hasCustomRate={customRate !== undefined}
             onReset={handleReset}
             onChangeRate={handleOpenEdit}
@@ -174,7 +223,7 @@ export default function MyRateScreen() {
             to={to}
             amount={amount}
             onAmountChange={setAmount}
-            convertedValue={convertedValue}
+            formattedConvertedValue={formattedConvertedValueText}
             onSwap={handleSwap}
             onSelectFrom={() => setIsPickerOpen({ side: "from" })}
             onSelectTo={() => setIsPickerOpen({ side: "to" })}
@@ -229,7 +278,7 @@ export function MyRateHeader({ isPro, onBack, onOpenPaywall }: MyRateHeaderProps
         onPress={onBack}
         activeOpacity={0.7}
         className="size-8 items-center justify-center rounded-full bg-transparent active:opacity-75"
-        accessibilityLabel="Go back"
+        accessibilityLabel={t("converter.go_back")}
       >
         <BackIcon
           color={colors.ink}
@@ -334,8 +383,8 @@ export function AttemptsQuotaBanner({ isPro, attempts }: AttemptsQuotaBannerProp
 type ExchangeComparisonCardProps = {
   from: string;
   to: string;
-  liveRate: number;
-  effectiveRate: number;
+  formattedEffectiveRateText: string;
+  formattedLiveRateText: string;
   hasCustomRate: boolean;
   onReset: () => void;
   onChangeRate: () => void;
@@ -344,8 +393,8 @@ type ExchangeComparisonCardProps = {
 export function ExchangeComparisonCard({
   from,
   to,
-  liveRate,
-  effectiveRate,
+  formattedEffectiveRateText,
+  formattedLiveRateText,
   hasCustomRate,
   onReset,
   onChangeRate,
@@ -377,7 +426,7 @@ export function ExchangeComparisonCard({
         {" "}
         =
         {" "}
-        {effectiveRate.toFixed(effectiveRate >= 100 ? 1 : 4)}
+        {formattedEffectiveRateText}
         {" "}
         {to}
       </Text>
@@ -393,7 +442,7 @@ export function ExchangeComparisonCard({
           {" "}
           =
           {" "}
-          {liveRate.toFixed(liveRate >= 100 ? 1 : 4)}
+          {formattedLiveRateText}
           {" "}
           {to}
         </Text>
@@ -417,7 +466,7 @@ type SandboxConversionFormProps = {
   to: string;
   amount: string;
   onAmountChange: (text: string) => void;
-  convertedValue: number;
+  formattedConvertedValue: string;
   onSwap: () => void;
   onSelectFrom: () => void;
   onSelectTo: () => void;
@@ -430,7 +479,7 @@ export function SandboxConversionForm({
   to,
   amount,
   onAmountChange,
-  convertedValue,
+  formattedConvertedValue,
   onSwap,
   onSelectFrom,
   onSelectTo,
@@ -448,6 +497,8 @@ export function SandboxConversionForm({
           onPress={onSelectFrom}
           activeOpacity={0.7}
           className="flex-row items-center gap-2"
+          accessibilityRole="button"
+          accessibilityLabel={t("converter.select_from_currency")}
         >
           <CurrencyFlagBox
             flag={fromFlag}
@@ -463,6 +514,7 @@ export function SandboxConversionForm({
           keyboardType="decimal-pad"
           className="w-full rounded-xl border border-line bg-surface px-3.5 py-3 text-lg font-bold text-ink"
           style={{ paddingVertical: 10 }}
+          accessibilityLabel={t("converter.amount")}
         />
       </View>
 
@@ -471,6 +523,8 @@ export function SandboxConversionForm({
         onPress={onSwap}
         activeOpacity={0.8}
         className="mt-1 size-9 items-center justify-center rounded-full border border-line bg-surface active:bg-chip"
+        accessibilityRole="button"
+        accessibilityLabel={t("converter.swap")}
       >
         <SwapHIcon
           color={colors.ink}
@@ -484,6 +538,8 @@ export function SandboxConversionForm({
           onPress={onSelectTo}
           activeOpacity={0.7}
           className="flex-row items-center gap-2"
+          accessibilityRole="button"
+          accessibilityLabel={t("converter.select_to_currency")}
         >
           <CurrencyFlagBox
             flag={toFlag}
@@ -501,10 +557,7 @@ export function SandboxConversionForm({
             className="mt-1 text-2xl font-black text-ink"
             numberOfLines={1}
           >
-            {convertedValue.toLocaleString(undefined, {
-              minimumFractionDigits: 2,
-              maximumFractionDigits: 4,
-            })}
+            {formattedConvertedValue}
           </Text>
         </View>
       </View>
@@ -576,6 +629,7 @@ export function EditRateOverlayModal({
               autoFocus
               className="flex-1 rounded-xl border border-line bg-bg px-3.5 py-3 text-[18px] font-black text-ink"
               style={{ paddingVertical: 10 }}
+              accessibilityLabel={t("converter.customRate")}
             />
             <Text className="text-[14px] font-bold text-ink-mute">
               {to}
@@ -657,6 +711,8 @@ export function CurrencyPickerModal({
                   className={`mb-1 flex-row items-center gap-3.5 rounded-xl px-3 py-2.5 ${
                     isSelected ? "bg-accent/15" : "active:bg-chip"
                   }`}
+                  accessibilityRole="button"
+                  accessibilityLabel={`${code}, ${info.name}`}
                 >
                   <CurrencyFlagBox
                     flag={info.flag}

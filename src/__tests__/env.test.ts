@@ -8,6 +8,7 @@ describe("env", () => {
       EXPO_PUBLIC_APP_ENV: "development",
       EXPO_PUBLIC_API_URL: "http://localhost:8088",
       EXPO_PUBLIC_APP_SERVICE_KEY: "test-service-key",
+      EXPO_PUBLIC_ENABLE_EXCHANGE_RATES: "false",
     };
   });
 
@@ -33,5 +34,16 @@ describe("env", () => {
   it("has cimmetria bundle IDs", () => {
     const Env = require("../../env").default;
     expect(Env.EXPO_PUBLIC_BUNDLE_ID).toContain("cimmetria");
+  });
+
+  it("exposes EXPO_PUBLIC_ENABLE_EXCHANGE_RATES as boolean", () => {
+    const Env = require("../../env").default;
+    expect(Env.EXPO_PUBLIC_ENABLE_EXCHANGE_RATES).toBe(false);
+  });
+
+  it("parses EXPO_PUBLIC_ENABLE_EXCHANGE_RATES as true when string is true", () => {
+    process.env.EXPO_PUBLIC_ENABLE_EXCHANGE_RATES = "true";
+    const Env = require("../../env").default;
+    expect(Env.EXPO_PUBLIC_ENABLE_EXCHANGE_RATES).toBe(true);
   });
 });

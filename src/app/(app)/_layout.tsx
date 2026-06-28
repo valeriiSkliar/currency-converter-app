@@ -107,6 +107,7 @@ export default function AppLayout() {
             <Animated.View style={[styles.drawerPanel, drawerStyle]}>
               <DrawerMenu
                 isPro={isPro}
+                enableExchangeRates={Env.EXPO_PUBLIC_ENABLE_EXCHANGE_RATES}
                 onNavigate={handleNavigate}
                 onRemoveAds={handleRemoveAds}
                 onShare={handleShare}

@@ -1,105 +1,109 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuites name="jest tests" tests="65" failures="0" errors="0" time="2.084">
-  <testsuite name="src/features/converter/utils/__tests__/price-ocr-parser.test.ts" errors="0" failures="0" skipped="0" timestamp="2026-06-28T19:20:00" time="0.812" tests="8">
+<testsuites name="jest tests" tests="67" failures="0" errors="0" time="2.007">
+  <testsuite name="src/features/converter/utils/__tests__/price-ocr-parser.test.ts" errors="0" failures="0" skipped="0" timestamp="2026-06-28T19:56:05" time="0.726" tests="8">
     <testcase classname="parsePriceFromOcrText" name="extracts price with dollar symbol prefix" time="0.007">
     </testcase>
-    <testcase classname="parsePriceFromOcrText" name="extracts price with euro symbol prefix and comma decimal" time="0">
+    <testcase classname="parsePriceFromOcrText" name="extracts price with euro symbol prefix and comma decimal" time="0.001">
     </testcase>
     <testcase classname="parsePriceFromOcrText" name="extracts price with symbol suffix" time="0.001">
     </testcase>
     <testcase classname="parsePriceFromOcrText" name="extracts plain decimal number when no symbol present" time="0">
     </testcase>
-    <testcase classname="parsePriceFromOcrText" name="prefers symbol-prefixed price over a plain number" time="0.001">
+    <testcase classname="parsePriceFromOcrText" name="prefers symbol-prefixed price over a plain number" time="0">
     </testcase>
-    <testcase classname="parsePriceFromOcrText" name="returns null when text contains no price-like pattern" time="0">
+    <testcase classname="parsePriceFromOcrText" name="returns null when text contains no price-like pattern" time="0.001">
     </testcase>
-    <testcase classname="parsePriceFromOcrText" name="returns null for empty string" time="0.001">
+    <testcase classname="parsePriceFromOcrText" name="returns null for empty string" time="0">
     </testcase>
-    <testcase classname="parsePriceFromOcrText" name="handles price surrounded by other text" time="0">
+    <testcase classname="parsePriceFromOcrText" name="handles price surrounded by other text" time="0.001">
     </testcase>
   </testsuite>
-  <testsuite name="src/__tests__/i18n.test.ts" errors="0" failures="0" skipped="0" timestamp="2026-06-28T19:20:00" time="0.82" tests="4">
-    <testcase classname="i18n resources" name="has en, ru and ar locales" time="0.008">
+  <testsuite name="src/__tests__/i18n.test.ts" errors="0" failures="0" skipped="0" timestamp="2026-06-28T19:56:05" time="0.741" tests="4">
+    <testcase classname="i18n resources" name="has en, ru and ar locales" time="0.007">
     </testcase>
     <testcase classname="i18n resources" name="en has required converter keys" time="0.001">
     </testcase>
     <testcase classname="i18n resources" name="ru has required converter keys" time="0">
     </testcase>
-    <testcase classname="i18n resources" name="ru and ar have same top-level keys as en" time="0.001">
+    <testcase classname="i18n resources" name="ru and ar have same top-level keys as en" time="0">
     </testcase>
   </testsuite>
-  <testsuite name="src/__tests__/settings-store.test.ts" errors="0" failures="0" skipped="0" timestamp="2026-06-28T19:20:00" time="0.854" tests="7">
-    <testcase classname="useSettingsStore" name="has default state values" time="0.009">
+  <testsuite name="src/__tests__/quota-store.test.ts" errors="0" failures="0" skipped="0" timestamp="2026-06-28T19:56:05" time="0.757" tests="5">
+    <testcase classname="useQuotaStore" name="has default state values" time="0.008">
     </testcase>
-    <testcase classname="useSettingsStore" name="updates theme" time="0.001">
+    <testcase classname="useQuotaStore" name="increments custom rate change attempts count" time="0">
+    </testcase>
+    <testcase classname="useQuotaStore" name="increments OCR scans attempts count" time="0">
+    </testcase>
+    <testcase classname="useQuotaStore" name="unlocks PRO plan" time="0.001">
+    </testcase>
+    <testcase classname="useQuotaStore" name="resets attempts counter" time="0.001">
+    </testcase>
+  </testsuite>
+  <testsuite name="src/__tests__/settings-store.test.ts" errors="0" failures="0" skipped="0" timestamp="2026-06-28T19:56:05" time="0.758" tests="7">
+    <testcase classname="useSettingsStore" name="has default state values" time="0.007">
+    </testcase>
+    <testcase classname="useSettingsStore" name="updates theme" time="0">
     </testcase>
     <testcase classname="useSettingsStore" name="updates language" time="0.001">
     </testcase>
-    <testcase classname="useSettingsStore" name="updates decimal places" time="0">
+    <testcase classname="useSettingsStore" name="updates decimal places" time="0.001">
     </testcase>
-    <testcase classname="useSettingsStore" name="updates wallpaper" time="0.001">
+    <testcase classname="useSettingsStore" name="updates wallpaper" time="0">
     </testcase>
-    <testcase classname="useSettingsStore" name="updates privacy accepted status" time="0">
+    <testcase classname="useSettingsStore" name="updates privacy accepted status" time="0.001">
     </testcase>
     <testcase classname="useSettingsStore" name="updates max target currencies" time="0.001">
     </testcase>
   </testsuite>
-  <testsuite name="src/__tests__/quota-store.test.ts" errors="0" failures="0" skipped="0" timestamp="2026-06-28T19:20:00" time="0.839" tests="5">
-    <testcase classname="useQuotaStore" name="has default state values" time="0.01">
-    </testcase>
-    <testcase classname="useQuotaStore" name="increments custom rate change attempts count" time="0.001">
-    </testcase>
-    <testcase classname="useQuotaStore" name="increments OCR scans attempts count" time="0.001">
-    </testcase>
-    <testcase classname="useQuotaStore" name="unlocks PRO plan" time="0.001">
-    </testcase>
-    <testcase classname="useQuotaStore" name="resets attempts counter" time="0.002">
-    </testcase>
-  </testsuite>
-  <testsuite name="src/__tests__/converter-store.test.ts" errors="0" failures="0" skipped="0" timestamp="2026-06-28T19:20:00" time="0.851" tests="7">
+  <testsuite name="src/__tests__/converter-store.test.ts" errors="0" failures="0" skipped="0" timestamp="2026-06-28T19:56:05" time="0.763" tests="7">
     <testcase classname="useConverterStore" name="has default state" time="0.008">
     </testcase>
-    <testcase classname="useConverterStore" name="updates base currency and target currencies list" time="0.001">
+    <testcase classname="useConverterStore" name="updates base currency and target currencies list" time="0">
     </testcase>
-    <testcase classname="useConverterStore" name="updates amount" time="0.001">
+    <testcase classname="useConverterStore" name="updates amount" time="0">
     </testcase>
-    <testcase classname="useConverterStore" name="adds new currency only if not already present" time="0.002">
+    <testcase classname="useConverterStore" name="adds new currency only if not already present" time="0.001">
     </testcase>
-    <testcase classname="useConverterStore" name="removes currency" time="0.001">
+    <testcase classname="useConverterStore" name="removes currency" time="0">
     </testcase>
-    <testcase classname="useConverterStore" name="swaps base currency with target row, placing old base at the row&apos;s index" time="0">
+    <testcase classname="useConverterStore" name="swaps base currency with target row, placing old base at the row&apos;s index" time="0.001">
     </testcase>
-    <testcase classname="useConverterStore" name="sets custom rate override" time="0.001">
-    </testcase>
-  </testsuite>
-  <testsuite name="src/__tests__/env.test.ts" errors="0" failures="0" skipped="0" timestamp="2026-06-28T19:20:00" time="1.039" tests="4">
-    <testcase classname="env" name="exposes EXPO_PUBLIC_API_URL" time="0.171">
-    </testcase>
-    <testcase classname="env" name="exposes EXPO_PUBLIC_APP_SERVICE_KEY" time="0.022">
-    </testcase>
-    <testcase classname="env" name="has CurrencyConverter as app name" time="0.025">
-    </testcase>
-    <testcase classname="env" name="has cimmetria bundle IDs" time="0.024">
+    <testcase classname="useConverterStore" name="sets custom rate override" time="0">
     </testcase>
   </testsuite>
-  <testsuite name="src/__tests__/api-client.test.ts" errors="0" failures="0" skipped="0" timestamp="2026-06-28T19:20:00" time="1.067" tests="3">
-    <testcase classname="aPI client" name="has correct baseURL from env" time="0.213">
+  <testsuite name="src/__tests__/api-client.test.ts" errors="0" failures="0" skipped="0" timestamp="2026-06-28T19:56:05" time="0.987" tests="3">
+    <testcase classname="aPI client" name="has correct baseURL from env" time="0.231">
     </testcase>
-    <testcase classname="aPI client" name="has X-App-Service-Key auth header" time="0.025">
+    <testcase classname="aPI client" name="has X-App-Service-Key auth header" time="0.021">
     </testcase>
-    <testcase classname="aPI client" name="has 10s timeout" time="0.029">
+    <testcase classname="aPI client" name="has 10s timeout" time="0.025">
     </testcase>
   </testsuite>
-  <testsuite name="src/__tests__/calculator-engine.test.ts" errors="0" failures="0" skipped="0" timestamp="2026-06-28T19:20:00" time="1.051" tests="14">
-    <testcase classname="useCalculatorEngine - Init &amp; Digits" name="initializes with default value &apos;0&apos;" time="0.017">
+  <testsuite name="src/__tests__/env.test.ts" errors="0" failures="0" skipped="0" timestamp="2026-06-28T19:56:05" time="1.018" tests="6">
+    <testcase classname="env" name="exposes EXPO_PUBLIC_API_URL" time="0.196">
+    </testcase>
+    <testcase classname="env" name="exposes EXPO_PUBLIC_APP_SERVICE_KEY" time="0.02">
+    </testcase>
+    <testcase classname="env" name="has CurrencyConverter as app name" time="0.021">
+    </testcase>
+    <testcase classname="env" name="has cimmetria bundle IDs" time="0.021">
+    </testcase>
+    <testcase classname="env" name="exposes EXPO_PUBLIC_ENABLE_EXCHANGE_RATES as boolean" time="0.021">
+    </testcase>
+    <testcase classname="env" name="parses EXPO_PUBLIC_ENABLE_EXCHANGE_RATES as true when string is true" time="0.029">
+    </testcase>
+  </testsuite>
+  <testsuite name="src/__tests__/calculator-engine.test.ts" errors="0" failures="0" skipped="0" timestamp="2026-06-28T19:56:05" time="1.031" tests="14">
+    <testcase classname="useCalculatorEngine - Init &amp; Digits" name="initializes with default value &apos;0&apos;" time="0.019">
     </testcase>
     <testcase classname="useCalculatorEngine - Init &amp; Digits" name="initializes with a custom initial value" time="0.002">
     </testcase>
-    <testcase classname="useCalculatorEngine - Init &amp; Digits" name="appends digits correctly" time="0.003">
+    <testcase classname="useCalculatorEngine - Init &amp; Digits" name="appends digits correctly" time="0.004">
     </testcase>
     <testcase classname="useCalculatorEngine - Init &amp; Digits" name="ignores leading duplicate zeros" time="0.002">
     </testcase>
-    <testcase classname="useCalculatorEngine - Init &amp; Digits" name="supports decimal separator and prevents duplicates" time="0.006">
+    <testcase classname="useCalculatorEngine - Init &amp; Digits" name="supports decimal separator and prevents duplicates" time="0.005">
     </testcase>
     <testcase classname="useCalculatorEngine - Init &amp; Digits" name="clears state on &apos;C&apos;" time="0.002">
     </testcase>
@@ -120,32 +124,32 @@
     <testcase classname="useCalculatorEngine - Calculations &amp; Precision" name="handles division by zero and displays Error" time="0.002">
     </testcase>
   </testsuite>
-  <testsuite name="src/features/converter/hooks/__tests__/use-price-scanner-engine.test.ts" errors="0" failures="0" skipped="0" timestamp="2026-06-28T19:20:00" time="1.063" tests="13">
-    <testcase classname="usePriceScannerEngine — phase transitions" name="starts in idle phase with null detectedPrice" time="0.018">
+  <testsuite name="src/features/converter/hooks/__tests__/use-price-scanner-engine.test.ts" errors="0" failures="0" skipped="0" timestamp="2026-06-28T19:56:05" time="1.038" tests="13">
+    <testcase classname="usePriceScannerEngine — phase transitions" name="starts in idle phase with null detectedPrice" time="0.021">
     </testcase>
     <testcase classname="usePriceScannerEngine — phase transitions" name="transitions to scanning on startScan" time="0.004">
     </testcase>
     <testcase classname="usePriceScannerEngine — phase transitions" name="transitions back to idle on stopScan" time="0.002">
     </testcase>
-    <testcase classname="usePriceScannerEngine — phase transitions" name="dismiss resets phase to idle and clears detectedPrice" time="0.005">
+    <testcase classname="usePriceScannerEngine — phase transitions" name="dismiss resets phase to idle and clears detectedPrice" time="0.002">
     </testcase>
-    <testcase classname="usePriceScannerEngine — controls" name="clamps zoom to 0–1" time="0.002">
+    <testcase classname="usePriceScannerEngine — controls" name="clamps zoom to 0–1" time="0.005">
     </testcase>
     <testcase classname="usePriceScannerEngine — controls" name="toggles flashlight" time="0.002">
     </testcase>
-    <testcase classname="usePriceScannerEngine — controls" name="swaps from and to" time="0.002">
+    <testcase classname="usePriceScannerEngine — controls" name="swaps from and to" time="0.001">
     </testcase>
-    <testcase classname="usePriceScannerEngine — controls" name="sets from and to independently" time="0.001">
+    <testcase classname="usePriceScannerEngine — controls" name="sets from and to independently" time="0.002">
     </testcase>
-    <testcase classname="usePriceScannerEngine — OCR pipeline" name="detects price and transitions to found after one interval tick" time="0.011">
+    <testcase classname="usePriceScannerEngine — OCR pipeline" name="detects price and transitions to found after one interval tick" time="0.01">
     </testcase>
     <testcase classname="usePriceScannerEngine — OCR pipeline" name="keeps scanning when captureFrame returns null" time="0.003">
     </testcase>
-    <testcase classname="usePriceScannerEngine — OCR pipeline" name="keeps scanning when OCR text contains no price" time="0.003">
+    <testcase classname="usePriceScannerEngine — OCR pipeline" name="keeps scanning when OCR text contains no price" time="0.002">
     </testcase>
     <testcase classname="usePriceScannerEngine — OCR pipeline" name="does not crash and keeps scanning when OCR throws" time="0.002">
     </testcase>
-    <testcase classname="usePriceScannerEngine — OCR pipeline" name="stops calling captureFrame after stopScan" time="0.002">
+    <testcase classname="usePriceScannerEngine — OCR pipeline" name="stops calling captureFrame after stopScan" time="0.001">
     </testcase>
   </testsuite>
 </testsuites>
