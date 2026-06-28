@@ -141,7 +141,9 @@ export default function SendFeedbackScreen() {
   const { mutate: submitFeedback, isPending } = useSubmitFeedback();
 
   const handleSubmit = () => {
-    if (!selectedOption) return;
+    if (!selectedOption) {
+      return;
+    }
     submitFeedback(
       { option_id: selectedOption },
       {

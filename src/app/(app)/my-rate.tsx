@@ -778,4 +778,3 @@ function getCurrencyInfo(code: string, currenciesData: any[] | undefined) {
   // API data not yet available — use code as neutral placeholder
   return { name: code, symbol: code, flag: code };
 }
-

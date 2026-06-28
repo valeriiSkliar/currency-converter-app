@@ -7,6 +7,37 @@ import { convertCurrency, getExchangeRate } from "../utils/conversion-helpers";
 import { useExchangeRates } from "./use-exchange-rates";
 import { useNumpadHandlers } from "./use-numpad-handlers";
 
+function formatInputAmount(rawVal: string, locale: string): string {
+  if (!rawVal) {
+    return "";
+  }
+  const parts = rawVal.split(".");
+  const integerPart = parts[0];
+  const decimalPart = parts[1];
+
+  const num = Number.parseInt(integerPart, 10);
+  if (Number.isNaN(num)) {
+    return rawVal;
+  }
+
+  const formattedInteger = num.toLocaleString(locale, { maximumFractionDigits: 0 });
+
+  if (integerPart === "-" || integerPart === "") {
+    return rawVal;
+  }
+
+  const decimalSeparator = locale === "ru-RU" ? "," : ".";
+  if (decimalPart !== undefined) {
+    return `${formattedInteger}${decimalSeparator}${decimalPart}`;
+  }
+
+  if (rawVal.endsWith(".")) {
+    return `${formattedInteger}${decimalSeparator}`;
+  }
+
+  return formattedInteger;
+}
+
 export function useHomeScreenState() {
   // Stores
   const { decimalPlaces, language } = useSettingsStore();
@@ -28,6 +59,11 @@ export function useHomeScreenState() {
   // Numpad key triggers delegation
   const numpadHandlers = useNumpadHandlers(amount, updateAmount);
 
+  const formattedAmount = React.useMemo(() => {
+    const locale = language === "ru" ? "ru-RU" : "en-US";
+    return formatInputAmount(amount, locale);
+  }, [amount, language]);
+
   // Currency info resolver
   const getCurrencyInfo = React.useCallback((code: string) => {
     const found = currenciesData?.find(c => c.code === code);
@@ -41,7 +77,6 @@ export function useHomeScreenState() {
     return { symbol: code, name: code };
   }, [currenciesData]);
 
-
   // Conversions
   const getConvertedText = React.useCallback((code: string) => {
     const converted = convertCurrency({
@@ -51,12 +86,15 @@ export function useHomeScreenState() {
       rates,
       customRates,
     });
+    const isCrypto = currenciesData?.find(c => c.code === code)?.type === "crypto";
+    const minDecimals = isCrypto ? 6 : Math.min(decimalPlaces, 2);
+    const maxDecimals = isCrypto ? 8 : decimalPlaces;
     const locale = language === "ru" ? "ru-RU" : "en-US";
     return converted.toLocaleString(locale, {
-      minimumFractionDigits: Math.min(decimalPlaces, 2),
-      maximumFractionDigits: decimalPlaces,
+      minimumFractionDigits: minDecimals,
+      maximumFractionDigits: maxDecimals,
     });
-  }, [amount, baseCurrency, rates, customRates, decimalPlaces, language]);
+  }, [amount, baseCurrency, rates, customRates, decimalPlaces, language, currenciesData]);
 
   const getRateText = React.useCallback((code: string) => {
     const rate = getExchangeRate({
@@ -66,20 +104,24 @@ export function useHomeScreenState() {
       customRates,
     });
     const locale = language === "ru" ? "ru-RU" : "en-US";
-    const d = rate >= 1000
-      ? 0
-      : rate >= 1
-        ? Math.min(4, decimalPlaces)
-        : Math.min(6, Math.max(4, decimalPlaces));
+    const isCrypto = currenciesData?.find(c => c.code === code)?.type === "crypto";
+    const d = isCrypto
+      ? 8
+      : rate >= 1000
+        ? 0
+        : rate >= 1
+          ? Math.min(4, decimalPlaces)
+          : Math.min(6, Math.max(4, decimalPlaces));
     return rate.toLocaleString(locale, {
       maximumFractionDigits: d,
     });
-  }, [baseCurrency, rates, customRates, decimalPlaces, language]);
+  }, [baseCurrency, rates, customRates, decimalPlaces, language, currenciesData]);
 
   return {
     baseCurrency,
     targetCurrencies,
     amount,
+    formattedAmount,
     isPro,
     updatedAt,
     isRefreshing,

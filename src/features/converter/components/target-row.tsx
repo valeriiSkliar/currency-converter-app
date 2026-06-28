@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useTranslation } from "react-i18next";
 import { Pressable, Text, View } from "react-native";
 import { FlagIcon } from "@/components/flag-icon";
 import { CloseIcon } from "@/components/ui/icons";
@@ -26,6 +27,7 @@ export function TargetRow({
   divider = false,
 }: TargetRowProps) {
   const colors = useThemeColors();
+  const { t } = useTranslation();
   return (
     <View
       className={`flex-row items-center gap-3 px-3.5 py-3 ${
@@ -71,7 +73,7 @@ export function TargetRow({
       <Pressable
         onPress={onRemove}
         className="size-[26px] items-center justify-center rounded-full border border-line bg-chip active:bg-black/10 dark:active:bg-white/10"
-        accessibilityLabel={`Remove ${code}`}
+        accessibilityLabel={t("converter.remove_currency_label", { code })}
       >
         <CloseIcon color={colors.inkMute} size={12} />
       </Pressable>

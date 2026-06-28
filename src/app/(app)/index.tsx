@@ -30,7 +30,7 @@ export default function HomeScreen() {
   const {
     baseCurrency,
     targetCurrencies,
-    amount,
+    formattedAmount,
     isPro,
     updatedAt,
     isRefreshing,
@@ -70,7 +70,7 @@ export default function HomeScreen() {
         <BaseCard
           baseCurrency={baseCurrency}
           symbol={baseSymbol}
-          amount={amount}
+          amount={formattedAmount}
           onScan={() => router.push("/price-scanner")}
           onEditBase={() => router.push("/my-rate")}
         />
@@ -202,13 +202,14 @@ function HomeHeader({
   proLabel,
 }: HomeHeaderProps) {
   const colors = useColors();
+  const { t } = useTranslation();
 
   return (
     <View style={homeStyles.header}>
       <Pressable
         onPress={onOpenMenu}
         className="rounded-xl border border-line bg-surface p-3 active:opacity-80"
-        accessibilityLabel="Open Menu"
+        accessibilityLabel={t("converter.open_menu")}
       >
         <MenuIcon color={colors.ink} />
       </Pressable>
@@ -240,7 +241,7 @@ function HomeHeader({
       <Pressable
         onPress={onOpenSettings}
         className="rounded-xl border border-line bg-surface p-3 active:opacity-80"
-        accessibilityLabel="Open Settings"
+        accessibilityLabel={t("converter.open_settings")}
       >
         <SettingsIcon color={colors.ink} width={20} height={20} />
       </Pressable>

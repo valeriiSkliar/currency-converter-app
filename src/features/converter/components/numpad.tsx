@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useTranslation } from "react-i18next";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { BackspaceIcon, CheckIcon } from "@/components/ui/icons";
 import { useThemeColors } from "@/components/ui/use-theme-colors";
@@ -21,6 +22,7 @@ export function Numpad({
   onTapDone,
 }: NumpadProps) {
   const colors = useThemeColors();
+  const { t } = useTranslation();
   return (
     <View style={styles.container}>
       {/* Left Column Component */}
@@ -69,7 +71,7 @@ export function Numpad({
           <Pressable
             onPress={onTapBackspace}
             className="flex-1 items-center justify-center rounded-[18px] bg-chip active:bg-black/10 dark:active:bg-white/10"
-            accessibilityLabel="Backspace"
+            accessibilityLabel={t("converter.backspace")}
           >
             <BackspaceIcon color={colors.ink} size={22} />
           </Pressable>
@@ -87,6 +89,7 @@ type LeftColumnProps = {
 
 function LeftColumn({ onTapClear, onTapOperator, onTapDone }: LeftColumnProps) {
   const colors = useThemeColors();
+  const { t } = useTranslation();
 
   return (
     <View style={{ flex: 1.4 }} className="gap-2">
@@ -94,7 +97,7 @@ function LeftColumn({ onTapClear, onTapOperator, onTapDone }: LeftColumnProps) {
       <Pressable
         onPress={onTapClear}
         className="flex-1 items-center justify-center rounded-[18px] bg-chip active:bg-black/10 dark:active:bg-white/10"
-        accessibilityLabel="Clear"
+        accessibilityLabel={t("converter.clear")}
       >
         <Text className="text-[22px] font-bold text-ink-mute">C</Text>
       </Pressable>
@@ -136,7 +139,7 @@ function LeftColumn({ onTapClear, onTapOperator, onTapDone }: LeftColumnProps) {
       <Pressable
         onPress={onTapDone}
         className="flex-1 items-center justify-center rounded-[18px] bg-ink active:opacity-85"
-        accessibilityLabel="Done"
+        accessibilityLabel={t("converter.done")}
       >
         <CheckIcon color={colors.bg} size={22} />
       </Pressable>

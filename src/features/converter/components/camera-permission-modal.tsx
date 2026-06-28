@@ -44,7 +44,7 @@ export function CameraPermissionModal({
           </Text>
 
           {/* Action Buttons */}
-          <View className="w-full space-y-2">
+          <View className="w-full gap-2">
             {/* Allow Button */}
             <TouchableOpacity
               onPress={onAllow}

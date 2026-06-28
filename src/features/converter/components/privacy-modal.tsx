@@ -60,7 +60,7 @@ export function PrivacyModal({ visible, onAccept }: PrivacyModalProps) {
           </TouchableOpacity>
 
           {/* Action Buttons */}
-          <View className="w-full space-y-2">
+          <View className="w-full gap-2">
             {/* Accept Button */}
             <TouchableOpacity
               onPress={onAccept}
@@ -115,7 +115,7 @@ function ShieldIcon() {
 
 function BulletPoints({ t }: { t: any }) {
   return (
-    <View className="mb-6 w-full space-y-2">
+    <View className="mb-6 w-full gap-2">
       <View className="flex-row items-center">
         <Text className="mr-2 text-sm font-bold text-green">✓</Text>
         <Text className="flex-1 text-xs font-medium text-ink-2">
