@@ -17,7 +17,7 @@ ENV=${1:-preview}
 BUILD_TYPE=${2:-apk}
 
 echo -e "${BLUE}========================================${NC}"
-echo -e "${BLUE}  Локальная сборка Android (Currency Converter)${NC}"
+echo -e "${BLUE}  Локальная сборка Android (Convertoff Currency Converter)${NC}"
 echo -e "${BLUE}========================================${NC}"
 echo -e "Окружение: ${GREEN}${ENV}${NC}"
 echo -e "Тип сборки: ${GREEN}${BUILD_TYPE}${NC}"

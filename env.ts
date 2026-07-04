@@ -49,7 +49,7 @@ const SCHEMES = {
   production: "currencyConverter",
 } as const;
 
-const NAME = "CurrencyConverter";
+const NAME = "Convertoff Currency Converter";
 
 // Check if strict validation is required (before prebuild)
 const STRICT_ENV_VALIDATION = process.env.STRICT_ENV_VALIDATION === "1";

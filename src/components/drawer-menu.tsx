@@ -3,8 +3,12 @@ import { useTranslation } from "react-i18next";
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Svg, { Circle, Defs, LinearGradient, Path, Rect, Stop } from "react-native-svg";
+import { Image } from "@/components/ui/image";
 import { Share as ShareIcon } from "./ui/icons/share";
 import { Support as SupportIcon } from "./ui/icons/support";
+
+// eslint-disable-next-line perfectionist/sort-imports
+const convertoffIcon = require("../../assets/icon Convertoff.png");
 
 type DrawerMenuProps = {
   isPro: boolean;
@@ -63,16 +67,12 @@ function DrawerHeader({ isPro, topInset = 0 }: { isPro: boolean; topInset?: numb
         <Rect width="100%" height="100%" fill="url(#drawerHeaderGrad)" />
       </Svg>
       {/* App Logo */}
-      <View className="mb-2 self-start rounded-xl bg-white/20 p-2">
-        <Svg width={24} height={24} viewBox="0 0 24 24" fill="none">
-          <Path
-            d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"
-            stroke="#FFF"
-            strokeWidth={2.5}
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-        </Svg>
+      <View className="mb-3 size-14 items-center justify-center overflow-hidden rounded-2xl bg-black">
+        <Image
+          source={convertoffIcon}
+          contentFit="cover"
+          style={StyleSheet.absoluteFill}
+        />
       </View>
       <Text className="mb-1 text-xl font-bold text-white">
         {t("converter.title")}

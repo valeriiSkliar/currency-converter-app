@@ -51,7 +51,7 @@ export default function AppLayout() {
     closeDrawer();
     try {
       await Share.share({
-        message: `Check out this amazing Currency Converter app! Download now at ${Env.EXPO_PUBLIC_SHARE_URL}`,
+        message: `Check out Convertoff Currency Converter! Download now at ${Env.EXPO_PUBLIC_SHARE_URL}`,
       });
     }
     catch {

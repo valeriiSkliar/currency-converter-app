@@ -26,9 +26,9 @@ describe("env", () => {
     expect(Env.EXPO_PUBLIC_APP_SERVICE_KEY).toBe("test-service-key");
   });
 
-  it("has CurrencyConverter as app name", () => {
+  it("has Convertoff Currency Converter as app name", () => {
     const Env = require("../../env").default;
-    expect(Env.EXPO_PUBLIC_NAME).toBe("CurrencyConverter");
+    expect(Env.EXPO_PUBLIC_NAME).toBe("Convertoff Currency Converter");
   });
 
   it("has cimmetria bundle IDs", () => {
