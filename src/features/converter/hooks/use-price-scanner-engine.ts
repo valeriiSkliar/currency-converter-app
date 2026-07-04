@@ -2,11 +2,15 @@ import * as React from "react";
 import MlkitOcr from "react-native-mlkit-ocr";
 import { parsePriceFromOcrText } from "@/features/converter/utils/price-ocr-parser";
 
-export type ScanPhase = "idle" | "scanning" | "found";
+const ERROR_RESET_DELAY_MS = 2000;
+
+export type ScanPhase = "idle" | "capturing" | "found" | "error";
+export type ScanErrorReason = "not_found" | "capture_failed";
 
 type ScannerState = {
   phase: ScanPhase;
   detectedPrice: number | null;
+  errorReason: ScanErrorReason | null;
   zoom: number;
   flashlight: boolean;
   from: string;
@@ -14,9 +18,11 @@ type ScannerState = {
 };
 
 type ScannerAction
-  = | { type: "START_SCAN" }
-    | { type: "STOP_SCAN" }
-    | { type: "PRICE_FOUND"; price: number }
+  = | { type: "CAPTURE_START" }
+    | { type: "CAPTURE_SUCCESS"; price: number }
+    | { type: "CAPTURE_NOT_FOUND" }
+    | { type: "CAPTURE_ERROR" }
+    | { type: "RESET_TO_IDLE" }
     | { type: "DISMISS" }
     | { type: "SET_ZOOM"; zoom: number }
     | { type: "TOGGLE_FLASHLIGHT" }
@@ -24,18 +30,34 @@ type ScannerAction
     | { type: "SET_TO"; code: string }
     | { type: "SWAP_CURRENCIES" };
 
+type OcrBlock = {
+  text: string;
+};
+
 function scannerReducer(state: ScannerState, action: ScannerAction): ScannerState {
   switch (action.type) {
-    case "START_SCAN":
-      return state.phase === "idle" ? { ...state, phase: "scanning" } : state;
-    case "STOP_SCAN":
-      return state.phase === "scanning" ? { ...state, phase: "idle" } : state;
-    case "PRICE_FOUND":
-      return state.phase === "scanning"
-        ? { ...state, phase: "found", detectedPrice: action.price }
+    case "CAPTURE_START":
+      return state.phase === "idle" || state.phase === "error"
+        ? { ...state, phase: "capturing", detectedPrice: null, errorReason: null }
+        : state;
+    case "CAPTURE_SUCCESS":
+      return state.phase === "capturing"
+        ? { ...state, phase: "found", detectedPrice: action.price, errorReason: null }
+        : state;
+    case "CAPTURE_NOT_FOUND":
+      return state.phase === "capturing"
+        ? { ...state, phase: "error", detectedPrice: null, errorReason: "not_found" }
+        : state;
+    case "CAPTURE_ERROR":
+      return state.phase === "capturing"
+        ? { ...state, phase: "error", detectedPrice: null, errorReason: "capture_failed" }
+        : state;
+    case "RESET_TO_IDLE":
+      return state.phase === "error"
+        ? { ...state, phase: "idle", detectedPrice: null, errorReason: null }
         : state;
     case "DISMISS":
-      return { ...state, phase: "idle", detectedPrice: null };
+      return { ...state, phase: "idle", detectedPrice: null, errorReason: null };
     case "SET_ZOOM":
       return { ...state, zoom: Math.max(0, Math.min(1, action.zoom)) };
     case "TOGGLE_FLASHLIGHT":
@@ -51,64 +73,92 @@ function scannerReducer(state: ScannerState, action: ScannerAction): ScannerStat
   }
 }
 
+async function detectPriceFromUri(uri: string) {
+  const blocks = await MlkitOcr.detectFromUri(uri);
+  const text = (blocks as OcrBlock[]).map(block => block.text).join(" ");
+
+  return parsePriceFromOcrText(text);
+}
+
 export type PriceScannerEngineOptions = {
   initialFrom: string;
   initialTo: string;
   captureFrame: () => Promise<string | null>;
-  scanIntervalMs?: number;
 };
+
+function createInitialState(initialFrom: string, initialTo: string): ScannerState {
+  return {
+    phase: "idle",
+    detectedPrice: null,
+    errorReason: null,
+    zoom: 0,
+    flashlight: false,
+    from: initialFrom,
+    to: initialTo,
+  };
+}
+
+function canStartCapture(phase: ScanPhase) {
+  return phase === "idle" || phase === "error";
+}
 
 export function usePriceScannerEngine({
   initialFrom,
   initialTo,
   captureFrame,
-  scanIntervalMs = 2500,
 }: PriceScannerEngineOptions) {
-  const [state, dispatch] = React.useReducer(scannerReducer, {
-    phase: "idle",
-    detectedPrice: null,
-    zoom: 0,
-    flashlight: false,
-    from: initialFrom,
-    to: initialTo,
-  });
-
+  const [state, dispatch] = React.useReducer(
+    scannerReducer,
+    createInitialState(initialFrom, initialTo),
+  );
   const captureFrameRef = React.useRef(captureFrame);
+  const phaseRef = React.useRef<ScanPhase>(state.phase);
+
   captureFrameRef.current = captureFrame;
+  phaseRef.current = state.phase;
 
   React.useEffect(() => {
-    if (state.phase !== "scanning")
+    if (state.phase !== "error")
       return;
 
-    const intervalId = setInterval(async () => {
-      try {
-        const uri = await captureFrameRef.current();
-        if (!uri)
-          return;
-        const blocks = await MlkitOcr.detectFromUri(uri);
-        const text = (blocks as Array<{ text: string }>).map(b => b.text).join(" ");
-        const price = parsePriceFromOcrText(text);
-        if (price !== null) {
-          dispatch({ type: "PRICE_FOUND", price });
-        }
-      }
-      catch {
-        // OCR error — retry on next tick
-      }
-    }, scanIntervalMs);
+    const timeoutId = setTimeout(() => {
+      dispatch({ type: "RESET_TO_IDLE" });
+    }, ERROR_RESET_DELAY_MS);
 
-    return () => clearInterval(intervalId);
-  }, [state.phase, scanIntervalMs]);
+    return () => clearTimeout(timeoutId);
+  }, [state.phase]);
+
+  const capture = React.useCallback(async () => {
+    if (!canStartCapture(phaseRef.current))
+      return;
+
+    phaseRef.current = "capturing";
+    dispatch({ type: "CAPTURE_START" });
+
+    try {
+      const uri = await captureFrameRef.current();
+      if (!uri) {
+        dispatch({ type: "CAPTURE_NOT_FOUND" });
+        return;
+      }
+
+      const price = await detectPriceFromUri(uri);
+      dispatch(price === null ? { type: "CAPTURE_NOT_FOUND" } : { type: "CAPTURE_SUCCESS", price });
+    }
+    catch {
+      dispatch({ type: "CAPTURE_ERROR" });
+    }
+  }, []);
 
   return {
     phase: state.phase,
     detectedPrice: state.detectedPrice,
+    errorReason: state.errorReason,
     zoom: state.zoom,
     flashlight: state.flashlight,
     from: state.from,
     to: state.to,
-    startScan: React.useCallback(() => dispatch({ type: "START_SCAN" }), []),
-    stopScan: React.useCallback(() => dispatch({ type: "STOP_SCAN" }), []),
+    capture,
     dismiss: React.useCallback(() => dispatch({ type: "DISMISS" }), []),
     setZoom: React.useCallback((zoom: number) => dispatch({ type: "SET_ZOOM", zoom }), []),
     toggleFlashlight: React.useCallback(() => dispatch({ type: "TOGGLE_FLASHLIGHT" }), []),

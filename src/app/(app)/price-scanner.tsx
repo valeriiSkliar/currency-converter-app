@@ -1,3 +1,4 @@
+import type { ScanPhase } from "@/features/converter/hooks/use-price-scanner-engine";
 import { CameraView, useCameraPermissions } from "expo-camera";
 import { useRouter } from "expo-router";
 import * as React from "react";
@@ -143,12 +144,19 @@ export function ViewfinderControls({
   onZoomChange,
   flashlight,
   onFlashlightToggle,
+  phase,
+  onCapture,
 }: {
   zoom: number;
   onZoomChange: (val: number) => void;
   flashlight: boolean;
   onFlashlightToggle: () => void;
+  phase: ScanPhase;
+  onCapture: () => void;
 }) {
+  const { t } = useTranslation();
+  const isCapturing = phase === "capturing";
+
   return (
     <View className="absolute inset-x-4 bottom-20 z-10 flex-row items-center justify-between px-4 py-2">
       <View className="flex-row items-center gap-2 rounded-full bg-black/45 px-3 py-1.5">
@@ -169,6 +177,21 @@ export function ViewfinderControls({
           <Text className="text-sm font-bold text-white">+</Text>
         </TouchableOpacity>
       </View>
+
+      <TouchableOpacity
+        onPress={onCapture}
+        disabled={isCapturing || phase === "found"}
+        activeOpacity={0.8}
+        accessibilityLabel={t("converter.scan")}
+        accessibilityRole="button"
+        className={`size-16 items-center justify-center rounded-full border-4 border-white/40 ${
+          isCapturing ? "bg-white/70" : "bg-white"
+        }`}
+      >
+        {isCapturing
+          ? <ActivityIndicator color="#0E0E10" />
+          : <CameraIcon color="#0E0E10" size={26} />}
+      </TouchableOpacity>
 
       <TouchableOpacity
         onPress={onFlashlightToggle}
@@ -470,15 +493,8 @@ function usePriceScannerState() {
   });
 
   // Destructure stable callbacks so effects have correct deps without eslint-disable.
-  const { startScan, dismiss: engineDismiss } = engine;
+  const { dismiss: engineDismiss } = engine;
   const enginePhase = engine.phase;
-
-  // Auto-start scanning when camera permission is granted.
-  React.useEffect(() => {
-    if (permission?.granted) {
-      startScan();
-    }
-  }, [permission?.granted, startScan]);
 
   // Quota guard: intercept the transition into "found".
   const prevPhaseRef = React.useRef(enginePhase);
@@ -567,6 +583,8 @@ export default function PriceScannerScreen() {
           onZoomChange={state.engine.setZoom}
           flashlight={state.engine.flashlight}
           onFlashlightToggle={state.engine.toggleFlashlight}
+          phase={state.engine.phase}
+          onCapture={state.engine.capture}
         />
 
         {!state.isPro && (

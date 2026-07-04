@@ -24,6 +24,7 @@
     "metro.config.js",
     "docs",
     "cli",
+    "__mocks__",
     "android",
     "ios",
     "lint-staged.config.js"
