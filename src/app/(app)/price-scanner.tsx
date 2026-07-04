@@ -1,3 +1,4 @@
+import type { ScanErrorReason, ScanPhase } from "@/features/converter/hooks/use-price-scanner-engine";
 import { CameraView, useCameraPermissions } from "expo-camera";
 import { useRouter } from "expo-router";
 import * as React from "react";
@@ -217,6 +218,106 @@ export function LimitBanner({
         </Text>
       </TouchableOpacity>
     </View>
+  );
+}
+
+export function ShutterButton({
+  phase,
+  onCapture,
+}: {
+  phase: ScanPhase;
+  onCapture: () => void;
+}) {
+  const { t } = useTranslation();
+  const isCapturing = phase === "capturing";
+
+  return (
+    <TouchableOpacity
+      onPress={onCapture}
+      activeOpacity={0.75}
+      disabled={isCapturing}
+      accessibilityLabel={t("converter.shutterButtonLabel")}
+      accessibilityRole="button"
+      accessibilityState={{ busy: isCapturing, disabled: isCapturing }}
+      className={`absolute bottom-20 left-1/2 z-20 size-[72px] -translate-x-1/2 items-center justify-center rounded-full border-4 border-white bg-white/20 ${
+        isCapturing ? "opacity-70" : "opacity-100"
+      }`}
+    >
+      <View className="size-[54px] items-center justify-center rounded-full bg-white">
+        {isCapturing
+          ? <ActivityIndicator size="small" color="#0E0E10" />
+          : <View className="size-[42px] rounded-full bg-accent" />}
+      </View>
+    </TouchableOpacity>
+  );
+}
+
+export function ScanErrorBanner({
+  reason,
+}: {
+  reason: ScanErrorReason | null;
+}) {
+  const { t } = useTranslation();
+
+  if (reason === null)
+    return null;
+
+  const messageKey = reason === "not_found"
+    ? "converter.priceNotFound"
+    : "converter.captureFailed";
+
+  return (
+    <View className="absolute inset-x-8 bottom-40 z-20 rounded-2xl border border-white/15 bg-neutral-900/90 px-4 py-3">
+      <Text className="text-center text-xs font-bold text-white">
+        {t(messageKey)}
+      </Text>
+    </View>
+  );
+}
+
+export function ScannerOverlays({
+  phase,
+  errorReason,
+  zoom,
+  onZoomChange,
+  flashlight,
+  onFlashlightToggle,
+  isPro,
+  scanCount,
+  scanLimit,
+  onOpenPaywall,
+  onCapture,
+}: {
+  phase: ScanPhase;
+  errorReason: ScanErrorReason | null;
+  zoom: number;
+  onZoomChange: (val: number) => void;
+  flashlight: boolean;
+  onFlashlightToggle: () => void;
+  isPro: boolean;
+  scanCount: number;
+  scanLimit: number;
+  onOpenPaywall: () => void;
+  onCapture: () => void;
+}) {
+  return (
+    <>
+      <ViewfinderControls
+        zoom={zoom}
+        onZoomChange={onZoomChange}
+        flashlight={flashlight}
+        onFlashlightToggle={onFlashlightToggle}
+      />
+      <ShutterButton phase={phase} onCapture={onCapture} />
+      <ScanErrorBanner reason={errorReason} />
+      {!isPro && (
+        <LimitBanner
+          count={scanCount}
+          limit={scanLimit}
+          onOpenPaywall={onOpenPaywall}
+        />
+      )}
+    </>
   );
 }
 
@@ -469,16 +570,8 @@ function usePriceScannerState() {
     captureFrame,
   });
 
-  // Destructure stable callbacks so effects have correct deps without eslint-disable.
-  const { startScan, dismiss: engineDismiss } = engine;
+  const { dismiss: engineDismiss } = engine;
   const enginePhase = engine.phase;
-
-  // Auto-start scanning when camera permission is granted.
-  React.useEffect(() => {
-    if (permission?.granted) {
-      startScan();
-    }
-  }, [permission?.granted, startScan]);
 
   // Quota guard: intercept the transition into "found".
   const prevPhaseRef = React.useRef(enginePhase);
@@ -562,20 +655,19 @@ export default function PriceScannerScreen() {
           getCurrencyInfo={code => getCurrencyInfo(code, state.currenciesData)}
         />
 
-        <ViewfinderControls
+        <ScannerOverlays
+          phase={state.engine.phase}
+          errorReason={state.engine.errorReason}
           zoom={state.engine.zoom}
           onZoomChange={state.engine.setZoom}
           flashlight={state.engine.flashlight}
           onFlashlightToggle={state.engine.toggleFlashlight}
+          isPro={state.isPro}
+          scanCount={state.ocrScanAttempts}
+          scanLimit={3}
+          onOpenPaywall={state.handleOpenPaywall}
+          onCapture={state.engine.capture}
         />
-
-        {!state.isPro && (
-          <LimitBanner
-            count={state.ocrScanAttempts}
-            limit={3}
-            onOpenPaywall={state.handleOpenPaywall}
-          />
-        )}
 
         {state.engine.phase === "found" && state.engine.detectedPrice !== null && (
           <ScanResultCard

@@ -1,4 +1,4 @@
-import { act, renderHook, waitFor } from "@testing-library/react-native";
+import { act, renderHook } from "@testing-library/react-native";
 import MlkitOcr from "react-native-mlkit-ocr";
 import { usePriceScannerEngine } from "../use-price-scanner-engine";
 
@@ -7,15 +7,14 @@ jest.mock("react-native-mlkit-ocr", () => ({
   default: { detectFromUri: jest.fn() },
 }));
 
-const noop = () => Promise.resolve(null);
+const noop: () => Promise<string | null> = () => Promise.resolve(null);
 
-function renderEngine(captureFrame = noop, scanIntervalMs?: number) {
+function renderEngine(captureFrame = noop) {
   return renderHook(() =>
     usePriceScannerEngine({
       initialFrom: "USD",
       initialTo: "EUR",
       captureFrame,
-      scanIntervalMs,
     }),
   );
 }
@@ -29,23 +28,26 @@ describe("usePriceScannerEngine — phase transitions", () => {
     expect(result.current.to).toBe("EUR");
   });
 
-  it("transitions to scanning on startScan", () => {
-    const { result } = renderEngine();
-    act(() => {
-      result.current.startScan();
-    });
-    expect(result.current.phase).toBe("scanning");
-  });
+  it("transitions to capturing while the photo is pending", async () => {
+    let resolveFrame: (value: string | null) => void = jest.fn();
+    const captureFrame = jest.fn(
+      () =>
+        new Promise<string | null>((resolve) => {
+          resolveFrame = resolve;
+        }),
+    );
+    const { result } = renderEngine(captureFrame);
+    let capturePromise = Promise.resolve();
 
-  it("transitions back to idle on stopScan", () => {
-    const { result } = renderEngine();
-    act(() => {
-      result.current.startScan();
+    await act(async () => {
+      capturePromise = result.current.capture();
     });
-    act(() => {
-      result.current.stopScan();
+    expect(result.current.phase).toBe("capturing");
+
+    await act(async () => {
+      resolveFrame(null);
+      await capturePromise;
     });
-    expect(result.current.phase).toBe("idle");
   });
 
   it("dismiss resets phase to idle and clears detectedPrice", () => {
@@ -55,6 +57,20 @@ describe("usePriceScannerEngine — phase transitions", () => {
     });
     expect(result.current.phase).toBe("idle");
     expect(result.current.detectedPrice).toBeNull();
+  });
+
+  it("clears previous errors on dismiss", async () => {
+    const { result } = renderEngine();
+    await act(async () => {
+      await result.current.capture();
+    });
+    expect(result.current.errorReason).toBe("capture_failed");
+
+    act(() => {
+      result.current.dismiss();
+    });
+    expect(result.current.phase).toBe("idle");
+    expect(result.current.errorReason).toBeNull();
   });
 });
 
@@ -112,102 +128,83 @@ describe("usePriceScannerEngine — controls", () => {
 
 describe("usePriceScannerEngine — OCR pipeline", () => {
   beforeEach(() => {
-    jest.useFakeTimers();
     (MlkitOcr.detectFromUri as jest.Mock).mockClear();
   });
 
-  afterEach(() => {
-    jest.useRealTimers();
-  });
-
-  it("detects price and transitions to found after one interval tick", async () => {
+  it("detects price and transitions to found after manual capture", async () => {
     const uri = "file:///mock/photo.jpg";
     const captureFrame = jest.fn().mockResolvedValue(uri);
     (MlkitOcr.detectFromUri as jest.Mock).mockResolvedValue([{ text: "Espresso $4.50" }]);
-    const { result } = renderEngine(captureFrame, 1000);
+    const { result } = renderEngine(captureFrame);
 
-    act(() => {
-      result.current.startScan();
-    });
-    expect(result.current.phase).toBe("scanning");
-    act(() => {
-      jest.advanceTimersByTime(1000);
+    await act(async () => {
+      await result.current.capture();
     });
 
-    await waitFor(() => {
-      expect(result.current.phase).toBe("found");
-      expect(result.current.detectedPrice).toBe(4.5);
-    });
+    expect(result.current.phase).toBe("found");
+    expect(result.current.detectedPrice).toBe(4.5);
+    expect(result.current.errorReason).toBeNull();
   });
 
-  it("keeps scanning when captureFrame returns null", async () => {
+  it("reports capture failure when no photo uri is returned", async () => {
     const captureFrame = jest.fn().mockResolvedValue(null);
-    const { result } = renderEngine(captureFrame, 1000);
+    const { result } = renderEngine(captureFrame);
 
-    act(() => {
-      result.current.startScan();
-    });
-    act(() => {
-      jest.advanceTimersByTime(2000);
+    await act(async () => {
+      await result.current.capture();
     });
 
-    await waitFor(() => {
-      expect(result.current.phase).toBe("scanning");
-      expect(MlkitOcr.detectFromUri).not.toHaveBeenCalled();
-    });
+    expect(result.current.phase).toBe("idle");
+    expect(result.current.errorReason).toBe("capture_failed");
+    expect(MlkitOcr.detectFromUri).not.toHaveBeenCalled();
   });
 
-  it("keeps scanning when OCR text contains no price", async () => {
+  it("reports not found when OCR text contains no price", async () => {
     const captureFrame = jest.fn().mockResolvedValue("file:///mock/photo.jpg");
     (MlkitOcr.detectFromUri as jest.Mock).mockResolvedValue([{ text: "Welcome to Coffee Shop" }]);
-    const { result } = renderEngine(captureFrame, 1000);
+    const { result } = renderEngine(captureFrame);
 
-    act(() => {
-      result.current.startScan();
-    });
-    act(() => {
-      jest.advanceTimersByTime(1000);
+    await act(async () => {
+      await result.current.capture();
     });
 
-    await waitFor(() => {
-      expect(result.current.phase).toBe("scanning");
-    });
+    expect(result.current.phase).toBe("idle");
+    expect(result.current.errorReason).toBe("not_found");
   });
 
-  it("does not crash and keeps scanning when OCR throws", async () => {
+  it("reports capture failure when OCR throws", async () => {
     const captureFrame = jest.fn().mockResolvedValue("file:///mock/photo.jpg");
     (MlkitOcr.detectFromUri as jest.Mock).mockRejectedValue(new Error("OCR failed"));
-    const { result } = renderEngine(captureFrame, 1000);
+    const { result } = renderEngine(captureFrame);
 
-    act(() => {
-      result.current.startScan();
-    });
-    act(() => {
-      jest.advanceTimersByTime(1000);
+    await act(async () => {
+      await result.current.capture();
     });
 
-    await waitFor(() => {
-      expect(result.current.phase).toBe("scanning");
-    });
+    expect(result.current.phase).toBe("idle");
+    expect(result.current.errorReason).toBe("capture_failed");
   });
 
-  it("stops calling captureFrame after stopScan", async () => {
-    const captureFrame = jest.fn().mockResolvedValue(null);
-    const { result } = renderEngine(captureFrame, 1000);
+  it("ignores duplicate captures while one is already pending", async () => {
+    let resolveFrame: (value: string | null) => void = jest.fn();
+    const captureFrame = jest.fn(
+      () =>
+        new Promise<string | null>((resolve) => {
+          resolveFrame = resolve;
+        }),
+    );
+    const { result } = renderEngine(captureFrame);
+    let capturePromise = Promise.resolve();
 
-    act(() => {
-      result.current.startScan();
+    await act(async () => {
+      capturePromise = result.current.capture();
+      void result.current.capture();
     });
-    act(() => {
-      result.current.stopScan();
-    });
-    const callsBefore = captureFrame.mock.calls.length;
-    act(() => {
-      jest.advanceTimersByTime(2000);
-    });
+    expect(captureFrame).toHaveBeenCalledTimes(1);
 
-    await waitFor(() => {
-      expect(captureFrame.mock.calls.length).toBe(callsBefore);
+    await act(async () => {
+      resolveFrame(null);
+      await capturePromise;
     });
   });
 });
