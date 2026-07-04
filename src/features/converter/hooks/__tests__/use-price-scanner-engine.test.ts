@@ -7,10 +7,25 @@ jest.mock("react-native-mlkit-ocr", () => ({
   default: { detectFromUri: jest.fn() },
 }));
 
-type CaptureFrame = () => Promise<string | null>;
+type CapturedPhoto = { uri: string; width: number; height: number };
+type CaptureFrame = () => Promise<CapturedPhoto | null>;
+type Bounding = { left: number; top: number; width: number; height: number };
+
+const PHOTO = { width: 1000, height: 1000 };
+const VIEW = { width: 1000, height: 1000 };
+// Center of a 1000x1000 photo/view falls inside the default viewfinder bounds.
+const INSIDE_BOUNDING: Bounding = { left: 450, top: 450, width: 100, height: 60 };
+// Near the top edge, well outside the viewfinder's on-screen band.
+const OUTSIDE_BOUNDING: Bounding = { left: 450, top: 10, width: 100, height: 60 };
 
 const noop: CaptureFrame = () => Promise.resolve(null);
 const detectFromUriMock = MlkitOcr.detectFromUri as jest.Mock;
+
+// Mirrors react-native-mlkit-ocr's MKLBlock shape: a block's own bounding box, plus a `lines`
+// array where each line carries its own (usually tighter) bounding box.
+function mockBlock(text: string, bounding: Bounding) {
+  return { text, bounding, lines: [{ text, bounding }] };
+}
 
 function createDeferred<T>() {
   let resolve!: (value: T) => void;
@@ -23,12 +38,13 @@ function createDeferred<T>() {
   return { promise, resolve, reject };
 }
 
-function renderEngine(captureFrame: CaptureFrame = noop) {
+function renderEngine(captureFrame: CaptureFrame = noop, getViewSize = () => VIEW) {
   return renderHook(() =>
     usePriceScannerEngine({
       initialFrom: "USD",
       initialTo: "EUR",
       captureFrame,
+      getViewSize,
     }),
   );
 }
@@ -50,9 +66,9 @@ describe("usePriceScannerEngine - phase transitions", () => {
   });
 
   it("moves through capturing and found when OCR contains a price", async () => {
-    const frame = createDeferred<string | null>();
+    const frame = createDeferred<CapturedPhoto | null>();
     const captureFrame = jest.fn(() => frame.promise);
-    detectFromUriMock.mockResolvedValue([{ text: "Espresso $4.50" }]);
+    detectFromUriMock.mockResolvedValue([mockBlock("Espresso $4.50", INSIDE_BOUNDING)]);
     const { result } = renderEngine(captureFrame);
 
     let capturePromise: Promise<void>;
@@ -64,7 +80,7 @@ describe("usePriceScannerEngine - phase transitions", () => {
     expect(captureFrame).toHaveBeenCalledTimes(1);
 
     await act(async () => {
-      frame.resolve("file:///mock/photo.jpg");
+      frame.resolve({ uri: "file:///mock/photo.jpg", ...PHOTO });
       await capturePromise;
     });
 
@@ -75,9 +91,9 @@ describe("usePriceScannerEngine - phase transitions", () => {
   });
 
   it("ignores capture requests while a capture is already running", async () => {
-    const frame = createDeferred<string | null>();
+    const frame = createDeferred<CapturedPhoto | null>();
     const captureFrame = jest.fn(() => frame.promise);
-    detectFromUriMock.mockResolvedValue([{ text: "$9.99" }]);
+    detectFromUriMock.mockResolvedValue([mockBlock("$9.99", INSIDE_BOUNDING)]);
     const { result } = renderEngine(captureFrame);
 
     let firstCapture: Promise<void>;
@@ -90,7 +106,7 @@ describe("usePriceScannerEngine - phase transitions", () => {
     expect(captureFrame).toHaveBeenCalledTimes(1);
 
     await act(async () => {
-      frame.resolve("file:///mock/photo.jpg");
+      frame.resolve({ uri: "file:///mock/photo.jpg", ...PHOTO });
       await firstCapture;
     });
 
@@ -99,8 +115,8 @@ describe("usePriceScannerEngine - phase transitions", () => {
   });
 
   it("dismiss resets phase to idle and clears scan data", async () => {
-    const captureFrame = jest.fn().mockResolvedValue("file:///mock/photo.jpg");
-    detectFromUriMock.mockResolvedValue([{ text: "$12.00" }]);
+    const captureFrame = jest.fn().mockResolvedValue({ uri: "file:///mock/photo.jpg", ...PHOTO });
+    detectFromUriMock.mockResolvedValue([mockBlock("$12.00", INSIDE_BOUNDING)]);
     const { result } = renderEngine(captureFrame);
 
     await act(async () => {
@@ -113,6 +129,67 @@ describe("usePriceScannerEngine - phase transitions", () => {
     expect(result.current.phase).toBe("idle");
     expect(result.current.detectedPrice).toBeNull();
     expect(result.current.errorReason).toBeNull();
+  });
+});
+
+describe("usePriceScannerEngine - viewfinder region filtering", () => {
+  beforeEach(() => {
+    jest.useRealTimers();
+    jest.clearAllMocks();
+  });
+
+  it("ignores a price block outside the on-screen viewfinder rectangle", async () => {
+    const captureFrame = jest.fn().mockResolvedValue({ uri: "file:///mock/photo.jpg", ...PHOTO });
+    detectFromUriMock.mockResolvedValue([mockBlock("21.00", OUTSIDE_BOUNDING)]);
+    const { result } = renderEngine(captureFrame);
+
+    await act(async () => {
+      await result.current.capture();
+    });
+
+    expect(result.current.phase).toBe("error");
+    expect(result.current.errorReason).toBe("not_found");
+  });
+
+  it("picks the in-viewfinder price and ignores an out-of-frame one", async () => {
+    const captureFrame = jest.fn().mockResolvedValue({ uri: "file:///mock/photo.jpg", ...PHOTO });
+    detectFromUriMock.mockResolvedValue([
+      mockBlock("21.00", OUTSIDE_BOUNDING),
+      mockBlock("42.00", INSIDE_BOUNDING),
+    ]);
+    const { result } = renderEngine(captureFrame);
+
+    await act(async () => {
+      await result.current.capture();
+    });
+
+    expect(result.current.phase).toBe("found");
+    expect(result.current.detectedPrice).toBe(42.0);
+  });
+
+  it("filters at line granularity when MLKit merges several rows into one block", async () => {
+    const captureFrame = jest.fn().mockResolvedValue({ uri: "file:///mock/photo.jpg", ...PHOTO });
+    // One block whose own bounding box spans the whole receipt, but whose individual lines
+    // carry tight per-row boxes — only the in-viewfinder line should be used.
+    detectFromUriMock.mockResolvedValue([
+      {
+        text: "21.00 42.00 19.00",
+        bounding: { left: 300, top: 0, width: 400, height: 1000 },
+        lines: [
+          { text: "21.00", bounding: OUTSIDE_BOUNDING },
+          { text: "19.00", bounding: INSIDE_BOUNDING },
+          { text: "42.00", bounding: { left: 450, top: 900, width: 100, height: 60 } },
+        ],
+      },
+    ]);
+    const { result } = renderEngine(captureFrame);
+
+    await act(async () => {
+      await result.current.capture();
+    });
+
+    expect(result.current.phase).toBe("found");
+    expect(result.current.detectedPrice).toBe(19.0);
   });
 });
 
@@ -137,8 +214,8 @@ describe("usePriceScannerEngine - capture errors", () => {
   });
 
   it("sets not_found when OCR text contains no price", async () => {
-    const captureFrame = jest.fn().mockResolvedValue("file:///mock/photo.jpg");
-    detectFromUriMock.mockResolvedValue([{ text: "Welcome to Coffee Shop" }]);
+    const captureFrame = jest.fn().mockResolvedValue({ uri: "file:///mock/photo.jpg", ...PHOTO });
+    detectFromUriMock.mockResolvedValue([mockBlock("Welcome to Coffee Shop", INSIDE_BOUNDING)]);
     const { result } = renderEngine(captureFrame);
 
     await act(async () => {
@@ -164,7 +241,7 @@ describe("usePriceScannerEngine - capture errors", () => {
   });
 
   it("sets capture_failed when OCR throws", async () => {
-    const captureFrame = jest.fn().mockResolvedValue("file:///mock/photo.jpg");
+    const captureFrame = jest.fn().mockResolvedValue({ uri: "file:///mock/photo.jpg", ...PHOTO });
     detectFromUriMock.mockRejectedValue(new Error("OCR failed"));
     const { result } = renderEngine(captureFrame);
 
@@ -212,8 +289,8 @@ describe("usePriceScannerEngine - error auto-reset", () => {
     jest.useFakeTimers();
     const captureFrame = jest.fn()
       .mockResolvedValueOnce(null)
-      .mockResolvedValueOnce("file:///mock/photo.jpg");
-    detectFromUriMock.mockResolvedValue([{ text: "$9.99" }]);
+      .mockResolvedValueOnce({ uri: "file:///mock/photo.jpg", ...PHOTO });
+    detectFromUriMock.mockResolvedValue([mockBlock("$9.99", INSIDE_BOUNDING)]);
     const { result } = renderEngine(captureFrame);
 
     await act(async () => {

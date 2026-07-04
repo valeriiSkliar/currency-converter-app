@@ -3,7 +3,7 @@ import { CameraView, useCameraPermissions } from "expo-camera";
 import { useRouter } from "expo-router";
 import * as React from "react";
 import { useTranslation } from "react-i18next";
-import { ActivityIndicator, Modal, Pressable, ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, Dimensions, Modal, Pressable, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import Svg, { Path } from "react-native-svg";
 import { ScreenBackground } from "@/components/ui";
 import { BackIcon, CameraIcon } from "@/components/ui/icons";
@@ -326,12 +326,12 @@ export function ScannerOverlays({
 export function ViewfinderOverlay() {
   return (
     <View className="absolute inset-0">
-      <View className="absolute inset-x-0 top-0 h-[30%] bg-black/45" />
-      <View className="absolute inset-x-0 bottom-0 h-[40%] bg-black/45" />
-      <View className="absolute top-[30%] bottom-[40%] left-0 w-[12%] bg-black/45" />
-      <View className="absolute top-[30%] right-0 bottom-[40%] w-[12%] bg-black/45" />
+      <View className="absolute inset-x-0 top-0 h-[42%] bg-black/45" />
+      <View className="absolute inset-x-0 bottom-0 h-[50%] bg-black/45" />
+      <View className="absolute top-[42%] bottom-[50%] left-0 w-[20%] bg-black/45" />
+      <View className="absolute top-[42%] right-0 bottom-[50%] w-[20%] bg-black/45" />
 
-      <View className="absolute top-[30%] right-[12%] bottom-[40%] left-[12%] items-center justify-center">
+      <View className="absolute top-[42%] right-[20%] bottom-[50%] left-[20%] items-center justify-center">
         <View className="absolute top-0 left-0 size-6 border-t-2 border-l-2 border-white" />
         <View className="absolute top-0 right-0 size-6 border-t-2 border-r-2 border-white" />
         <View className="absolute bottom-0 left-0 size-6 border-b-2 border-l-2 border-white" />
@@ -563,13 +563,18 @@ function usePriceScannerState() {
       quality: 0.5,
       skipProcessing: true,
     });
-    return photo?.uri ?? null;
+    if (!photo)
+      return null;
+    return { uri: photo.uri, width: photo.width, height: photo.height };
   }, []);
+
+  const getViewSize = React.useCallback(() => Dimensions.get("window"), []);
 
   const engine = usePriceScannerEngine({
     initialFrom: baseCurrency,
     initialTo: targetCurrencies[0] ?? "EUR",
     captureFrame,
+    getViewSize,
   });
 
   const { dismiss: engineDismiss } = engine;

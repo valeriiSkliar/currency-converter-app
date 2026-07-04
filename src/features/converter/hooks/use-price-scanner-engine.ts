@@ -1,6 +1,8 @@
+import type { MKLBlock } from "react-native-mlkit-ocr";
 import * as React from "react";
 import MlkitOcr from "react-native-mlkit-ocr";
 import { parsePriceFromOcrText } from "@/features/converter/utils/price-ocr-parser";
+import { filterBlocksInViewfinder } from "@/features/converter/utils/viewfinder-region";
 
 const ERROR_RESET_DELAY_MS = 2000;
 
@@ -30,8 +32,15 @@ type ScannerAction
     | { type: "SET_TO"; code: string }
     | { type: "SWAP_CURRENCIES" };
 
-type OcrBlock = {
-  text: string;
+export type CapturedPhoto = {
+  uri: string;
+  width: number;
+  height: number;
+};
+
+export type ViewSize = {
+  width: number;
+  height: number;
 };
 
 function scannerReducer(state: ScannerState, action: ScannerAction): ScannerState {
@@ -73,17 +82,34 @@ function scannerReducer(state: ScannerState, action: ScannerAction): ScannerStat
   }
 }
 
-async function detectPriceFromUri(uri: string) {
-  const blocks = await MlkitOcr.detectFromUri(uri);
-  const text = (blocks as OcrBlock[]).map(block => block.text).join(" ");
+async function detectPriceFromCapture(
+  photo: CapturedPhoto,
+  view: ViewSize,
+) {
+  const blocks: MKLBlock[] = await MlkitOcr.detectFromUri(photo.uri);
+  // Filter at line granularity, not block granularity: MLKit sometimes merges several
+  // visually-adjacent receipt rows into a single block with one bounding box spanning all of
+  // them, which would defeat viewfinder filtering. Each line within a block keeps its own tight
+  // bounding box, so line-level filtering correctly isolates just the row the user aimed at.
+  const lines = blocks.flatMap(block => block.lines);
+  const relevantLines = filterBlocksInViewfinder(lines, photo, view);
+  const text = relevantLines.map(line => line.text).join(" ");
+  console.log("[scanner-debug] photo:", photo.width, photo.height, "view:", view.width, view.height);
+  console.log("[scanner-debug] all lines:", JSON.stringify(
+    lines.map(l => ({ text: l.text, bounding: l.bounding })),
+  ));
+  console.log("[scanner-debug] in-viewfinder text:", JSON.stringify(text));
 
-  return parsePriceFromOcrText(text);
+  const price = parsePriceFromOcrText(text);
+  console.log("[scanner-debug] parsed price:", price);
+  return price;
 }
 
 export type PriceScannerEngineOptions = {
   initialFrom: string;
   initialTo: string;
-  captureFrame: () => Promise<string | null>;
+  captureFrame: () => Promise<CapturedPhoto | null>;
+  getViewSize: () => ViewSize;
 };
 
 function createInitialState(initialFrom: string, initialTo: string): ScannerState {
@@ -106,15 +132,18 @@ export function usePriceScannerEngine({
   initialFrom,
   initialTo,
   captureFrame,
+  getViewSize,
 }: PriceScannerEngineOptions) {
   const [state, dispatch] = React.useReducer(
     scannerReducer,
     createInitialState(initialFrom, initialTo),
   );
   const captureFrameRef = React.useRef(captureFrame);
+  const getViewSizeRef = React.useRef(getViewSize);
   const phaseRef = React.useRef<ScanPhase>(state.phase);
 
   captureFrameRef.current = captureFrame;
+  getViewSizeRef.current = getViewSize;
   phaseRef.current = state.phase;
 
   React.useEffect(() => {
@@ -136,13 +165,13 @@ export function usePriceScannerEngine({
     dispatch({ type: "CAPTURE_START" });
 
     try {
-      const uri = await captureFrameRef.current();
-      if (!uri) {
+      const photo = await captureFrameRef.current();
+      if (!photo) {
         dispatch({ type: "CAPTURE_ERROR" });
         return;
       }
 
-      const price = await detectPriceFromUri(uri);
+      const price = await detectPriceFromCapture(photo, getViewSizeRef.current());
       dispatch(price === null ? { type: "CAPTURE_NOT_FOUND" } : { type: "CAPTURE_SUCCESS", price });
     }
     catch {
