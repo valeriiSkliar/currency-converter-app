@@ -94,15 +94,8 @@ async function detectPriceFromCapture(
   const lines = blocks.flatMap(block => block.lines);
   const relevantLines = filterBlocksInViewfinder(lines, photo, view);
   const text = relevantLines.map(line => line.text).join(" ");
-  console.log("[scanner-debug] photo:", photo.width, photo.height, "view:", view.width, view.height);
-  console.log("[scanner-debug] all lines:", JSON.stringify(
-    lines.map(l => ({ text: l.text, bounding: l.bounding })),
-  ));
-  console.log("[scanner-debug] in-viewfinder text:", JSON.stringify(text));
 
-  const price = parsePriceFromOcrText(text);
-  console.log("[scanner-debug] parsed price:", price);
-  return price;
+  return parsePriceFromOcrText(text);
 }
 
 export type PriceScannerEngineOptions = {
