@@ -176,6 +176,12 @@ describe("usePriceScannerEngine - capture errors", () => {
     expect(result.current.errorReason).toBe("capture_failed");
     expect(result.current.detectedPrice).toBeNull();
   });
+});
+
+describe("usePriceScannerEngine - error auto-reset", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
 
   it("auto-resets an error back to idle after 2000ms", async () => {
     jest.useFakeTimers();
@@ -200,6 +206,34 @@ describe("usePriceScannerEngine - capture errors", () => {
       expect(result.current.phase).toBe("idle");
       expect(result.current.errorReason).toBeNull();
     });
+  });
+
+  it("allows an immediate re-capture from the error phase before the auto-reset fires", async () => {
+    jest.useFakeTimers();
+    const captureFrame = jest.fn()
+      .mockResolvedValueOnce(null)
+      .mockResolvedValueOnce("file:///mock/photo.jpg");
+    detectFromUriMock.mockResolvedValue([{ text: "$9.99" }]);
+    const { result } = renderEngine(captureFrame);
+
+    await act(async () => {
+      await result.current.capture();
+    });
+    expect(result.current.phase).toBe("error");
+    expect(result.current.errorReason).toBe("capture_failed");
+
+    act(() => {
+      jest.advanceTimersByTime(500);
+    });
+    expect(result.current.phase).toBe("error");
+
+    await act(async () => {
+      await result.current.capture();
+    });
+
+    expect(result.current.phase).toBe("found");
+    expect(result.current.detectedPrice).toBe(9.99);
+    expect(result.current.errorReason).toBeNull();
   });
 });
 

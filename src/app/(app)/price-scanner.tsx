@@ -308,7 +308,9 @@ export function ScannerOverlays({
         flashlight={flashlight}
         onFlashlightToggle={onFlashlightToggle}
       />
-      <ShutterButton phase={phase} onCapture={onCapture} />
+      {phase !== "found" && (
+        <ShutterButton phase={phase} onCapture={onCapture} />
+      )}
       <ScanErrorBanner reason={errorReason} />
       {!isPro && (
         <LimitBanner
