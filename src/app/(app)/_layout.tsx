@@ -5,6 +5,7 @@ import { Linking, Pressable, Share, StyleSheet, View } from "react-native";
 import Animated, { runOnJS, useAnimatedStyle, useSharedValue, withTiming } from "react-native-reanimated";
 import { DrawerMenu } from "@/components/drawer-menu";
 import { useQuotaStore } from "@/features/converter/store/use-quota-store";
+import { useProStatusSync } from "@/features/iap/use-pro-status-sync";
 import { useSettingsStore } from "@/features/settings/store/use-settings-store";
 import { DrawerContext } from "@/lib/drawer-context";
 import { platformSelect } from "@/lib/platform";
@@ -12,6 +13,7 @@ import { platformSelect } from "@/lib/platform";
 const DRAWER_WIDTH = 280;
 
 export default function AppLayout() {
+  useProStatusSync();
   const router = useRouter();
   const [isDrawerOpen, setIsDrawerOpen] = React.useState(false);
   const isPro = useQuotaStore(state => state.isPro);
@@ -92,10 +94,7 @@ export default function AppLayout() {
   return (
     <DrawerContext value={{ openDrawer, closeDrawer, isDrawerOpen }}>
       <View style={styles.container}>
-        {/* Active Route Slot */}
         <Slot />
-
-        {/* Custom Slide drawer overlay */}
         {isDrawerOpen && (
           <View style={StyleSheet.absoluteFill} pointerEvents="box-none">
             {/* Dim Backdrop overlay */}

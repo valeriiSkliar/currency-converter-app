@@ -3,12 +3,16 @@ import { useQuotaStore } from "@/features/converter/store/use-quota-store";
 import { useProPurchase } from "@/features/iap/use-pro-purchase";
 
 const mockShowMessage = jest.fn();
+function mockCreateTranslation() {
+  return { t: (key: string) => key };
+}
+
 jest.mock("react-native-flash-message", () => ({
   showMessage: (...args: unknown[]) => mockShowMessage(...args),
 }));
 
 jest.mock("react-i18next", () => ({
-  useTranslation: () => ({ t: (key: string) => key }),
+  useTranslation: mockCreateTranslation,
 }));
 
 const mockRequestPurchase = jest.fn(() => Promise.resolve());
@@ -21,22 +25,24 @@ let capturedOptions: {
   onPurchaseError?: (error: { code: string; message: string }) => void;
 } = {};
 
+function mockCreateIap(options: typeof capturedOptions) {
+  capturedOptions = options;
+  return {
+    connected: true,
+    subscriptions: [
+      { id: "pro_monthly", displayPrice: "$4.99", price: 4.99 },
+      { id: "pro_yearly", displayPrice: "$19.99", price: 19.99 },
+    ],
+    fetchProducts: mockFetchProducts,
+    requestPurchase: mockRequestPurchase,
+    finishTransaction: mockFinishTransaction,
+    hasActiveSubscriptions: mockHasActiveSubscriptions,
+  };
+}
+
 jest.mock("expo-iap", () => ({
   ErrorCode: { UserCancelled: "user-cancelled" },
-  useIAP: (options: typeof capturedOptions) => {
-    capturedOptions = options;
-    return {
-      connected: true,
-      subscriptions: [
-        { id: "pro_monthly", displayPrice: "$4.99", price: 4.99 },
-        { id: "pro_yearly", displayPrice: "$19.99", price: 19.99 },
-      ],
-      fetchProducts: mockFetchProducts,
-      requestPurchase: mockRequestPurchase,
-      finishTransaction: mockFinishTransaction,
-      hasActiveSubscriptions: mockHasActiveSubscriptions,
-    };
-  },
+  useIAP: mockCreateIap,
 }));
 
 describe("useProPurchase", () => {
