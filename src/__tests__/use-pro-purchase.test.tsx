@@ -86,6 +86,18 @@ describe("useProPurchase", () => {
     expect(onPurchaseComplete).toHaveBeenCalled();
   });
 
+  it("clears processing and shows an error when finishTransaction fails", async () => {
+    mockFinishTransaction.mockRejectedValueOnce(new Error("network"));
+    const { result } = renderHook(() => useProPurchase());
+    await act(async () => {
+      await result.current.purchase("pro_yearly");
+      await capturedOptions.onPurchaseSuccess?.({ productId: "pro_yearly" });
+    });
+    expect(useQuotaStore.getState().isPro).toBe(false);
+    expect(mockShowMessage).toHaveBeenCalled();
+    expect(result.current.isProcessing).toBe(false);
+  });
+
   it("stays silent when the user cancels", async () => {
     renderHook(() => useProPurchase());
     await act(async () => {

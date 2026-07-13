@@ -35,11 +35,20 @@ export function useProPurchase(options?: UseProPurchaseOptions): ProPurchaseApi 
     subscriptions,
   } = useIAP({
     onPurchaseSuccess: async (purchase) => {
-      await finishTransaction({ purchase, isConsumable: false });
-      unlockPro();
-      setIsProcessing(false);
-      showMessage({ message: t("converter.purchaseSuccess"), type: "success" });
-      onCompleteRef.current?.();
+      try {
+        await finishTransaction({ purchase, isConsumable: false });
+        unlockPro();
+        showMessage({ message: t("converter.purchaseSuccess"), type: "success" });
+        onCompleteRef.current?.();
+      }
+      catch {
+        // Do NOT unlock on failure: an unfinished transaction is
+        // re-delivered by the store later.
+        showMessage({ message: t("converter.purchaseError"), type: "danger" });
+      }
+      finally {
+        setIsProcessing(false);
+      }
     },
     onPurchaseError: (error) => {
       setIsProcessing(false);
