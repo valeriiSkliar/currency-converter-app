@@ -42,13 +42,6 @@ export default function AppLayout() {
     }, 100);
   };
 
-  const handleRemoveAds = () => {
-    closeDrawer();
-    setTimeout(() => {
-      router.push("/paywall");
-    }, 100);
-  };
-
   const handleShare = async () => {
     closeDrawer();
     try {
@@ -108,7 +101,6 @@ export default function AppLayout() {
                 isPro={isPro}
                 enableExchangeRates={Env.EXPO_PUBLIC_ENABLE_EXCHANGE_RATES}
                 onNavigate={handleNavigate}
-                onRemoveAds={handleRemoveAds}
                 onShare={handleShare}
                 onRate={handleRate}
                 onOpenPrivacy={handleOpenPrivacy}
