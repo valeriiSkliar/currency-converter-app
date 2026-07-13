@@ -30,7 +30,7 @@ export function useProPurchase(options?: UseProPurchaseOptions): ProPurchaseApi 
     connected,
     fetchProducts,
     finishTransaction,
-    getActiveSubscriptions,
+    hasActiveSubscriptions,
     requestPurchase,
     subscriptions,
   } = useIAP({
@@ -89,14 +89,8 @@ export function useProPurchase(options?: UseProPurchaseOptions): ProPurchaseApi 
 
   const restore = React.useCallback(async () => {
     try {
-      // expo-iap's useIAP().getActiveSubscriptions is typed to resolve
-      // `void` (it stores the result in the hook's internal
-      // `activeSubscriptions` state as a side effect) rather than returning
-      // the list directly. Read the resolved value defensively so this
-      // still works if a given platform/version resolves the list inline.
-      const resolved: unknown = await getActiveSubscriptions(PRO_SKUS);
-      const active = Array.isArray(resolved) ? resolved : [];
-      if (active.length > 0) {
+      const hasActive = await hasActiveSubscriptions(PRO_SKUS);
+      if (hasActive) {
         unlockPro();
         showMessage({ message: t("converter.restoreSuccess"), type: "success" });
       }
@@ -107,7 +101,7 @@ export function useProPurchase(options?: UseProPurchaseOptions): ProPurchaseApi 
     catch {
       showMessage({ message: t("converter.purchaseError"), type: "danger" });
     }
-  }, [getActiveSubscriptions, t, unlockPro]);
+  }, [hasActiveSubscriptions, t, unlockPro]);
 
   return {
     isReady: connected && plans.length > 0,

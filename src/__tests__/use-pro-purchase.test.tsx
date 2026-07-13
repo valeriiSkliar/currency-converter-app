@@ -14,7 +14,7 @@ jest.mock("react-i18next", () => ({
 const mockRequestPurchase = jest.fn(() => Promise.resolve());
 const mockFinishTransaction = jest.fn(() => Promise.resolve());
 const mockFetchProducts = jest.fn(() => Promise.resolve());
-const mockGetActiveSubscriptions = jest.fn(() => Promise.resolve([] as unknown[]));
+const mockHasActiveSubscriptions = jest.fn(() => Promise.resolve(false));
 
 let capturedOptions: {
   onPurchaseSuccess?: (purchase: unknown) => void | Promise<void>;
@@ -34,7 +34,7 @@ jest.mock("expo-iap", () => ({
       fetchProducts: mockFetchProducts,
       requestPurchase: mockRequestPurchase,
       finishTransaction: mockFinishTransaction,
-      getActiveSubscriptions: mockGetActiveSubscriptions,
+      hasActiveSubscriptions: mockHasActiveSubscriptions,
     };
   },
 }));
@@ -105,7 +105,7 @@ describe("useProPurchase", () => {
   });
 
   it("restore() unlocks PRO when an active subscription exists", async () => {
-    mockGetActiveSubscriptions.mockResolvedValueOnce([{ productId: "pro_monthly" }]);
+    mockHasActiveSubscriptions.mockResolvedValueOnce(true);
     const { result } = renderHook(() => useProPurchase());
     await act(async () => {
       await result.current.restore();
@@ -114,7 +114,7 @@ describe("useProPurchase", () => {
   });
 
   it("restore() reports when nothing is found and does not unlock", async () => {
-    mockGetActiveSubscriptions.mockResolvedValueOnce([]);
+    mockHasActiveSubscriptions.mockResolvedValueOnce(false);
     const { result } = renderHook(() => useProPurchase());
     await act(async () => {
       await result.current.restore();
