@@ -1,5 +1,33 @@
 # IAP и AdMob: настройка владельцем
 
+## Данные приложения для консолей
+
+| Поле | Значение |
+|---|---|
+| Название | Convertoff Currency Converter |
+| Версия | 1.0.0 |
+| Expo slug | `currency-converter` |
+| Платформы | iOS (включая iPad), Android |
+| Локализации приложения | English, Russian, Arabic |
+| Camera permission | Камера используется только для сканирования цен; микрофон и `RECORD_AUDIO` отключены |
+
+Идентификаторы iOS bundle ID и Android package ID совпадают:
+
+| Среда | iOS bundle ID / Android package ID |
+|---|---|
+| Development | `com.cimmetria.currencyconverter.development` |
+| Preview | `com.cimmetria.currencyconverter.preview` |
+| Production | `com.cimmetria.currencyconverter` |
+
+Для публикации использовать только production ID. Development и Preview не добавлять как отдельные store/AdMob apps.
+
+Перед созданием аккаунтов и публикацией проверить, что доступны публичные страницы:
+
+- Privacy policy: `https://currencyconverterapp.com/privacy-policy`;
+- Share/site URL: `https://currencyconverterapp.com`.
+
+Сейчас EAS production builds настроены как iOS store build и Android AAB. В `eas.json` ещё нет submit-конфигурации: для отправки понадобятся iOS `ascAppId` и Android service-account key.
+
 ## IAP — App Store Connect
 
 1. В **Agreements, Tax, and Banking** принять **Paid Apps agreement**.
@@ -39,5 +67,7 @@ EXPO_PUBLIC_ADMOB_INTERSTITIAL_ID_ANDROID=ca-app-pub-.../...
 5. Собрать новый dev/production build и выполнить smoke test interstitial.
 
 До production IDs приложение использует Google test IDs вне production.
+
+Не сохранять App IDs, Ad unit IDs, store credentials или service-account key в репозитории. Добавлять их в EAS secrets / production environment.
 
 Официальная документация: [создание interstitial](https://support.google.com/admob/answer/7311435), [поиск App ID и Ad unit ID](https://support.google.com/admob/answer/7356431).
