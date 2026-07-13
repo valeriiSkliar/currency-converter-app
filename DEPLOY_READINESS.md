@@ -34,7 +34,7 @@
 
 1. **Внешняя настройка монетизации** — код интегрирован, но владелец должен создать `pro_monthly` и `pro_yearly` в App Store Connect / Play Console, принять Paid Apps agreement, создать AdMob apps/interstitial unit IDs, задать production env IDs и выполнить sandbox/device smoke test. До этого используются Google test IDs, а paywall корректно остаётся в loading/error-состоянии.
 2. **`check-all`** — ✅ исправлено: `.cyrboard/` исключена из ESLint и Jest.
-3. **Разрешения камеры** — в `app.config.ts` нет плагина `expo-camera`; сейчас в Info.plist попадает дефолтный текст «Allow $(PRODUCT_NAME) to access your camera» плюс **лишний `NSMicrophoneUsageDescription`**. Добавить плагин с осмысленным текстом и `"microphonePermission": false` — Apple задаёт вопросы про неиспользуемые разрешения.
+3. **Разрешения камеры** — ✅ исправлено: `expo-camera` config plugin задаёт осмысленный `NSCameraUsageDescription`, отключает `NSMicrophoneUsageDescription` и Android `RECORD_AUDIO`.
 
 ### Сильно рекомендуется до релиза
 
