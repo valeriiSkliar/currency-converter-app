@@ -1,8 +1,7 @@
 import { useRouter } from "expo-router";
 import * as React from "react";
 import { useTranslation } from "react-i18next";
-import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { showMessage } from "react-native-flash-message";
+import { ActivityIndicator, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Svg, {
   Circle,
@@ -12,7 +11,8 @@ import Svg, {
   Stop,
 } from "react-native-svg";
 import { CheckIcon, CloseIcon, CrownIcon } from "@/components/ui/icons";
-import { useQuotaStore } from "@/features/converter/store/use-quota-store";
+import { PRO_SKU_YEARLY } from "@/features/iap/products";
+import { useProPurchase } from "@/features/iap/use-pro-purchase";
 
 // Radial dark-gold background with sparkle circles
 export function PaywallBackground({ children }: { children: React.ReactNode }) {
@@ -179,19 +179,23 @@ export function TitleBlock({ eyebrow, title }: { eyebrow: string; title: string 
 
 export function CTADock({
   ctaText,
-  trialNote,
+  note,
   restoreText,
   termsText,
   onPress,
+  onRestore,
   onBack,
+  disabled = false,
   bottomInset = 0,
 }: {
   ctaText: string;
-  trialNote: string;
+  note: string;
   restoreText: string;
   termsText: string;
   onPress: () => void;
+  onRestore: () => void;
   onBack: () => void;
+  disabled?: boolean;
   bottomInset?: number;
 }) {
   return (
@@ -201,6 +205,7 @@ export function CTADock({
     >
       <TouchableOpacity
         onPress={onPress}
+        disabled={disabled}
         activeOpacity={0.85}
         style={{
           shadowColor: "#FF9600",
@@ -211,17 +216,21 @@ export function CTADock({
         }}
         className="w-full items-center justify-center rounded-full border border-transparent bg-linear-to-br from-[#FFE066] via-[#FFB100] to-[#FF8A00] py-4.5"
       >
-        <Text className="text-base font-black tracking-tight text-[#1A1A1C] uppercase">
-          {ctaText}
-        </Text>
+        {disabled
+          ? <ActivityIndicator color="#1A1A1C" />
+          : (
+              <Text className="text-base font-black tracking-tight text-[#1A1A1C] uppercase">
+                {ctaText}
+              </Text>
+            )}
       </TouchableOpacity>
 
       <Text className="mt-2.5 text-center text-[11.5px] leading-normal text-white/50">
-        {trialNote}
+        {note}
       </Text>
 
       <View className="mt-2 flex-row items-center justify-center gap-3.5">
-        <TouchableOpacity onPress={onBack}>
+        <TouchableOpacity onPress={onRestore}>
           <Text className="text-[11.5px] font-semibold text-white/55">
             {restoreText}
           </Text>
@@ -240,9 +249,9 @@ export function CTADock({
 function usePaywallScreenState() {
   const router = useRouter();
   const { t } = useTranslation();
-  const { unlockPro } = useQuotaStore();
-
-  const [selectedPlan, setSelectedPlan] = React.useState("yearly");
+  const [selectedPlan, setSelectedPlan] = React.useState(PRO_SKU_YEARLY);
+  const { isReady, plans: storePlans, isProcessing, purchase, restore }
+    = useProPurchase({ onPurchaseComplete: () => router.back() });
 
   const features = [
     t("converter.featureNoAds"),
@@ -253,40 +262,22 @@ function usePaywallScreenState() {
     t("converter.featureSync"),
   ];
 
-  const plans = [
-    {
-      id: "monthly",
-      title: t("converter.planMonthly"),
-      price: "$4.99",
-      per: t("converter.pricePerMonth"),
-      sub: "",
-    },
-    {
-      id: "yearly",
-      title: t("converter.planYearly"),
-      price: "$19.99",
-      per: t("converter.pricePerYear"),
-      sub: t("converter.save60"),
-      badge: t("converter.bestValue"),
-    },
-    {
-      id: "lifetime",
-      title: t("converter.planLifetime"),
-      price: "$49.99",
-      per: t("converter.priceOnce"),
-      sub: "",
-    },
-  ];
+  const plans = storePlans.map(plan => ({
+    id: plan.sku,
+    title: t(plan.period === "monthly" ? "converter.planMonthly" : "converter.planYearly"),
+    price: plan.displayPrice,
+    per: t(plan.period === "monthly" ? "converter.pricePerMonth" : "converter.pricePerYear"),
+    sub: plan.savingsPercent === null
+      ? ""
+      : t("converter.savePercent", { percent: plan.savingsPercent }),
+    badge: plan.period === "yearly" ? t("converter.bestValue") : undefined,
+  }));
 
   const handlePurchase = () => {
-    unlockPro();
-    showMessage({
-      message: "Subscription Active",
-      description: "You are now a PRO member! Thank you.",
-      type: "success",
-      duration: 3000,
-    });
-    router.back();
+    if (!isReady || isProcessing) {
+      return;
+    }
+    void purchase(selectedPlan);
   };
 
   return {
@@ -296,7 +287,10 @@ function usePaywallScreenState() {
     setSelectedPlan,
     features,
     plans,
+    isReady,
+    isProcessing,
     handlePurchase,
+    handleRestore: () => void restore(),
   };
 }
 
@@ -310,7 +304,10 @@ export default function PaywallScreen() {
     setSelectedPlan,
     features,
     plans,
+    isReady,
+    isProcessing,
     handlePurchase,
+    handleRestore,
   } = usePaywallScreenState();
 
   return (
@@ -354,23 +351,34 @@ export default function PaywallScreen() {
         </View>
 
         <View className="mt-6 gap-2.5">
-          {plans.map(p => (
-            <PlanCard
-              key={p.id}
-              plan={p}
-              selected={selectedPlan === p.id}
-              onSelect={() => setSelectedPlan(p.id)}
-            />
-          ))}
+          {!isReady
+            ? (
+                <View className="items-center gap-3 py-8">
+                  <ActivityIndicator color="#FFD200" />
+                  <Text className="text-sm font-semibold text-white/70">
+                    {t("converter.plansLoading")}
+                  </Text>
+                </View>
+              )
+            : plans.map(p => (
+                <PlanCard
+                  key={p.id}
+                  plan={p}
+                  selected={selectedPlan === p.id}
+                  onSelect={() => setSelectedPlan(p.id)}
+                />
+              ))}
         </View>
       </ScrollView>
 
       <CTADock
         ctaText={t("converter.paywallCta")}
-        trialNote={t("converter.trialNote")}
+        note={t("converter.paywallNote")}
         restoreText={t("converter.restorePurchase")}
         termsText={t("converter.termsAndPrivacy")}
+        disabled={!isReady || isProcessing}
         onPress={handlePurchase}
+        onRestore={handleRestore}
         onBack={() => router.back()}
         bottomInset={insets.bottom}
       />
