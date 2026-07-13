@@ -4,6 +4,8 @@ import * as React from "react";
 import { Linking, Pressable, Share, StyleSheet, View } from "react-native";
 import Animated, { runOnJS, useAnimatedStyle, useSharedValue, withTiming } from "react-native-reanimated";
 import { DrawerMenu } from "@/components/drawer-menu";
+import { initializeAds } from "@/features/ads/ads-init";
+import { useInterstitialGate } from "@/features/ads/use-interstitial-gate";
 import { useQuotaStore } from "@/features/converter/store/use-quota-store";
 import { useProStatusSync } from "@/features/iap/use-pro-status-sync";
 import { useSettingsStore } from "@/features/settings/store/use-settings-store";
@@ -14,10 +16,15 @@ const DRAWER_WIDTH = 280;
 
 export default function AppLayout() {
   useProStatusSync();
+  useInterstitialGate();
   const router = useRouter();
   const [isDrawerOpen, setIsDrawerOpen] = React.useState(false);
   const isPro = useQuotaStore(state => state.isPro);
   const setPrivacyAccepted = useSettingsStore(state => state.setPrivacyAccepted);
+
+  React.useEffect(() => {
+    void initializeAds();
+  }, []);
 
   const translateX = useSharedValue(-DRAWER_WIDTH);
 

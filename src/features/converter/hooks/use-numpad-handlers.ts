@@ -1,10 +1,12 @@
 import { useRouter } from "expo-router";
+import { useAdFrequencyStore } from "@/features/ads/use-ad-frequency-store";
 
 export function useNumpadHandlers(
   amount: string,
   updateAmount: (val: string) => void,
 ) {
   const router = useRouter();
+  const registerAdAction = useAdFrequencyStore(state => state.registerAction);
 
   const onTapDigit = (d: string) => {
     const current = amount || "";
@@ -50,6 +52,7 @@ export function useNumpadHandlers(
   };
 
   const onTapDone = () => {
+    registerAdAction();
     if (!amount) {
       return;
     }

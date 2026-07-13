@@ -3,7 +3,7 @@ import * as React from "react";
 import { useTranslation } from "react-i18next";
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { showMessage } from "react-native-flash-message";
-import { FullscreenAd, ProLimitModal, RateModal, ScreenBackground } from "@/components/ui";
+import { ProLimitModal, RateModal, ScreenBackground } from "@/components/ui";
 import {
   ArrowRight,
   BackIcon,
@@ -13,6 +13,7 @@ import {
   WallpaperIcon,
 } from "@/components/ui/icons";
 import { useThemeColors } from "@/components/ui/use-theme-colors";
+import { useAdFrequencyStore } from "@/features/ads/use-ad-frequency-store";
 import { PrivacyModal } from "@/features/converter/components/privacy-modal";
 import { useSettingsStore } from "@/features/settings/store/use-settings-store";
 import { useSelectedTheme } from "@/lib/hooks/use-selected-theme";
@@ -230,7 +231,7 @@ type DevDebugPanelProps = {
   onTriggerPaywall: () => void;
   onTriggerProLimit: () => void;
   onTriggerPrivacy: () => void;
-  onTriggerFullscreenAd: () => void;
+  onTriggerInterstitial: () => void;
   hint: string;
   triggers: Record<string, string>;
 };
@@ -240,7 +241,7 @@ export function DevDebugPanel({
   onTriggerPaywall,
   onTriggerProLimit,
   onTriggerPrivacy,
-  onTriggerFullscreenAd,
+  onTriggerInterstitial,
   hint,
   triggers,
 }: DevDebugPanelProps) {
@@ -254,7 +255,7 @@ export function DevDebugPanel({
         <DevButton onPress={onTriggerPaywall} label={triggers.paywall} />
         <DevButton onPress={onTriggerProLimit} label={triggers.proLimit} />
         <DevButton onPress={onTriggerPrivacy} label={triggers.privacy} />
-        <DevButton onPress={onTriggerFullscreenAd} label={triggers.fullscreenAd} />
+        <DevButton onPress={onTriggerInterstitial} label={triggers.fullscreenAd} />
       </View>
     </View>
   );
@@ -288,7 +289,6 @@ function useSettingsScreenState() {
   const [isProLimitVisible, setIsProLimitVisible] = React.useState(false);
   const [isPrivacyVisible, setIsPrivacyVisible] = React.useState(false);
   const [isRateVisible, setIsRateVisible] = React.useState(false);
-  const [isAdVisible, setIsAdVisible] = React.useState(false);
 
   const handleLanguageChange = (lang: "en" | "ru" | "ar") => {
     setStoreLanguage(lang);
@@ -325,8 +325,6 @@ function useSettingsScreenState() {
     setIsPrivacyVisible,
     isRateVisible,
     setIsRateVisible,
-    isAdVisible,
-    setIsAdVisible,
   };
 }
 
@@ -427,7 +425,7 @@ export function DevSection({ state }: { state: SettingsState }) {
         onTriggerPaywall={() => state.router.push("/paywall")}
         onTriggerProLimit={() => state.setIsProLimitVisible(true)}
         onTriggerPrivacy={() => state.setIsPrivacyVisible(true)}
-        onTriggerFullscreenAd={() => state.setIsAdVisible(true)}
+        onTriggerInterstitial={() => useAdFrequencyStore.getState().requestForceShow()}
       />
     </View>
   );
@@ -477,10 +475,6 @@ export default function SettingsScreen() {
         onClose={() => state.setIsRateVisible(false)}
       />
 
-      <FullscreenAd
-        visible={state.isAdVisible}
-        onClose={() => state.setIsAdVisible(false)}
-      />
     </ScreenBackground>
   );
 }
