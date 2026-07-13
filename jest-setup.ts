@@ -101,3 +101,28 @@ global.window = {};
 
 // @ts-expect-error
 global.window = global;
+
+// Mock react-native-google-mobile-ads (native module unavailable in Jest)
+function mockCreateInterstitialAdState() {
+  return {
+    isLoaded: false,
+    isClosed: false,
+    load: jest.fn(),
+    show: jest.fn(),
+  };
+}
+
+jest.mock("react-native-google-mobile-ads", () => ({
+  __esModule: true,
+  default: () => ({ initialize: jest.fn(() => Promise.resolve([])) }),
+  TestIds: { INTERSTITIAL: "test-interstitial" },
+  AdsConsent: { gatherConsent: jest.fn(() => Promise.resolve()) },
+  useInterstitialAd: mockCreateInterstitialAdState,
+}));
+
+// Mock expo-tracking-transparency (native module unavailable in Jest)
+jest.mock("expo-tracking-transparency", () => ({
+  requestTrackingPermissionsAsync: jest.fn(() =>
+    Promise.resolve({ status: "denied" }),
+  ),
+}));

@@ -116,6 +116,20 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     ["app-icon-badge", appIconBadgeConfig],
     ["react-native-edge-to-edge"],
     "expo-iap",
+    [
+      "react-native-google-mobile-ads",
+      {
+        androidAppId: process.env.ADMOB_ANDROID_APP_ID ?? "ca-app-pub-3940256099942544~3347511713",
+        iosAppId: process.env.ADMOB_IOS_APP_ID ?? "ca-app-pub-3940256099942544~1458002511",
+      },
+    ],
+    [
+      "expo-tracking-transparency",
+      {
+        userTrackingPermission:
+          "This identifier will be used to show you more relevant ads.",
+      },
+    ],
   ],
   extra: {
     eas: {
