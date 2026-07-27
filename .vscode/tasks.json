@@ -1,0 +1,24 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Install dependencies",
+      "type": "shell",
+      "command": "pnpm install",
+      "inAgents": true,
+      "runOptions": { "runOn": "worktreeCreated" }
+    },
+    {
+      "label": "Start dev server",
+      "type": "shell",
+      "command": "pnpm start",
+      "inAgents": true
+    },
+    {
+      "label": "Check all (lint, types, translations, tests)",
+      "type": "shell",
+      "command": "pnpm run check-all",
+      "inAgents": true
+    }
+  ]
+}
