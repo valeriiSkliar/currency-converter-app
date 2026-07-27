@@ -6,6 +6,7 @@ import Svg, { Defs, LinearGradient, Rect, Stop } from "react-native-svg";
 import { ScreenBackground } from "@/components/ui";
 import { BackIcon, CaretDown, SparklesIcon, SwapHIcon } from "@/components/ui/icons";
 import { useThemeColors } from "@/components/ui/use-theme-colors";
+import { useAdFrequencyStore } from "@/features/ads/use-ad-frequency-store";
 import { useCurrencies } from "@/features/converter/api/use-rates";
 import { useExchangeRates } from "@/features/converter/hooks/use-exchange-rates";
 import { useConverterStore } from "@/features/converter/store/use-converter-store";
@@ -53,8 +54,8 @@ function useMyRateState() {
   const router = useRouter();
   const { baseCurrency, targetCurrencies, customRates, setCustomRate } = useConverterStore();
   const { isPro, customRateAttempts, incrementRateAttempt } = useQuotaStore();
+  const registerAdAction = useAdFrequencyStore(state => state.registerAction);
   const { decimalPlaces, language } = useSettingsStore();
-
   const [from, setFrom] = React.useState(baseCurrency);
   const [to, setTo] = React.useState(targetCurrencies[0] || "EUR");
   const [amount, setAmount] = React.useState("1");
@@ -119,6 +120,7 @@ function useMyRateState() {
     setCustomRate(directPair, value);
     if (!isPro) {
       incrementRateAttempt();
+      registerAdAction();
     }
     setIsEditOpen(false);
   };

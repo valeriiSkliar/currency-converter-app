@@ -27,6 +27,16 @@ const appIconBadgeConfig: AppIconBadgeConfig = {
   ],
 };
 
+const cameraPlugin = [
+  "expo-camera",
+  {
+    cameraPermission:
+      "Allow Convertoff Currency Converter to use your camera to scan prices.",
+    microphonePermission: false,
+    recordAudioAndroid: false,
+  },
+] satisfies NonNullable<ExpoConfig["plugins"]>[number];
+
 export default ({ config }: ConfigContext): ExpoConfig => ({
   ...config,
   name: Env.EXPO_PUBLIC_NAME,
@@ -115,6 +125,21 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     "expo-router",
     ["app-icon-badge", appIconBadgeConfig],
     ["react-native-edge-to-edge"],
+    cameraPlugin,
+    "expo-iap",
+    [
+      "react-native-google-mobile-ads",
+      {
+        androidAppId: process.env.ADMOB_ANDROID_APP_ID ?? "ca-app-pub-3940256099942544~3347511713",
+        iosAppId: process.env.ADMOB_IOS_APP_ID ?? "ca-app-pub-3940256099942544~1458002511",
+      },
+    ],
+    [
+      "expo-tracking-transparency",
+      {
+        userTrackingPermission: "This identifier will be used to show you more relevant ads.",
+      },
+    ],
   ],
   extra: {
     eas: {

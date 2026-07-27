@@ -47,4 +47,12 @@ describe("useQuotaStore", () => {
     expect(useQuotaStore.getState().customRateAttempts).toBe(0);
     expect(useQuotaStore.getState().ocrScanAttempts).toBe(0);
   });
+
+  it("revokePro sets isPro back to false", () => {
+    useQuotaStore.getState().unlockPro();
+    expect(useQuotaStore.getState().isPro).toBe(true);
+
+    useQuotaStore.getState().revokePro();
+    expect(useQuotaStore.getState().isPro).toBe(false);
+  });
 });

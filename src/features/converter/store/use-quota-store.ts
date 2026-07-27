@@ -9,6 +9,7 @@ type QuotaState = {
   incrementRateAttempt: () => void;
   incrementScanAttempt: () => void;
   unlockPro: () => void;
+  revokePro: () => void;
   resetAttempts: () => void;
 };
 
@@ -33,6 +34,7 @@ export const useQuotaStore = create<QuotaState>()(
           ocrScanAttempts: state.ocrScanAttempts + 1,
         })),
       unlockPro: () => set({ isPro: true }),
+      revokePro: () => set({ isPro: false }),
       resetAttempts: () => set({ customRateAttempts: 0, ocrScanAttempts: 0 }),
     }),
     {

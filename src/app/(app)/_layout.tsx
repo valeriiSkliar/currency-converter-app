@@ -4,7 +4,10 @@ import * as React from "react";
 import { Linking, Pressable, Share, StyleSheet, View } from "react-native";
 import Animated, { runOnJS, useAnimatedStyle, useSharedValue, withTiming } from "react-native-reanimated";
 import { DrawerMenu } from "@/components/drawer-menu";
+import { initializeAds } from "@/features/ads/ads-init";
+import { useInterstitialGate } from "@/features/ads/use-interstitial-gate";
 import { useQuotaStore } from "@/features/converter/store/use-quota-store";
+import { useProStatusSync } from "@/features/iap/use-pro-status-sync";
 import { useSettingsStore } from "@/features/settings/store/use-settings-store";
 import { DrawerContext } from "@/lib/drawer-context";
 import { platformSelect } from "@/lib/platform";
@@ -12,10 +15,16 @@ import { platformSelect } from "@/lib/platform";
 const DRAWER_WIDTH = 280;
 
 export default function AppLayout() {
+  useProStatusSync();
+  useInterstitialGate();
   const router = useRouter();
   const [isDrawerOpen, setIsDrawerOpen] = React.useState(false);
   const isPro = useQuotaStore(state => state.isPro);
   const setPrivacyAccepted = useSettingsStore(state => state.setPrivacyAccepted);
+
+  React.useEffect(() => {
+    void initializeAds();
+  }, []);
 
   const translateX = useSharedValue(-DRAWER_WIDTH);
 
@@ -37,13 +46,6 @@ export default function AppLayout() {
     // Wrap navigation in microtask to allow drawer close transition to start
     setTimeout(() => {
       router.push(route as any);
-    }, 100);
-  };
-
-  const handleRemoveAds = () => {
-    closeDrawer();
-    setTimeout(() => {
-      router.push("/paywall");
     }, 100);
   };
 
@@ -92,10 +94,7 @@ export default function AppLayout() {
   return (
     <DrawerContext value={{ openDrawer, closeDrawer, isDrawerOpen }}>
       <View style={styles.container}>
-        {/* Active Route Slot */}
         <Slot />
-
-        {/* Custom Slide drawer overlay */}
         {isDrawerOpen && (
           <View style={StyleSheet.absoluteFill} pointerEvents="box-none">
             {/* Dim Backdrop overlay */}
@@ -109,7 +108,6 @@ export default function AppLayout() {
                 isPro={isPro}
                 enableExchangeRates={Env.EXPO_PUBLIC_ENABLE_EXCHANGE_RATES}
                 onNavigate={handleNavigate}
-                onRemoveAds={handleRemoveAds}
                 onShare={handleShare}
                 onRate={handleRate}
                 onOpenPrivacy={handleOpenPrivacy}

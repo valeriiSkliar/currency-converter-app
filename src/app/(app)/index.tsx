@@ -8,7 +8,6 @@ import {
   Settings as SettingsIcon,
   SparklesIcon,
 } from "@/components/ui/icons";
-import { AdBanner } from "@/features/converter/components/ad-banner";
 // Components
 import { BaseCard } from "@/features/converter/components/base-card";
 import { MultiList } from "@/features/converter/components/multi-list";
@@ -88,13 +87,6 @@ export default function HomeScreen() {
           removeCurrency={removeCurrency}
           onAddLimitReached={() => setIsLimitModalOpen(true)}
         />
-
-        {/* Sponsored Ad Banner */}
-        {!isPro && (
-          <View style={homeStyles.adSlot}>
-            <AdBanner onRemove={() => router.push("/paywall")} />
-          </View>
-        )}
 
         {/* Bottom Numpad */}
         <Numpad
@@ -250,12 +242,6 @@ function HomeHeader({
 }
 
 const homeStyles = StyleSheet.create({
-  adSlot: {
-    flexShrink: 0,
-    justifyContent: "center",
-    marginBottom: 12,
-    marginTop: 4,
-  },
   container: {
     flex: 1,
     paddingBottom: 16,

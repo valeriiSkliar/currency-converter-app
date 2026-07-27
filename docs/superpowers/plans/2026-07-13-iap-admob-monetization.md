@@ -600,7 +600,7 @@ git commit -m "feat(iap): add useProPurchase hook with purchase and restore flow
 - Test: `src/__tests__/use-pro-status-sync.test.tsx`
 
 **Interfaces:**
-- Consumes: `useIAP().getActiveSubscriptions`, `PRO_SKUS`, `useQuotaStore.revokePro` (Task 2).
+- Consumes: `useIAP().hasActiveSubscriptions` (hook-level `getActiveSubscriptions` returns `Promise<void>` in expo-iap 4.4.1 — verified in Task 4), `PRO_SKUS`, `useQuotaStore.revokePro` (Task 2).
 - Produces: `useProStatusSync(): void` — mounted once in the app layout.
 
 - [ ] **Step 1: Write the failing tests**
@@ -612,12 +612,12 @@ import { act, renderHook } from "@testing-library/react-native";
 import { useQuotaStore } from "@/features/converter/store/use-quota-store";
 import { useProStatusSync } from "@/features/iap/use-pro-status-sync";
 
-const mockGetActiveSubscriptions = jest.fn(() => Promise.resolve([] as unknown[]));
+const mockHasActiveSubscriptions = jest.fn(() => Promise.resolve(false));
 
 jest.mock("expo-iap", () => ({
   useIAP: () => ({
     connected: true,
-    getActiveSubscriptions: mockGetActiveSubscriptions,
+    hasActiveSubscriptions: mockHasActiveSubscriptions,
   }),
 }));
 
@@ -640,7 +640,7 @@ describe("useProStatusSync", () => {
   });
 
   it("keeps PRO when an active subscription exists", async () => {
-    mockGetActiveSubscriptions.mockResolvedValueOnce([{ productId: "pro_yearly" }]);
+    mockHasActiveSubscriptions.mockResolvedValueOnce(true);
     useQuotaStore.setState({ isPro: true });
     renderHook(() => useProStatusSync());
     await flush();
@@ -648,7 +648,7 @@ describe("useProStatusSync", () => {
   });
 
   it("keeps PRO when the store check fails (offline)", async () => {
-    mockGetActiveSubscriptions.mockRejectedValueOnce(new Error("offline"));
+    mockHasActiveSubscriptions.mockRejectedValueOnce(new Error("offline"));
     useQuotaStore.setState({ isPro: true });
     renderHook(() => useProStatusSync());
     await flush();
@@ -659,7 +659,7 @@ describe("useProStatusSync", () => {
     useQuotaStore.setState({ isPro: false });
     renderHook(() => useProStatusSync());
     await flush();
-    expect(mockGetActiveSubscriptions).not.toHaveBeenCalled();
+    expect(mockHasActiveSubscriptions).not.toHaveBeenCalled();
   });
 });
 ```
@@ -684,7 +684,7 @@ import { PRO_SKUS } from "@/features/iap/products";
 export function useProStatusSync(): void {
   const isPro = useQuotaStore(state => state.isPro);
   const revokePro = useQuotaStore(state => state.revokePro);
-  const { connected, getActiveSubscriptions } = useIAP();
+  const { connected, hasActiveSubscriptions } = useIAP();
   const checkedRef = React.useRef(false);
 
   React.useEffect(() => {
@@ -692,9 +692,9 @@ export function useProStatusSync(): void {
       return;
     }
     checkedRef.current = true;
-    getActiveSubscriptions(PRO_SKUS)
-      .then((active) => {
-        if (active.length === 0) {
+    hasActiveSubscriptions(PRO_SKUS)
+      .then((hasActive) => {
+        if (!hasActive) {
           revokePro();
         }
       })
@@ -740,7 +740,7 @@ jest.mock("expo-iap", () => ({
     fetchProducts: jest.fn(),
     requestPurchase: jest.fn(),
     finishTransaction: jest.fn(),
-    getActiveSubscriptions: jest.fn(() => Promise.resolve([])),
+    hasActiveSubscriptions: jest.fn(() => Promise.resolve(false)),
   }),
 }));
 ```

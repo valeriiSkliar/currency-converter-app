@@ -8,6 +8,7 @@ import Svg, { Path } from "react-native-svg";
 import { ScreenBackground } from "@/components/ui";
 import { BackIcon, CameraIcon } from "@/components/ui/icons";
 import { useThemeColors } from "@/components/ui/use-theme-colors";
+import { useAdFrequencyStore } from "@/features/ads/use-ad-frequency-store";
 import { useCurrencies } from "@/features/converter/api/use-rates";
 import { useExchangeRates } from "@/features/converter/hooks/use-exchange-rates";
 import { usePriceScannerEngine } from "@/features/converter/hooks/use-price-scanner-engine";
@@ -547,6 +548,7 @@ function usePriceScannerState() {
 
   const { baseCurrency, targetCurrencies } = useConverterStore();
   const { isPro, ocrScanAttempts, incrementScanAttempt } = useQuotaStore();
+  const registerAdAction = useAdFrequencyStore(state => state.registerAction);
   const { data: currenciesData } = useCurrencies();
   const { rates } = useExchangeRates();
   const decimalPlaces = useSettingsStore(state => state.decimalPlaces);
@@ -590,10 +592,11 @@ function usePriceScannerState() {
       }
       else {
         incrementScanAttempt();
+        registerAdAction();
       }
     }
     prevPhaseRef.current = enginePhase;
-  }, [enginePhase, isPro, ocrScanAttempts, incrementScanAttempt, router, engineDismiss]);
+  }, [enginePhase, isPro, ocrScanAttempts, incrementScanAttempt, registerAdAction, router, engineDismiss]);
 
   return {
     cameraRef,

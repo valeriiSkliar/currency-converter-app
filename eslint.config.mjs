@@ -38,6 +38,8 @@ export default antfu(
       ".vscode",
       "docs/",
       "cli/",
+      ".cyrboard/",
+      ".superpowers/",
       "expo-env.d.ts",
       "uniwind-types.d.ts",
       "migration/*",

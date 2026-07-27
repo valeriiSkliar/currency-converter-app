@@ -14,7 +14,6 @@ type DrawerMenuProps = {
   isPro: boolean;
   enableExchangeRates?: boolean;
   onNavigate: (route: string) => void;
-  onRemoveAds: () => void;
   onShare: () => void;
   onRate: () => void;
   onOpenPrivacy: () => void;
@@ -24,7 +23,6 @@ export function DrawerMenu({
   isPro,
   enableExchangeRates,
   onNavigate,
-  onRemoveAds,
   onShare,
   onRate,
   onOpenPrivacy,
@@ -38,10 +36,8 @@ export function DrawerMenu({
     >
       <DrawerHeader isPro={isPro} topInset={insets.top} />
       <DrawerContent
-        isPro={isPro}
         enableExchangeRates={enableExchangeRates}
         onNavigate={onNavigate}
-        onRemoveAds={onRemoveAds}
         onShare={onShare}
         onRate={onRate}
         onOpenPrivacy={onOpenPrivacy}
@@ -85,20 +81,16 @@ function DrawerHeader({ isPro, topInset = 0 }: { isPro: boolean; topInset?: numb
 }
 
 type DrawerContentProps = {
-  isPro: boolean;
   enableExchangeRates?: boolean;
   onNavigate: (route: string) => void;
-  onRemoveAds: () => void;
   onShare: () => void;
   onRate: () => void;
   onOpenPrivacy: () => void;
 };
 
 function DrawerContent({
-  isPro,
   enableExchangeRates,
   onNavigate,
-  onRemoveAds,
   onShare,
   onRate,
   onOpenPrivacy,
@@ -106,19 +98,6 @@ function DrawerContent({
   const { t } = useTranslation();
   return (
     <ScrollView className="flex-1 p-4" bounces={false}>
-      {/* Monetization Yellow Button */}
-      {!isPro && (
-        <TouchableOpacity
-          onPress={onRemoveAds}
-          activeOpacity={0.8}
-          className="mb-4 flex-row items-center justify-center rounded-2xl border border-line bg-accent p-4"
-        >
-          <Text className="text-sm font-bold text-accent-ink">
-            {t("drawer.remove_ads")}
-          </Text>
-        </TouchableOpacity>
-      )}
-
       {/* Navigation Rows */}
       <View className="space-y-1">
         {/* Exchange Rates */}
