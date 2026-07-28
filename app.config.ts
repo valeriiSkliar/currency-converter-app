@@ -9,7 +9,7 @@ import "tsx/cjs";
 import Env from "./env";
 
 const EXPO_ACCOUNT_OWNER = Env.EXPO_ACCOUNT_OWNER;
-const EAS_PROJECT_ID = Env.EAS_PROJECT_ID ?? "";
+const EAS_PROJECT_ID = Env.EAS_PROJECT_ID || "4c4f7ae5-f34c-4ce6-b90e-df8a24a8a210";
 
 const appIconBadgeConfig: AppIconBadgeConfig = {
   enabled: Env.EXPO_PUBLIC_APP_ENV !== "production",
