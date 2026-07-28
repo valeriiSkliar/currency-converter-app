@@ -49,3 +49,8 @@ app-example
 .netlify
 coverage/
 
+# Google Service Account keys
+*service_account*.json
+eoassist-ru-*.json
+
+
