@@ -1,7 +1,7 @@
 import * as React from "react";
 import { useTranslation } from "react-i18next";
 import { Pressable, StyleSheet, Text, View } from "react-native";
-import { BackspaceIcon, CheckIcon } from "@/components/ui/icons";
+import { BackspaceIcon, CameraIcon } from "@/components/ui/icons";
 import { useThemeColors } from "@/components/ui/use-theme-colors";
 
 type NumpadProps = {
@@ -10,7 +10,7 @@ type NumpadProps = {
   onTapBackspace: () => void;
   onTapClear: () => void;
   onTapOperator: (op: string) => void;
-  onTapDone: () => void;
+  onScan: () => void;
 };
 
 export function Numpad({
@@ -19,7 +19,7 @@ export function Numpad({
   onTapBackspace,
   onTapClear,
   onTapOperator,
-  onTapDone,
+  onScan,
 }: NumpadProps) {
   const colors = useThemeColors();
   const { t } = useTranslation();
@@ -29,7 +29,7 @@ export function Numpad({
       <LeftColumn
         onTapClear={onTapClear}
         onTapOperator={onTapOperator}
-        onTapDone={onTapDone}
+        onScan={onScan}
       />
 
       {/* Right Section: 3x4 Digits & Backspace Grid */}
@@ -84,10 +84,10 @@ export function Numpad({
 type LeftColumnProps = {
   onTapClear: () => void;
   onTapOperator: (op: string) => void;
-  onTapDone: () => void;
+  onScan: () => void;
 };
 
-function LeftColumn({ onTapClear, onTapOperator, onTapDone }: LeftColumnProps) {
+function LeftColumn({ onTapClear, onTapOperator, onScan }: LeftColumnProps) {
   const colors = useThemeColors();
   const { t } = useTranslation();
 
@@ -135,13 +135,16 @@ function LeftColumn({ onTapClear, onTapOperator, onTapDone }: LeftColumnProps) {
         </View>
       </View>
 
-      {/* Done Button */}
+      {/* Scan Button */}
       <Pressable
-        onPress={onTapDone}
-        className="flex-1 items-center justify-center rounded-[18px] bg-ink active:opacity-85"
-        accessibilityLabel={t("converter.done")}
+        onPress={onScan}
+        className="flex-1 flex-col items-center justify-center rounded-[18px] border border-line bg-surface active:bg-black/5 dark:active:bg-white/5"
+        accessibilityLabel={t("converter.scan")}
       >
-        <CheckIcon color={colors.bg} size={22} />
+        <CameraIcon color={colors.ink} size={18} />
+        <Text className="mt-0.5 text-[9px] font-extrabold tracking-wider text-ink uppercase">
+          {t("converter.scan")}
+        </Text>
       </Pressable>
     </View>
   );

@@ -44,7 +44,6 @@ export default function HomeScreen() {
     onTapBackspace,
     onTapClear,
     onTapOperator,
-    onTapDone,
   } = useHomeScreenState();
 
   const baseSymbol = getCurrencyInfo(baseCurrency).symbol;
@@ -70,7 +69,6 @@ export default function HomeScreen() {
           baseCurrency={baseCurrency}
           symbol={baseSymbol}
           amount={formattedAmount}
-          onScan={() => router.push("/price-scanner")}
           onEditBase={() => router.push("/my-rate")}
         />
 
@@ -95,7 +93,7 @@ export default function HomeScreen() {
           onTapBackspace={onTapBackspace}
           onTapClear={onTapClear}
           onTapOperator={onTapOperator}
-          onTapDone={onTapDone}
+          onScan={() => router.push("/price-scanner")}
         />
       </View>
 
