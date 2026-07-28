@@ -73,7 +73,7 @@ const _env: z.infer<typeof envSchema> = {
   EXPO_PUBLIC_VAR_BOOL: process.env.EXPO_PUBLIC_VAR_BOOL === "true",
   EXPO_PUBLIC_ENABLE_EXCHANGE_RATES: process.env.EXPO_PUBLIC_ENABLE_EXCHANGE_RATES === "true",
   EXPO_PUBLIC_SHARE_URL: process.env.EXPO_PUBLIC_SHARE_URL ?? "https://currencyconverterapp.com",
-  EXPO_PUBLIC_PRIVACY_POLICY_URL: process.env.EXPO_PUBLIC_PRIVACY_POLICY_URL ?? "https://currencyconverterapp.com/privacy-policy",
+  EXPO_PUBLIC_PRIVACY_POLICY_URL: process.env.EXPO_PUBLIC_PRIVACY_POLICY_URL ?? "https://convertoff-privacy.netlify.app/privacy-policy",
   EXPO_PUBLIC_RATE_URL_IOS: process.env.EXPO_PUBLIC_RATE_URL_IOS ?? "https://apps.apple.com/app/currency-converter",
   EXPO_PUBLIC_RATE_URL_ANDROID: process.env.EXPO_PUBLIC_RATE_URL_ANDROID ?? "https://play.google.com/store/apps/details?id=com.cimmetria.currencyconverter",
   EXPO_PUBLIC_ADMOB_INTERSTITIAL_ID_IOS: process.env.EXPO_PUBLIC_ADMOB_INTERSTITIAL_ID_IOS,

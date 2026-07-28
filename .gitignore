@@ -44,3 +44,8 @@ app-example
 /ios
 .env
 .env.production
+
+# Local Netlify folder
+.netlify
+coverage/
+
