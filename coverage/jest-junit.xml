@@ -1,21 +1,37 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuites name="jest tests" tests="114" failures="0" errors="0" time="1.038">
-  <testsuite name="src/__tests__/env.test.ts" errors="0" failures="0" skipped="0" timestamp="2026-07-28T11:23:30" time="0.273" tests="6">
-    <testcase classname="env" name="exposes EXPO_PUBLIC_API_URL" time="0.048">
+<testsuites name="jest tests" tests="114" failures="0" errors="0" time="1.291">
+  <testsuite name="src/__tests__/converter-store.test.ts" errors="0" failures="0" skipped="0" timestamp="2026-07-28T12:54:32" time="0.462" tests="7">
+    <testcase classname="useConverterStore" name="has default state" time="0.002">
     </testcase>
-    <testcase classname="env" name="exposes EXPO_PUBLIC_APP_SERVICE_KEY" time="0.011">
+    <testcase classname="useConverterStore" name="updates base currency and target currencies list" time="0.001">
+    </testcase>
+    <testcase classname="useConverterStore" name="updates amount" time="0">
+    </testcase>
+    <testcase classname="useConverterStore" name="adds new currency only if not already present" time="0.003">
+    </testcase>
+    <testcase classname="useConverterStore" name="removes currency" time="0">
+    </testcase>
+    <testcase classname="useConverterStore" name="swaps base currency with target row, placing old base at the row&apos;s index" time="0">
+    </testcase>
+    <testcase classname="useConverterStore" name="sets custom rate override" time="0">
+    </testcase>
+  </testsuite>
+  <testsuite name="src/__tests__/env.test.ts" errors="0" failures="0" skipped="0" timestamp="2026-07-28T12:54:32" time="0.126" tests="6">
+    <testcase classname="env" name="exposes EXPO_PUBLIC_API_URL" time="0.044">
+    </testcase>
+    <testcase classname="env" name="exposes EXPO_PUBLIC_APP_SERVICE_KEY" time="0.008">
     </testcase>
     <testcase classname="env" name="has Convertoff Currency Converter as app name" time="0.008">
     </testcase>
-    <testcase classname="env" name="has cimmetria bundle IDs" time="0.011">
+    <testcase classname="env" name="has cimmetria bundle IDs" time="0.012">
     </testcase>
     <testcase classname="env" name="exposes EXPO_PUBLIC_ENABLE_EXCHANGE_RATES as boolean" time="0.009">
     </testcase>
-    <testcase classname="env" name="parses EXPO_PUBLIC_ENABLE_EXCHANGE_RATES as true when string is true" time="0.01">
+    <testcase classname="env" name="parses EXPO_PUBLIC_ENABLE_EXCHANGE_RATES as true when string is true" time="0.012">
     </testcase>
   </testsuite>
-  <testsuite name="src/__tests__/use-pro-status-sync.test.tsx" errors="0" failures="0" skipped="0" timestamp="2026-07-28T11:23:30" time="0.127" tests="4">
-    <testcase classname="useProStatusSync" name="revokes PRO when the store reports no active subscription" time="0.011">
+  <testsuite name="src/__tests__/use-pro-status-sync.test.tsx" errors="0" failures="0" skipped="0" timestamp="2026-07-28T12:54:32" time="0.091" tests="4">
+    <testcase classname="useProStatusSync" name="revokes PRO when the store reports no active subscription" time="0.007">
     </testcase>
     <testcase classname="useProStatusSync" name="keeps PRO when an active subscription exists" time="0.001">
     </testcase>
@@ -24,22 +40,22 @@
     <testcase classname="useProStatusSync" name="does nothing for free users" time="0.001">
     </testcase>
   </testsuite>
-  <testsuite name="src/__tests__/api-client.test.ts" errors="0" failures="0" skipped="0" timestamp="2026-07-28T11:23:30" time="0.08" tests="3">
-    <testcase classname="aPI client" name="has correct baseURL from env" time="0.03">
+  <testsuite name="src/__tests__/api-client.test.ts" errors="0" failures="0" skipped="0" timestamp="2026-07-28T12:54:32" time="0.066" tests="3">
+    <testcase classname="aPI client" name="has correct baseURL from env" time="0.024">
     </testcase>
-    <testcase classname="aPI client" name="has X-App-Service-Key auth header" time="0.008">
+    <testcase classname="aPI client" name="has X-App-Service-Key auth header" time="0.007">
     </testcase>
-    <testcase classname="aPI client" name="has 10s timeout" time="0.012">
+    <testcase classname="aPI client" name="has 10s timeout" time="0.01">
     </testcase>
   </testsuite>
-  <testsuite name="src/features/converter/hooks/__tests__/use-price-scanner-engine.test.ts" errors="0" failures="0" skipped="0" timestamp="2026-07-28T11:23:30" time="0.07" tests="17">
-    <testcase classname="usePriceScannerEngine - phase transitions" name="starts in idle phase with null detected price and error reason" time="0.006">
+  <testsuite name="src/features/converter/hooks/__tests__/use-price-scanner-engine.test.ts" errors="0" failures="0" skipped="0" timestamp="2026-07-28T12:54:32" time="0.062" tests="17">
+    <testcase classname="usePriceScannerEngine - phase transitions" name="starts in idle phase with null detected price and error reason" time="0.004">
     </testcase>
-    <testcase classname="usePriceScannerEngine - phase transitions" name="moves through capturing and found when OCR contains a price" time="0.003">
+    <testcase classname="usePriceScannerEngine - phase transitions" name="moves through capturing and found when OCR contains a price" time="0.002">
     </testcase>
     <testcase classname="usePriceScannerEngine - phase transitions" name="ignores capture requests while a capture is already running" time="0.001">
     </testcase>
-    <testcase classname="usePriceScannerEngine - phase transitions" name="dismiss resets phase to idle and clears scan data" time="0.001">
+    <testcase classname="usePriceScannerEngine - phase transitions" name="dismiss resets phase to idle and clears scan data" time="0.002">
     </testcase>
     <testcase classname="usePriceScannerEngine - viewfinder region filtering" name="ignores a price block outside the on-screen viewfinder rectangle" time="0.001">
     </testcase>
@@ -65,10 +81,10 @@
     </testcase>
     <testcase classname="usePriceScannerEngine - controls" name="swaps from and to" time="0.001">
     </testcase>
-    <testcase classname="usePriceScannerEngine - controls" name="sets from and to independently" time="0.001">
+    <testcase classname="usePriceScannerEngine - controls" name="sets from and to independently" time="0">
     </testcase>
   </testsuite>
-  <testsuite name="src/__tests__/calculator-engine.test.ts" errors="0" failures="0" skipped="0" timestamp="2026-07-28T11:23:30" time="0.065" tests="14">
+  <testsuite name="src/__tests__/calculator-engine.test.ts" errors="0" failures="0" skipped="0" timestamp="2026-07-28T12:54:32" time="0.045" tests="14">
     <testcase classname="useCalculatorEngine - Init &amp; Digits" name="initializes with default value &apos;0&apos;" time="0.001">
     </testcase>
     <testcase classname="useCalculatorEngine - Init &amp; Digits" name="initializes with a custom initial value" time="0">
@@ -79,100 +95,86 @@
     </testcase>
     <testcase classname="useCalculatorEngine - Init &amp; Digits" name="supports decimal separator and prevents duplicates" time="0.001">
     </testcase>
-    <testcase classname="useCalculatorEngine - Init &amp; Digits" name="clears state on &apos;C&apos;" time="0">
+    <testcase classname="useCalculatorEngine - Init &amp; Digits" name="clears state on &apos;C&apos;" time="0.001">
     </testcase>
     <testcase classname="useCalculatorEngine - Backspace, Sign &amp; Percent" name="handles backspace" time="0.001">
     </testcase>
     <testcase classname="useCalculatorEngine - Backspace, Sign &amp; Percent" name="toggles sign correctly" time="0.001">
     </testcase>
-    <testcase classname="useCalculatorEngine - Backspace, Sign &amp; Percent" name="applies percentage correctly" time="0.001">
+    <testcase classname="useCalculatorEngine - Backspace, Sign &amp; Percent" name="applies percentage correctly" time="0">
     </testcase>
     <testcase classname="useCalculatorEngine - Calculations &amp; Precision" name="performs addition correctly" time="0.001">
     </testcase>
-    <testcase classname="useCalculatorEngine - Calculations &amp; Precision" name="performs multiplication with visual symbol" time="0">
+    <testcase classname="useCalculatorEngine - Calculations &amp; Precision" name="performs multiplication with visual symbol" time="0.001">
     </testcase>
     <testcase classname="useCalculatorEngine - Calculations &amp; Precision" name="resolves float point inaccuracies (e.g. 0.1 + 0.2)" time="0.001">
     </testcase>
-    <testcase classname="useCalculatorEngine - Calculations &amp; Precision" name="chains calculations automatically" time="0.001">
+    <testcase classname="useCalculatorEngine - Calculations &amp; Precision" name="chains calculations automatically" time="0">
     </testcase>
-    <testcase classname="useCalculatorEngine - Calculations &amp; Precision" name="handles division by zero and displays Error" time="0">
+    <testcase classname="useCalculatorEngine - Calculations &amp; Precision" name="handles division by zero and displays Error" time="0.001">
     </testcase>
   </testsuite>
-  <testsuite name="src/__tests__/use-pro-purchase.test.tsx" errors="0" failures="0" skipped="0" timestamp="2026-07-28T11:23:31" time="0.065" tests="9">
-    <testcase classname="useProPurchase" name="fetches subscription products once connected" time="0.003">
+  <testsuite name="src/__tests__/use-pro-purchase.test.tsx" errors="0" failures="0" skipped="0" timestamp="2026-07-28T12:54:32" time="0.045" tests="9">
+    <testcase classname="useProPurchase" name="fetches subscription products once connected" time="0.002">
     </testcase>
-    <testcase classname="useProPurchase" name="exposes mapped plans and readiness" time="0.002">
+    <testcase classname="useProPurchase" name="exposes mapped plans and readiness" time="0.001">
     </testcase>
-    <testcase classname="useProPurchase" name="purchase() requests the subscription and flags processing" time="0.002">
+    <testcase classname="useProPurchase" name="purchase() requests the subscription and flags processing" time="0.001">
     </testcase>
-    <testcase classname="useProPurchase" name="unlocks PRO and finishes transaction on purchase success" time="0.003">
+    <testcase classname="useProPurchase" name="unlocks PRO and finishes transaction on purchase success" time="0.001">
     </testcase>
-    <testcase classname="useProPurchase" name="clears processing and shows an error when finishTransaction fails" time="0.002">
+    <testcase classname="useProPurchase" name="clears processing and shows an error when finishTransaction fails" time="0.001">
     </testcase>
-    <testcase classname="useProPurchase" name="stays silent when the user cancels" time="0.002">
+    <testcase classname="useProPurchase" name="stays silent when the user cancels" time="0">
     </testcase>
-    <testcase classname="useProPurchase" name="shows an error message for real purchase errors" time="0.008">
+    <testcase classname="useProPurchase" name="shows an error message for real purchase errors" time="0.001">
     </testcase>
     <testcase classname="useProPurchase" name="restore() unlocks PRO when an active subscription exists" time="0.001">
     </testcase>
-    <testcase classname="useProPurchase" name="restore() reports when nothing is found and does not unlock" time="0.001">
+    <testcase classname="useProPurchase" name="restore() reports when nothing is found and does not unlock" time="0">
     </testcase>
   </testsuite>
-  <testsuite name="src/__tests__/ad-frequency.test.ts" errors="0" failures="0" skipped="0" timestamp="2026-07-28T11:23:31" time="0.029" tests="6">
+  <testsuite name="src/__tests__/settings-store.test.ts" errors="0" failures="0" skipped="0" timestamp="2026-07-28T12:54:33" time="0.04" tests="7">
+    <testcase classname="useSettingsStore" name="has default state values" time="0">
+    </testcase>
+    <testcase classname="useSettingsStore" name="updates theme" time="0">
+    </testcase>
+    <testcase classname="useSettingsStore" name="updates language" time="0">
+    </testcase>
+    <testcase classname="useSettingsStore" name="updates decimal places" time="0">
+    </testcase>
+    <testcase classname="useSettingsStore" name="updates wallpaper" time="0.001">
+    </testcase>
+    <testcase classname="useSettingsStore" name="updates privacy accepted status" time="0">
+    </testcase>
+    <testcase classname="useSettingsStore" name="updates max target currencies" time="0">
+    </testcase>
+  </testsuite>
+  <testsuite name="src/__tests__/ad-frequency.test.ts" errors="0" failures="0" skipped="0" timestamp="2026-07-28T12:54:33" time="0.03" tests="6">
     <testcase classname="shouldShowAd" name="is false below the action threshold" time="0">
     </testcase>
-    <testcase classname="shouldShowAd" name="is true at the threshold when never shown before" time="0.001">
+    <testcase classname="shouldShowAd" name="is true at the threshold when never shown before" time="0">
     </testcase>
     <testcase classname="shouldShowAd" name="is false when the minimum interval has not elapsed" time="0">
     </testcase>
     <testcase classname="shouldShowAd" name="is true when the minimum interval has elapsed" time="0">
     </testcase>
-    <testcase classname="useAdFrequencyStore" name="registerAction increments the counter" time="0.002">
+    <testcase classname="useAdFrequencyStore" name="registerAction increments the counter" time="0.001">
     </testcase>
-    <testcase classname="useAdFrequencyStore" name="markShown resets counter, records time, clears force flag" time="0.001">
-    </testcase>
-  </testsuite>
-  <testsuite name="src/__tests__/converter-store.test.ts" errors="0" failures="0" skipped="0" timestamp="2026-07-28T11:23:31" time="0.03" tests="7">
-    <testcase classname="useConverterStore" name="has default state" time="0.001">
-    </testcase>
-    <testcase classname="useConverterStore" name="updates base currency and target currencies list" time="0">
-    </testcase>
-    <testcase classname="useConverterStore" name="updates amount" time="0">
-    </testcase>
-    <testcase classname="useConverterStore" name="adds new currency only if not already present" time="0.001">
-    </testcase>
-    <testcase classname="useConverterStore" name="removes currency" time="0">
-    </testcase>
-    <testcase classname="useConverterStore" name="swaps base currency with target row, placing old base at the row&apos;s index" time="0">
-    </testcase>
-    <testcase classname="useConverterStore" name="sets custom rate override" time="0">
+    <testcase classname="useAdFrequencyStore" name="markShown resets counter, records time, clears force flag" time="0">
     </testcase>
   </testsuite>
-  <testsuite name="src/__tests__/i18n.test.ts" errors="0" failures="0" skipped="0" timestamp="2026-07-28T11:23:31" time="0.029" tests="4">
+  <testsuite name="src/__tests__/i18n.test.ts" errors="0" failures="0" skipped="0" timestamp="2026-07-28T12:54:33" time="0.044" tests="4">
     <testcase classname="i18n resources" name="has en, ru and ar locales" time="0.001">
     </testcase>
-    <testcase classname="i18n resources" name="en has required converter keys" time="0.001">
+    <testcase classname="i18n resources" name="en has required converter keys" time="0">
     </testcase>
     <testcase classname="i18n resources" name="ru has required converter keys" time="0">
     </testcase>
-    <testcase classname="i18n resources" name="ru and ar have same top-level keys as en" time="0">
+    <testcase classname="i18n resources" name="ru and ar have same top-level keys as en" time="0.001">
     </testcase>
   </testsuite>
-  <testsuite name="src/__tests__/quota-store.test.ts" errors="0" failures="0" skipped="0" timestamp="2026-07-28T11:23:31" time="0.026" tests="6">
-    <testcase classname="useQuotaStore" name="has default state values" time="0.003">
-    </testcase>
-    <testcase classname="useQuotaStore" name="increments custom rate change attempts count" time="0">
-    </testcase>
-    <testcase classname="useQuotaStore" name="increments OCR scans attempts count" time="0.001">
-    </testcase>
-    <testcase classname="useQuotaStore" name="unlocks PRO plan" time="0">
-    </testcase>
-    <testcase classname="useQuotaStore" name="resets attempts counter" time="0">
-    </testcase>
-    <testcase classname="useQuotaStore" name="revokePro sets isPro back to false" time="0">
-    </testcase>
-  </testsuite>
-  <testsuite name="src/features/converter/utils/__tests__/viewfinder-region.test.ts" errors="0" failures="0" skipped="0" timestamp="2026-07-28T11:23:31" time="0.027" tests="13">
+  <testsuite name="src/features/converter/utils/__tests__/viewfinder-region.test.ts" errors="0" failures="0" skipped="0" timestamp="2026-07-28T12:54:33" time="0.035" tests="13">
     <testcase classname="normalizePhotoSize" name="returns the photo unchanged when its orientation already matches the view" time="0">
     </testcase>
     <testcase classname="normalizePhotoSize" name="swaps width/height when the photo is reported landscape but the view is portrait" time="0">
@@ -181,9 +183,9 @@
     </testcase>
     <testcase classname="computeVisibleCropRect" name="returns the full rect when photo and view share the same aspect ratio" time="0">
     </testcase>
-    <testcase classname="computeVisibleCropRect" name="crops left/right when the photo is relatively wider than the view (same orientation)" time="0.001">
+    <testcase classname="computeVisibleCropRect" name="crops left/right when the photo is relatively wider than the view (same orientation)" time="0">
     </testcase>
-    <testcase classname="computeVisibleCropRect" name="crops top/bottom when the photo is relatively taller/narrower than the view (same orientation)" time="0">
+    <testcase classname="computeVisibleCropRect" name="crops top/bottom when the photo is relatively taller/narrower than the view (same orientation)" time="0.001">
     </testcase>
     <testcase classname="computeVisibleCropRect" name="treats a landscape-reported photo the same as its already-rotated equivalent, given a portrait view" time="0">
     </testcase>
@@ -191,7 +193,7 @@
     </testcase>
     <testcase classname="computeViewfinderRectInPhoto" name="composes the visible crop with the viewfinder bounds when the photo is wider than the view" time="0">
     </testcase>
-    <testcase classname="filterBlocksInViewfinder" name="keeps a block whose center falls inside the viewfinder rectangle" time="0.001">
+    <testcase classname="filterBlocksInViewfinder" name="keeps a block whose center falls inside the viewfinder rectangle" time="0">
     </testcase>
     <testcase classname="filterBlocksInViewfinder" name="drops a block whose center falls outside the viewfinder rectangle (e.g. above it)" time="0">
     </testcase>
@@ -200,24 +202,8 @@
     <testcase classname="filterBlocksInViewfinder" name="filters correctly when the photo orientation needs normalizing against the view" time="0">
     </testcase>
   </testsuite>
-  <testsuite name="src/__tests__/settings-store.test.ts" errors="0" failures="0" skipped="0" timestamp="2026-07-28T11:23:31" time="0.026" tests="7">
-    <testcase classname="useSettingsStore" name="has default state values" time="0.001">
-    </testcase>
-    <testcase classname="useSettingsStore" name="updates theme" time="0">
-    </testcase>
-    <testcase classname="useSettingsStore" name="updates language" time="0">
-    </testcase>
-    <testcase classname="useSettingsStore" name="updates decimal places" time="0">
-    </testcase>
-    <testcase classname="useSettingsStore" name="updates wallpaper" time="0">
-    </testcase>
-    <testcase classname="useSettingsStore" name="updates privacy accepted status" time="0">
-    </testcase>
-    <testcase classname="useSettingsStore" name="updates max target currencies" time="0">
-    </testcase>
-  </testsuite>
-  <testsuite name="src/features/converter/utils/__tests__/price-ocr-parser.test.ts" errors="0" failures="0" skipped="0" timestamp="2026-07-28T11:23:31" time="0.027" tests="13">
-    <testcase classname="parsePriceFromOcrText" name="extracts price with dollar symbol prefix" time="0.001">
+  <testsuite name="src/features/converter/utils/__tests__/price-ocr-parser.test.ts" errors="0" failures="0" skipped="0" timestamp="2026-07-28T12:54:33" time="0.03" tests="13">
+    <testcase classname="parsePriceFromOcrText" name="extracts price with dollar symbol prefix" time="0">
     </testcase>
     <testcase classname="parsePriceFromOcrText" name="extracts price with euro symbol prefix and comma decimal" time="0">
     </testcase>
@@ -227,7 +213,7 @@
     </testcase>
     <testcase classname="parsePriceFromOcrText" name="prefers symbol-prefixed price over a plain number" time="0">
     </testcase>
-    <testcase classname="parsePriceFromOcrText" name="returns null when text contains no price-like pattern" time="0.001">
+    <testcase classname="parsePriceFromOcrText" name="returns null when text contains no price-like pattern" time="0">
     </testcase>
     <testcase classname="parsePriceFromOcrText" name="returns null for empty string" time="0">
     </testcase>
@@ -235,16 +221,30 @@
     </testcase>
     <testcase classname="parsePriceFromOcrText" name="extracts whole-number price with a 3-letter currency code suffix" time="0">
     </testcase>
-    <testcase classname="parsePriceFromOcrText" name="extracts price with a 3-letter currency code suffix despite trailing OCR noise" time="0.001">
+    <testcase classname="parsePriceFromOcrText" name="extracts price with a 3-letter currency code suffix despite trailing OCR noise" time="0">
     </testcase>
-    <testcase classname="parsePriceFromOcrText" name="extracts price with a spaced 3-letter currency code suffix" time="0">
+    <testcase classname="parsePriceFromOcrText" name="extracts price with a spaced 3-letter currency code suffix" time="0.001">
     </testcase>
     <testcase classname="parsePriceFromOcrText" name="extracts price with a 3-letter currency code prefix" time="0">
     </testcase>
     <testcase classname="parsePriceFromOcrText" name="does not treat an unrelated 3-letter word next to a number as a currency code" time="0">
     </testcase>
   </testsuite>
-  <testsuite name="src/__tests__/iap-plan-mapping.test.ts" errors="0" failures="0" skipped="0" timestamp="2026-07-28T11:23:31" time="0.024" tests="5">
+  <testsuite name="src/__tests__/quota-store.test.ts" errors="0" failures="0" skipped="0" timestamp="2026-07-28T12:54:33" time="0.029" tests="6">
+    <testcase classname="useQuotaStore" name="has default state values" time="0">
+    </testcase>
+    <testcase classname="useQuotaStore" name="increments custom rate change attempts count" time="0.001">
+    </testcase>
+    <testcase classname="useQuotaStore" name="increments OCR scans attempts count" time="0">
+    </testcase>
+    <testcase classname="useQuotaStore" name="unlocks PRO plan" time="0">
+    </testcase>
+    <testcase classname="useQuotaStore" name="resets attempts counter" time="0">
+    </testcase>
+    <testcase classname="useQuotaStore" name="revokePro sets isPro back to false" time="0">
+    </testcase>
+  </testsuite>
+  <testsuite name="src/__tests__/iap-plan-mapping.test.ts" errors="0" failures="0" skipped="0" timestamp="2026-07-28T12:54:33" time="0.028" tests="5">
     <testcase classname="mapSubscriptionsToPlans" name="returns monthly first, then yearly, regardless of input order" time="0">
     </testcase>
     <testcase classname="mapSubscriptionsToPlans" name="keeps the store&apos;s localized displayPrice" time="0.001">

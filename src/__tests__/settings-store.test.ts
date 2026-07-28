@@ -7,7 +7,7 @@ beforeEach(() => {
     decimalPlaces: 2,
     wallpaper: "default",
     privacyAccepted: false,
-    maxTargetCurrencies: 4,
+    maxTargetCurrencies: 5,
   });
 });
 
@@ -19,7 +19,7 @@ describe("useSettingsStore", () => {
     expect(state.decimalPlaces).toBe(2);
     expect(state.wallpaper).toBe("default");
     expect(state.privacyAccepted).toBe(false);
-    expect(state.maxTargetCurrencies).toBe(4);
+    expect(state.maxTargetCurrencies).toBe(5);
   });
 
   it("updates theme", () => {

@@ -40,7 +40,7 @@ export const useSettingsStore = create<SettingsState>()(
       decimalPlaces: 2,
       wallpaper: "default",
       privacyAccepted: false,
-      maxTargetCurrencies: 4,
+      maxTargetCurrencies: 5,
       setTheme: theme => set({ theme }),
       setLanguage: language => set({ language }),
       setDecimalPlaces: decimalPlaces => set({ decimalPlaces }),
