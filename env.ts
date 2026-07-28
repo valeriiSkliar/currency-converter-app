@@ -24,6 +24,8 @@ const envSchema = z.object({
   EXPO_PUBLIC_ADMOB_INTERSTITIAL_ID_ANDROID: z.string().optional(),
 
   // only available for app.config.ts usage
+  ADMOB_ANDROID_APP_ID: z.string().optional(),
+  ADMOB_IOS_APP_ID: z.string().optional(),
   APP_BUILD_ONLY_VAR: z.string().optional(),
   EXPO_ACCOUNT_OWNER: z.string().optional(),
   EAS_PROJECT_ID: z.string().optional(),
@@ -76,6 +78,8 @@ const _env: z.infer<typeof envSchema> = {
   EXPO_PUBLIC_RATE_URL_ANDROID: process.env.EXPO_PUBLIC_RATE_URL_ANDROID ?? "https://play.google.com/store/apps/details?id=com.cimmetria.currencyconverter",
   EXPO_PUBLIC_ADMOB_INTERSTITIAL_ID_IOS: process.env.EXPO_PUBLIC_ADMOB_INTERSTITIAL_ID_IOS,
   EXPO_PUBLIC_ADMOB_INTERSTITIAL_ID_ANDROID: process.env.EXPO_PUBLIC_ADMOB_INTERSTITIAL_ID_ANDROID,
+  ADMOB_ANDROID_APP_ID: process.env.ADMOB_ANDROID_APP_ID,
+  ADMOB_IOS_APP_ID: process.env.ADMOB_IOS_APP_ID,
   APP_BUILD_ONLY_VAR: process.env.APP_BUILD_ONLY_VAR,
   EXPO_ACCOUNT_OWNER: process.env.EXPO_ACCOUNT_OWNER,
   EAS_PROJECT_ID: process.env.EAS_PROJECT_ID,
