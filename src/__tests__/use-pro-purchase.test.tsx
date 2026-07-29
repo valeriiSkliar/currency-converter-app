@@ -30,8 +30,7 @@ function mockCreateIap(options: typeof capturedOptions) {
   return {
     connected: true,
     subscriptions: [
-      { id: "pro_monthly", displayPrice: "$4.99", price: 4.99 },
-      { id: "pro_yearly", displayPrice: "$19.99", price: 19.99 },
+      { id: "pro_yearly", displayPrice: "$4.99", price: 4.99 },
     ],
     fetchProducts: mockFetchProducts,
     requestPurchase: mockRequestPurchase,
@@ -54,7 +53,7 @@ describe("useProPurchase", () => {
   it("fetches subscription products once connected", () => {
     renderHook(() => useProPurchase());
     expect(mockFetchProducts).toHaveBeenCalledWith({
-      skus: ["pro_monthly", "pro_yearly"],
+      skus: ["pro_yearly"],
       type: "subs",
     });
   });
@@ -63,7 +62,6 @@ describe("useProPurchase", () => {
     const { result } = renderHook(() => useProPurchase());
     expect(result.current.isReady).toBe(true);
     expect(result.current.plans.map(p => p.sku)).toEqual([
-      "pro_monthly",
       "pro_yearly",
     ]);
   });

@@ -28,13 +28,19 @@ export function DrawerMenu({
   onOpenPrivacy,
 }: DrawerMenuProps) {
   const insets = useSafeAreaInsets();
+  const { t } = useTranslation();
 
   return (
     <View
-      className="h-full w-70 flex-1 bg-surface"
+      className="size-full flex-1 bg-surface"
       style={{ paddingTop: 0, paddingBottom: 0 }}
     >
-      <DrawerHeader isPro={isPro} topInset={insets.top} />
+      <DrawerHeader topInset={insets.top} />
+      <View className="px-5 pt-3 pb-1">
+        <Text className="text-xs font-semibold text-ink-mute">
+          {isPro ? t("drawer.pro_plan") : t("drawer.free_plan")}
+        </Text>
+      </View>
       <DrawerContent
         enableExchangeRates={enableExchangeRates}
         onNavigate={onNavigate}
@@ -46,14 +52,14 @@ export function DrawerMenu({
   );
 }
 
-function DrawerHeader({ isPro, topInset = 0 }: { isPro: boolean; topInset?: number }) {
+function DrawerHeader({ topInset = 0 }: { topInset?: number }) {
   const { t } = useTranslation();
   return (
     <View
-      className="relative justify-end overflow-hidden p-5"
-      style={{ minHeight: 160 + topInset }}
+      className="relative w-full justify-end overflow-hidden p-5"
+      style={{ paddingTop: topInset + 20, paddingBottom: 20 }}
     >
-      <Svg style={StyleSheet.absoluteFill}>
+      <Svg style={StyleSheet.absoluteFill} width="100%" height="100%" preserveAspectRatio="none">
         <Defs>
           <LinearGradient id="drawerHeaderGrad" x1="0" y1="0" x2="0" y2="1">
             <Stop offset="0%" stopColor="#0057B7" />
@@ -70,11 +76,8 @@ function DrawerHeader({ isPro, topInset = 0 }: { isPro: boolean; topInset?: numb
           style={StyleSheet.absoluteFill}
         />
       </View>
-      <Text className="mb-1 text-xl font-bold text-white">
+      <Text className="text-xl font-bold text-white">
         {t("converter.title")}
-      </Text>
-      <Text className="text-xs text-white/70">
-        {isPro ? t("drawer.pro_plan") : t("drawer.free_plan")}
       </Text>
     </View>
   );

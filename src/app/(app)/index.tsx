@@ -59,7 +59,6 @@ export default function HomeScreen() {
           onOpenMenu={openDrawer}
           onRefresh={handleRefresh}
           onOpenSettings={() => router.push("/settings")}
-          onOpenPaywall={() => router.push("/paywall")}
           title={t("converter.title")}
           proLabel={t("converter.pro")}
         />
@@ -175,7 +174,6 @@ type HomeHeaderProps = {
   onOpenMenu: () => void;
   onRefresh: () => void;
   onOpenSettings: () => void;
-  onOpenPaywall: () => void;
   title: string;
   proLabel: string;
 };
@@ -187,7 +185,6 @@ function HomeHeader({
   onOpenMenu,
   onRefresh,
   onOpenSettings,
-  onOpenPaywall,
   title,
   proLabel,
 }: HomeHeaderProps) {
@@ -209,16 +206,15 @@ function HomeHeader({
           <Text className="text-base font-extrabold text-ink" numberOfLines={1}>
             {title}
           </Text>
-          {!isPro && (
-            <Pressable
-              onPress={onOpenPaywall}
-              className="flex-row items-center gap-0.5 rounded-full bg-accent px-2 py-0.5 active:opacity-80"
+          {isPro && (
+            <View
+              className="flex-row items-center gap-0.5 rounded-full bg-accent px-2 py-0.5"
             >
               <SparklesIcon color="#1A1A1C" size={10} />
               <Text className="text-[9px] font-black tracking-widest text-[#1A1A1C] uppercase">
                 {proLabel}
               </Text>
-            </Pressable>
+            </View>
           )}
         </View>
         <UpdatedSubtitle

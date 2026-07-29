@@ -264,13 +264,11 @@ function usePaywallScreenState() {
 
   const plans = storePlans.map(plan => ({
     id: plan.sku,
-    title: t(plan.period === "monthly" ? "converter.planMonthly" : "converter.planYearly"),
+    title: t("converter.planYearly"),
     price: plan.displayPrice,
-    per: t(plan.period === "monthly" ? "converter.pricePerMonth" : "converter.pricePerYear"),
-    sub: plan.savingsPercent === null
-      ? ""
-      : t("converter.savePercent", { percent: plan.savingsPercent }),
-    badge: plan.period === "yearly" ? t("converter.bestValue") : undefined,
+    per: t("converter.pricePerYear"),
+    sub: "",
+    badge: undefined,
   }));
 
   const handlePurchase = () => {
