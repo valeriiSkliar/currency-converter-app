@@ -56,18 +56,20 @@ function DrawerHeader({ topInset = 0 }: { topInset?: number }) {
   const { t } = useTranslation();
   return (
     <View
-      className="relative w-full justify-end overflow-hidden p-5"
+      className="relative w-full overflow-hidden bg-[#0057B7] p-5"
       style={{ paddingTop: topInset + 20, paddingBottom: 20 }}
     >
-      <Svg style={StyleSheet.absoluteFill} width="100%" height="100%" preserveAspectRatio="none">
-        <Defs>
-          <LinearGradient id="drawerHeaderGrad" x1="0" y1="0" x2="0" y2="1">
-            <Stop offset="0%" stopColor="#0057B7" />
-            <Stop offset="100%" stopColor="#002D62" />
-          </LinearGradient>
-        </Defs>
-        <Rect width="100%" height="100%" fill="url(#drawerHeaderGrad)" />
-      </Svg>
+      <View style={StyleSheet.absoluteFillObject}>
+        <Svg width="100%" height="100%" preserveAspectRatio="none">
+          <Defs>
+            <LinearGradient id="drawerHeaderGrad" x1="0" y1="0" x2="0" y2="1">
+              <Stop offset="0%" stopColor="#0057B7" />
+              <Stop offset="100%" stopColor="#002D62" />
+            </LinearGradient>
+          </Defs>
+          <Rect width="100%" height="100%" fill="url(#drawerHeaderGrad)" />
+        </Svg>
+      </View>
       {/* App Logo */}
       <View className="mb-3 size-14 items-center justify-center overflow-hidden rounded-2xl bg-black">
         <Image
