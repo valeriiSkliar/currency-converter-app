@@ -200,7 +200,7 @@ export function CTADock({
 }) {
   return (
     <View
-      className="bg-linear-to-b from-transparent via-bg/85 to-bg px-5.5 pt-3"
+      className="bg-linear-to-b from-transparent via-[#0A0A0C]/90 to-[#0A0A0C] px-5.5 pt-3"
       style={{ paddingBottom: Math.max(bottomInset + 10, 18) }}
     >
       <TouchableOpacity
@@ -225,19 +225,19 @@ export function CTADock({
             )}
       </TouchableOpacity>
 
-      <Text className="mt-2.5 text-center text-[11.5px] leading-normal text-white/50">
+      <Text className="mt-2.5 text-center text-xs/normal font-medium text-white/80">
         {note}
       </Text>
 
-      <View className="mt-2 flex-row items-center justify-center gap-3.5">
-        <TouchableOpacity onPress={onRestore}>
-          <Text className="text-[11.5px] font-semibold text-white/55">
+      <View className="mt-2.5 flex-row items-center justify-center gap-3.5">
+        <TouchableOpacity onPress={onRestore} activeOpacity={0.7}>
+          <Text className="text-xs font-bold text-white/90 underline">
             {restoreText}
           </Text>
         </TouchableOpacity>
-        <Text className="text-[11.5px] font-bold text-white/20">·</Text>
-        <TouchableOpacity onPress={onBack}>
-          <Text className="text-[11.5px] font-semibold text-white/55">
+        <Text className="text-xs font-bold text-white/40">·</Text>
+        <TouchableOpacity onPress={onBack} activeOpacity={0.7}>
+          <Text className="text-xs font-bold text-white/90 underline">
             {termsText}
           </Text>
         </TouchableOpacity>
