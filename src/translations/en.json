@@ -174,5 +174,11 @@
     "title": "Settings",
     "wallpaper": "Wallpaper",
     "wallpaperHint": "Default"
+  },
+  "update": {
+    "button": "Update Now",
+    "current_version": "Current version: v{{version}}",
+    "description": "A new version of the app (v{{minVersion}}) is required to continue. Please update to get the latest features and improvements.",
+    "title": "Update Available"
   }
 }

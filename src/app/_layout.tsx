@@ -13,7 +13,9 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 
 import { useThemeConfig } from "@/components/ui/use-theme-config";
 import { PrivacyModal } from "@/features/converter/components/privacy-modal";
+import { UpdateModal } from "@/features/converter/components/update-modal";
 import { useSettingsStore } from "@/features/settings/store/use-settings-store";
+import { useVersionCheck } from "@/features/version/hooks/use-version-check";
 import { APIProvider } from "@/lib/api";
 import { loadSelectedTheme } from "@/lib/hooks/use-selected-theme";
 // Import  global CSS file
@@ -69,6 +71,18 @@ export default function RootLayout() {
   );
 }
 
+function VersionCheckModalContainer() {
+  const { isUpdateRequired, minVersion, currentVersion } = useVersionCheck();
+
+  return (
+    <UpdateModal
+      visible={isUpdateRequired}
+      minVersion={minVersion}
+      currentVersion={currentVersion}
+    />
+  );
+}
+
 function Providers({ children }: { children: React.ReactNode }) {
   const theme = useThemeConfig();
   return (
@@ -84,6 +98,7 @@ function Providers({ children }: { children: React.ReactNode }) {
               <BottomSheetModalProvider>
                 {children}
                 <FlashMessage position="top" />
+                <VersionCheckModalContainer />
               </BottomSheetModalProvider>
             </APIProvider>
           </ThemeProvider>
