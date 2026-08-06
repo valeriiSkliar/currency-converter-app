@@ -1,8 +1,9 @@
 import * as React from "react";
 import { useTranslation } from "react-i18next";
 import { useSettingsStore } from "@/features/settings/store/use-settings-store";
-import { useCryptoRates, useCurrencies, useFiatRates } from "../api/use-rates";
+import { useCurrencies } from "../api/use-rates";
 import { useConverterStore } from "../store/use-converter-store";
+import { useExchangeRates } from "./use-exchange-rates";
 
 export type CurrencyPickerTab = "all" | "fiat" | "crypto";
 
@@ -24,20 +25,7 @@ export function useCurrencyPickerState() {
 
   // API Queries
   const { data: currenciesData, isLoading: isLoadingCurrencies, isError: isErrorCurrencies } = useCurrencies();
-  const { data: fiatRatesData, isLoading: isLoadingFiat } = useFiatRates();
-  const { data: cryptoRatesData, isLoading: isLoadingCrypto } = useCryptoRates();
-
-  // Combine rates relative to USD
-  const rates = React.useMemo(() => {
-    const map: Record<string, number> = { USD: 1 };
-    if (fiatRatesData?.rates) {
-      Object.assign(map, fiatRatesData.rates);
-    }
-    if (cryptoRatesData?.rates) {
-      Object.assign(map, cryptoRatesData.rates);
-    }
-    return map;
-  }, [fiatRatesData, cryptoRatesData]);
+  const { rates, isRefreshing: isLoadingRates } = useExchangeRates();
 
   // Exclude codes check
   const isTaken = React.useCallback(
@@ -111,7 +99,7 @@ export function useCurrencyPickerState() {
     groups,
     isTaken,
     getFormattedRate,
-    isLoading: isLoadingCurrencies || isLoadingFiat || isLoadingCrypto,
+    isLoading: isLoadingCurrencies || isLoadingRates,
     isError: isErrorCurrencies,
   };
 }

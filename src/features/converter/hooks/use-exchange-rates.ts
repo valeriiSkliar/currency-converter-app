@@ -15,7 +15,11 @@ export function useExchangeRates() {
       Object.assign(map, fiatRatesData.rates);
     }
     if (cryptoRatesData?.rates) {
-      Object.assign(map, cryptoRatesData.rates);
+      for (const [code, priceInUsd] of Object.entries(cryptoRatesData.rates)) {
+        if (typeof priceInUsd === "number" && priceInUsd > 0) {
+          map[code] = 1 / priceInUsd;
+        }
+      }
     }
     return map;
   }, [fiatRatesData, cryptoRatesData]);
