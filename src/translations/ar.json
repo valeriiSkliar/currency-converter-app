@@ -1,4 +1,13 @@
 {
+  "app_update": {
+    "current_version": "الإصدار المثبت: {{version}}",
+    "debug_close": "إغلاق شاشة الاختبار (DEV)",
+    "message": "يتطلب متابعة الاستخدام تحديث التطبيق. يرجى التحديث إلى أحدث إصدار.",
+    "required_version": "الإصدار المطلوب: {{version}}",
+    "store_error": "تعذر فتح صفحة المتجر",
+    "title": "التحديث مطلوب",
+    "update_button": "تحديث التطبيق"
+  },
   "common": {
     "cancel": "إلغاء",
     "error": "حدث خطأ",

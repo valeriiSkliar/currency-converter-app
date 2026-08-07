@@ -12,13 +12,18 @@ import { KeyboardProvider } from "react-native-keyboard-controller";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 
 import { useThemeConfig } from "@/components/ui/use-theme-config";
+import {
+  AppUpdateProvider,
+  AppUpdateScreen,
+  useAppUpdate,
+} from "@/features/app-update";
 import { PrivacyModal } from "@/features/converter/components/privacy-modal";
 import { UpdateModal } from "@/features/converter/components/update-modal";
 import { useSettingsStore } from "@/features/settings/store/use-settings-store";
 import { useVersionCheck } from "@/features/version/hooks/use-version-check";
 import { APIProvider } from "@/lib/api";
 import { loadSelectedTheme } from "@/lib/hooks/use-selected-theme";
-// Import  global CSS file
+// Import global CSS file
 import "../global.css";
 
 export { ErrorBoundary } from "expo-router";
@@ -60,14 +65,41 @@ export default function RootLayout() {
 
   return (
     <Providers>
+      <MainContent
+        privacyAccepted={privacyAccepted}
+        onAcceptPrivacy={() => setPrivacyAccepted(true)}
+      />
+    </Providers>
+  );
+}
+
+function MainContent({
+  privacyAccepted,
+  onAcceptPrivacy,
+}: {
+  onAcceptPrivacy: () => void;
+  privacyAccepted: boolean;
+}) {
+  const { isChecking, isUpdateRequired, isDebugUpdateVisible } = useAppUpdate();
+
+  if (isChecking) {
+    return null;
+  }
+
+  if (isUpdateRequired || isDebugUpdateVisible) {
+    return <AppUpdateScreen />;
+  }
+
+  return (
+    <>
       <Stack>
         <Stack.Screen name="(app)" options={{ headerShown: false }} />
       </Stack>
       <PrivacyModal
         visible={!privacyAccepted}
-        onAccept={() => setPrivacyAccepted(true)}
+        onAccept={onAcceptPrivacy}
       />
-    </Providers>
+    </>
   );
 }
 
@@ -95,11 +127,13 @@ function Providers({ children }: { children: React.ReactNode }) {
         <SafeAreaProvider>
           <ThemeProvider value={theme}>
             <APIProvider>
-              <BottomSheetModalProvider>
-                {children}
-                <FlashMessage position="top" />
-                <VersionCheckModalContainer />
-              </BottomSheetModalProvider>
+              <AppUpdateProvider>
+                <BottomSheetModalProvider>
+                  {children}
+                  <FlashMessage position="top" />
+                  <VersionCheckModalContainer />
+                </BottomSheetModalProvider>
+              </AppUpdateProvider>
             </APIProvider>
           </ThemeProvider>
         </SafeAreaProvider>

@@ -5,7 +5,6 @@
   },
   "build": {
     "production": {
-      "channel": "production",
       "autoIncrement": true,
       "distribution": "store",
       "environment": "production",
@@ -17,11 +16,19 @@
         "image": "latest"
       },
       "env": {
-        "EXPO_PUBLIC_APP_ENV": "production"
+        "EXPO_PUBLIC_APP_ENV": "production",
+        "EXPO_PUBLIC_API_URL": "https://converter.firstbot.online/api/v1",
+        "EXPO_PUBLIC_APP_SERVICE_KEY": "6612bb8e84d50cb1e1d4c814aee2d78efaf216393e457c355a9899f060d8eae3",
+        "EXPO_PUBLIC_SHARE_URL": "https://currencyconverterapp.com",
+        "EXPO_PUBLIC_PRIVACY_POLICY_URL": "https://convertoff-privacy.netlify.app/privacy-policy",
+        "EXPO_PUBLIC_RATE_URL_IOS": "https://apps.apple.com/app/currency-converter",
+        "EXPO_PUBLIC_RATE_URL_ANDROID": "https://play.google.com/store/apps/details?id=com.convertoff.currencyconverter",
+        "EXPO_PUBLIC_ENABLE_EXCHANGE_RATES": "false",
+        "ADMOB_ANDROID_APP_ID": "ca-app-pub-8666683012959419~5410032905",
+        "EXPO_PUBLIC_ADMOB_INTERSTITIAL_ID_ANDROID": "ca-app-pub-8666683012959419/3949043352"
       }
     },
     "preview": {
-      "channel": "preview",
       "autoIncrement": true,
       "distribution": "store",
       "ios": {
@@ -33,7 +40,14 @@
       },
       "environment": "preview",
       "env": {
-        "EXPO_PUBLIC_APP_ENV": "preview"
+        "EXPO_PUBLIC_APP_ENV": "preview",
+        "EXPO_PUBLIC_API_URL": "https://converter.firstbot.online/api/v1",
+        "EXPO_PUBLIC_APP_SERVICE_KEY": "6612bb8e84d50cb1e1d4c814aee2d78efaf216393e457c355a9899f060d8eae3",
+        "EXPO_PUBLIC_SHARE_URL": "https://currencyconverterapp.com",
+        "EXPO_PUBLIC_PRIVACY_POLICY_URL": "https://convertoff-privacy.netlify.app/privacy-policy",
+        "EXPO_PUBLIC_RATE_URL_IOS": "https://apps.apple.com/app/currency-converter",
+        "EXPO_PUBLIC_RATE_URL_ANDROID": "https://play.google.com/store/apps/details?id=com.convertoff.currencyconverter",
+        "EXPO_PUBLIC_ENABLE_EXCHANGE_RATES": "false"
       }
     },
     "development": {
@@ -66,7 +80,17 @@
     }
   },
   "submit": {
-    "preview": {},
-    "production": {}
+    "preview": {
+      "android": {
+        "serviceAccountKeyPath": "./eoassist-ru-05642d2ab33a.json",
+        "track": "internal"
+      }
+    },
+    "production": {
+      "android": {
+        "serviceAccountKeyPath": "./eoassist-ru-05642d2ab33a.json",
+        "track": "internal"
+      }
+    }
   }
 }

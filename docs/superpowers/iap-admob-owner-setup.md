@@ -32,9 +32,8 @@
 
 1. В **Agreements, Tax, and Banking** принять **Paid Apps agreement**.
 2. В приложении открыть **Subscriptions** и создать subscription group `PRO`.
-3. Добавить auto-renewable subscriptions:
-   - `pro_monthly` — 1 месяц, $4.99;
-   - `pro_yearly` — 1 год, $19.99.
+3. Добавить auto-renewable subscription:
+   - `pro_yearly` — 1 год, $4.99.
 4. Не создавать trial или introductory offers.
 5. Добавить sandbox tester и проверить покупку и restore в новом dev build.
 
@@ -44,8 +43,8 @@
 
 1. Настроить payments profile.
 2. Открыть **Monetize with Play → Products → Subscriptions**.
-3. Создать subscriptions `pro_monthly` и `pro_yearly`.
-4. Для каждой создать и активировать один auto-renewing base plan: Monthly / Yearly с ценами $4.99 / $19.99.
+3. Создать subscription `pro_yearly`.
+4. Создать и активировать один auto-renewing base plan: Yearly с ценой $4.99.
 5. Добавить licensed testers или закрытый testing track и выполнить purchase/restore smoke test.
 
 Официальная документация: [Google Play subscriptions](https://support.google.com/googleplay/android-developer/answer/140504).

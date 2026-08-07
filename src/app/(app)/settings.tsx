@@ -279,7 +279,7 @@ function useSettingsScreenState() {
   const router = useRouter();
   const { t } = useTranslation();
 
-  const { decimalPlaces, setDecimalPlaces, setLanguage: setStoreLanguage } = useSettingsStore();
+  const { decimalPlaces, setDecimalPlaces, setLanguage: setStoreLanguage, maxTargetCurrencies } = useSettingsStore();
   const { selectedTheme, setSelectedTheme } = useSelectedTheme();
   const { language: currentLang, setLanguage: setI18nLanguage } = useSelectedLanguage();
 
@@ -313,6 +313,7 @@ function useSettingsScreenState() {
     t,
     decimalPlaces,
     setDecimalPlaces,
+    maxTargetCurrencies,
     selectedTheme,
     setSelectedTheme,
     currentLang,
@@ -461,8 +462,8 @@ export default function SettingsScreen() {
           state.setIsProLimitVisible(false);
           state.router.push("/paywall");
         }}
-        limit={4}
-        count={4}
+        limit={state.maxTargetCurrencies}
+        count={state.maxTargetCurrencies}
       />
 
       <PrivacyModal

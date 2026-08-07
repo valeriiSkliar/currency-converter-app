@@ -24,6 +24,8 @@ const envSchema = z.object({
   EXPO_PUBLIC_ADMOB_INTERSTITIAL_ID_ANDROID: z.string().optional(),
 
   // only available for app.config.ts usage
+  ADMOB_ANDROID_APP_ID: z.string().optional(),
+  ADMOB_IOS_APP_ID: z.string().optional(),
   APP_BUILD_ONLY_VAR: z.string().optional(),
   EXPO_ACCOUNT_OWNER: z.string().optional(),
   EAS_PROJECT_ID: z.string().optional(),
@@ -42,7 +44,7 @@ const BUNDLE_IDS = {
 const PACKAGES = {
   development: "com.cimmetria.currencyconverter.development",
   preview: "com.cimmetria.currencyconverter.preview",
-  production: "com.cimmetria.currencyconverter",
+  production: "com.convertoff.currencyconverter",
 } as const;
 
 const SCHEMES = {
@@ -71,11 +73,13 @@ const _env: z.infer<typeof envSchema> = {
   EXPO_PUBLIC_VAR_BOOL: process.env.EXPO_PUBLIC_VAR_BOOL === "true",
   EXPO_PUBLIC_ENABLE_EXCHANGE_RATES: process.env.EXPO_PUBLIC_ENABLE_EXCHANGE_RATES === "true",
   EXPO_PUBLIC_SHARE_URL: process.env.EXPO_PUBLIC_SHARE_URL ?? "https://currencyconverterapp.com",
-  EXPO_PUBLIC_PRIVACY_POLICY_URL: process.env.EXPO_PUBLIC_PRIVACY_POLICY_URL ?? "https://currencyconverterapp.com/privacy-policy",
+  EXPO_PUBLIC_PRIVACY_POLICY_URL: process.env.EXPO_PUBLIC_PRIVACY_POLICY_URL ?? "https://convertoff-privacy.netlify.app/privacy-policy",
   EXPO_PUBLIC_RATE_URL_IOS: process.env.EXPO_PUBLIC_RATE_URL_IOS ?? "https://apps.apple.com/app/currency-converter",
-  EXPO_PUBLIC_RATE_URL_ANDROID: process.env.EXPO_PUBLIC_RATE_URL_ANDROID ?? "https://play.google.com/store/apps/details?id=com.cimmetria.currencyconverter",
+  EXPO_PUBLIC_RATE_URL_ANDROID: process.env.EXPO_PUBLIC_RATE_URL_ANDROID ?? "https://play.google.com/store/apps/details?id=com.convertoff.currencyconverter",
   EXPO_PUBLIC_ADMOB_INTERSTITIAL_ID_IOS: process.env.EXPO_PUBLIC_ADMOB_INTERSTITIAL_ID_IOS,
   EXPO_PUBLIC_ADMOB_INTERSTITIAL_ID_ANDROID: process.env.EXPO_PUBLIC_ADMOB_INTERSTITIAL_ID_ANDROID,
+  ADMOB_ANDROID_APP_ID: process.env.ADMOB_ANDROID_APP_ID,
+  ADMOB_IOS_APP_ID: process.env.ADMOB_IOS_APP_ID,
   APP_BUILD_ONLY_VAR: process.env.APP_BUILD_ONLY_VAR,
   EXPO_ACCOUNT_OWNER: process.env.EXPO_ACCOUNT_OWNER,
   EAS_PROJECT_ID: process.env.EAS_PROJECT_ID,

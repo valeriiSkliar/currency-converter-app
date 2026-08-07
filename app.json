@@ -1,4 +1,11 @@
 {
-  "name": "currency-converter-app",
-  "slug": "currency-converter-app"
+  "expo": {
+    "name": "currency-converter-app",
+    "slug": "currency-converter",
+    "extra": {
+      "eas": {
+        "projectId": "4c4f7ae5-f34c-4ce6-b90e-df8a24a8a210"
+      }
+    }
+  }
 }

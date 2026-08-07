@@ -26,7 +26,7 @@ export const useConverterStore = create<ConverterState>()(
   persist(
     set => ({
       baseCurrency: "USD",
-      targetCurrencies: ["EUR", "GBP", "JPY"],
+      targetCurrencies: ["EUR", "GBP", "JPY", "BTC"],
       amount: "100",
       customRates: {},
       setBaseCurrency: code => set({ baseCurrency: code }),

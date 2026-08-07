@@ -44,3 +44,13 @@ app-example
 /ios
 .env
 .env.production
+
+# Local Netlify folder
+.netlify
+coverage/
+
+# Google Service Account keys
+*service_account*.json
+eoassist-ru-*.json
+
+

@@ -564,6 +564,7 @@ function usePriceScannerState() {
     const photo = await cameraRef.current?.takePictureAsync({
       quality: 0.5,
       skipProcessing: true,
+      shutterSound: false,
     });
     if (!photo)
       return null;
@@ -646,6 +647,7 @@ export default function PriceScannerScreen() {
           facing="back"
           zoom={state.engine.zoom}
           enableTorch={state.engine.flashlight}
+          animateShutter={false}
         />
 
         <ViewfinderOverlay />

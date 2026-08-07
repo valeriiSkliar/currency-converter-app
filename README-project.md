@@ -39,6 +39,7 @@ pnpm android
 
 ## ✍️ Documentation
 
+- [Android signing / upload key](./docs/android-signing.md)
 - [Rules and Conventions](https://starter.obytes.com/getting-started/rules-and-conventions/)
 - [Project structure](https://starter.obytes.com/getting-started/project-structure)
 - [Environment vars and config](https://starter.obytes.com/getting-started/environment-vars-config)
