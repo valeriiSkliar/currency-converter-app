@@ -85,6 +85,10 @@ fi
 
 echo -e "${GREEN}✓ Нативные папки пересозданы${NC}"
 
+if ! grep -q "-Xskip-metadata-version-check" android/build.gradle; then
+    sed -i '' "s|maven { url = uri('https://www.jitpack.io') }|maven { url = uri('https://www.jitpack.io') }\n  tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach { kotlinOptions { freeCompilerArgs += ['-Xskip-metadata-version-check'] } }|g" android/build.gradle 2>/dev/null || true
+fi
+
 # Шаг 4: Сборка с помощью Gradle
 cd android
 
