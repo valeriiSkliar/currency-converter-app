@@ -81,6 +81,7 @@ export default ({ config }: ConfigContext): ExpoConfig =>
         backgroundColor: "#000000",
       },
       package: Env.EXPO_PUBLIC_PACKAGE,
+      versionCode: 10,
     },
     web: {
       favicon: "./assets/favicon.png",
