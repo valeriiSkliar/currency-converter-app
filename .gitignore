@@ -53,4 +53,8 @@ coverage/
 *service_account*.json
 eoassist-ru-*.json
 
+.cyrboard/
+Archive.zip
+
+
 
